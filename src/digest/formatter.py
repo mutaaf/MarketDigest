@@ -295,6 +295,127 @@ def quick_take_block(text: str) -> str:
     return "\n".join(formatted)
 
 
+def enhanced_pick_line(rank: int, pick: dict, track: dict | None = None) -> str:
+    """Format a rich scorecard-style pick line for daytrade digest.
+
+    Shows grade, R:R, pivot labels, ATR %, and optional track record.
+    """
+    symbol = pick.get("symbol", "?")
+    score = pick.get("score", 0)
+    grade = pick.get("grade", "?")
+    rr = pick.get("risk_reward", 0)
+    price = pick.get("price", 0)
+    rsi = pick.get("rsi")
+    trend = pick.get("trend", "neutral").replace("_", " ")
+    trend_emoji = pick.get("trend_emoji", "")
+    vol_ratio = pick.get("volume_ratio")
+    atr_pct = pick.get("atr_pct")
+    entry = pick.get("entry", 0)
+    target = pick.get("target", 0)
+    stop = pick.get("stop", 0)
+    target_level = pick.get("target_level", "")
+    stop_level = pick.get("stop_level", "")
+    signals = pick.get("signals", [])
+
+    # Trend color icon
+    if pick.get("trend") in ("bullish", "weakly_bullish"):
+        icon = "\U0001f7e2"
+    elif pick.get("trend") in ("bearish", "weakly_bearish"):
+        icon = "\U0001f534"
+    else:
+        icon = "\u26aa"
+
+    rsi_str = f"{rsi:.0f}" if rsi is not None else "N/A"
+    vol_str = f"Vol {vol_ratio:.1f}x" if vol_ratio else ""
+    atr_str = f"ATR {atr_pct}%" if atr_pct is not None else ""
+
+    target_label = f" ({esc(target_level)})" if target_level else ""
+    stop_label = f" ({esc(stop_level)})" if stop_level else ""
+
+    # Line 1: rank, icon, symbol, grade, score, R:R
+    line = f"  {rank}. {icon} {bold(symbol)} [{esc(grade)}] \u2014 {code(f'{score:.0f}/100')} | R:R {code(f'{rr:.1f}')}"
+
+    # Line 2: price, RSI, trend, volume, ATR
+    detail_parts = [f"${price}"]
+    detail_parts.append(f"RSI {rsi_str}")
+    detail_parts.append(f"{trend_emoji} {esc(trend)}")
+    if vol_str:
+        detail_parts.append(esc(vol_str))
+    if atr_str:
+        detail_parts.append(esc(atr_str))
+    line += f"\n     {' | '.join(detail_parts)}"
+
+    # Line 3: entry/target/stop with pivot labels
+    line += (
+        f"\n     Entry: {code(f'${entry:.2f}')} | "
+        f"Target: {code(f'${target:.2f}')}{target_label} | "
+        f"Stop: {code(f'${stop:.2f}')}{stop_label}"
+    )
+
+    # Line 4: signals
+    if signals:
+        line += f"\n     {esc(chr(8594))} {esc(', '.join(signals))}"
+
+    # Line 5: track record (only if retrace history exists)
+    if track:
+        w = track.get("wins", 0)
+        l = track.get("losses", 0)
+        wr = track.get("win_rate", 0)
+        avg_r = track.get("avg_r")
+        r_part = f", {avg_r}R avg" if avg_r is not None else ""
+        line += f"\n     \U0001f4ca Track: {w}W-{l}L ({wr:.0f}% WR{esc(r_part)})"
+
+    return line
+
+
+def custom_section_block(title: str, data: dict | list, source_type: str) -> str:
+    """Format a custom data source as a digest section.
+
+    HTTP/CSV data renders as price lines, RSS as a bullet list.
+    """
+    lines = []
+
+    if source_type == "rss":
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            t = item.get("title", "")
+            summary = item.get("summary", "")
+            url = item.get("url", "")
+            bullet = f"  \u2022 {bold(t)}"
+            if summary:
+                # Truncate long summaries
+                short = summary[:120] + "..." if len(summary) > 120 else summary
+                bullet += f"\n    {esc(short)}"
+            if url:
+                bullet += f"\n    {esc(url)}"
+            lines.append(bullet)
+    else:
+        # HTTP or CSV — render as price-style lines
+        items = data if isinstance(data, list) else [data]
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            symbol = item.get("symbol", "")
+            price = item.get("price")
+            change_pct = item.get("change_pct")
+            name = item.get("name", symbol)
+
+            if price is not None:
+                price_val = _safe_float(price)
+                if change_pct is not None:
+                    chg = _safe_float(change_pct)
+                    indicator = change_indicator(chg)
+                    lines.append(f"  {esc(name)}: {code(f'{price_val:,.2f}')}  {indicator}")
+                else:
+                    lines.append(f"  {esc(name)}: {code(f'{price_val:,.2f}')}")
+            elif name:
+                # No price — just show the fields we have
+                parts = [f"{esc(k)}: {esc(str(v))}" for k, v in item.items() if k != "symbol" and v]
+                lines.append(f"  {esc(name)} — {', '.join(parts)}" if parts else f"  {esc(name)}")
+
+    return "\n".join(lines) if lines else f"  {italic('No data available')}"
+
+
 def unavailable(section: str) -> str:
     return f"  {italic(f'{esc(section)} data temporarily unavailable')}"
 

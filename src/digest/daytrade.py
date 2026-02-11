@@ -3,9 +3,10 @@
 from src.digest.builder import DigestBuilder
 from src.digest.formatter import (
     bold, code, esc, italic, section_header, analysis_block, unavailable,
+    enhanced_pick_line, custom_section_block,
 )
 from src.analysis.technicals import full_analysis, get_trend_emoji
-from src.analysis.daytrade_scorer import score_instrument, rank_daytrade_picks
+from src.analysis.daytrade_scorer import score_instrument, rank_daytrade_picks, get_condensed_track_record
 from src.analysis.performance import change_indicator
 from src.utils.timezone import now_ct, format_date, format_time_ct
 from src.utils.logging_config import get_logger
@@ -143,7 +144,8 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
         from src.retrace.scoring_config import load_scoring_weights
         from src.retrace.versioning import get_current_version_id
         save_snapshot(digest_data, load_scoring_weights(),
-                      get_current_version_id("prompts") or "unversioned")
+                      get_current_version_id("prompts") or "unversioned",
+                      digest_type="daytrade")
     except Exception as e:
         logger.warning(f"Retrace snapshot save failed: {e}")
 
@@ -159,28 +161,12 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
     # ── Top 10 Day Trade Picks ──────────────────────────────────
     parts.append(section_header("\U0001f3af TOP 10 DAY TRADE PICKS"))
     for i, pick in enumerate(top_picks, 1):
-        trend_emoji = pick.get("trend_emoji", "")
-        trend = pick.get("trend", "neutral").replace("_", " ")
-        vol_str = f"Vol {pick['volume_ratio']:.1f}x" if pick.get("volume_ratio") else ""
-
-        # Color icon based on trend
-        icon = "\U0001f7e2" if pick.get("trend") in ("bullish", "weakly_bullish") else "\U0001f534" if pick.get("trend") in ("bearish", "weakly_bearish") else "\u26aa"
-
-        score_str = f"{pick['score']:.0f}/100"
-        entry_str = f"${pick['entry']:.2f}"
-        target_str = f"${pick['target']:.2f}"
-        stop_str = f"${pick['stop']:.2f}"
-        rsi_val = pick.get('rsi')
-        rsi_str = f"{rsi_val:.0f}" if rsi_val is not None else "N/A"
-
-        line = (
-            f"  {i}. {icon} {bold(pick['symbol'])} — Score: {code(score_str)}\n"
-            f"     ${pick['price']} | RSI {rsi_str} | {trend_emoji} {esc(trend)} | {esc(vol_str)}\n"
-            f"     Entry: {code(entry_str)} | Target: {code(target_str)} | Stop: {code(stop_str)}"
-        )
-        if pick.get("signals"):
-            line += f"\n     {esc(chr(8594))} {esc(', '.join(pick['signals']))}"
-        parts.append(line)
+        track = None
+        try:
+            track = get_condensed_track_record(pick["symbol"])
+        except Exception:
+            pass
+        parts.append(enhanced_pick_line(i, pick, track))
 
     # ── Honorable Mentions ──────────────────────────────────────
     if honorable:
@@ -212,6 +198,19 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
                 reasons.append(f"{trend.replace('_', ' ')} trend")
             reason_str = ", ".join(reasons) if reasons else f"score {pick['score']:.0f}"
             parts.append(f"  {esc(pick['symbol'])} — {esc(reason_str)}")
+
+    # ── Custom Data Sources ─────────────────────────────────────
+    try:
+        custom_sources = builder.fetch_custom_sources("daytrade")
+        for src_id, src_info in custom_sources.items():
+            cfg = src_info["config"]
+            integration = cfg.get("digest_integration", {})
+            if integration.get("mode") == "section":
+                title = integration.get("section_title", cfg.get("name", src_id))
+                parts.append(section_header(f"\U0001f4cc {title}"))
+                parts.append(custom_section_block(title, src_info["data"], cfg.get("type", "http")))
+    except Exception as e:
+        logger.warning(f"Custom sources failed: {e}")
 
     # ── Next Steps (full mode) ──────────────────────────────────
     if analyzer and digest_data:

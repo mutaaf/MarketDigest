@@ -77,3 +77,34 @@ export interface TestResult {
   success: boolean
   message: string
 }
+
+export interface CustomSourceAuth {
+  type: string // api_key | bearer | header | none
+  env_var?: string
+  header_name?: string
+}
+
+export interface CustomSourceDigestIntegration {
+  mode: string // section | merge
+  merge_target?: string
+  section_title: string
+  digest_types: string[]
+}
+
+export interface CustomSource {
+  id: string
+  name: string
+  type: string // http | rss | csv
+  enabled: boolean
+  url?: string
+  path?: string
+  auth?: CustomSourceAuth
+  response_root?: string
+  response_mapping?: Record<string, string>
+  instruments?: string[]
+  field_mapping?: Record<string, string>
+  columns?: Record<string, string>
+  max_items?: number
+  cache_ttl: number
+  digest_integration?: CustomSourceDigestIntegration
+}

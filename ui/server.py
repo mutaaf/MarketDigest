@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from ui.routes import status, onboarding, settings, instruments, prompts, digests, sources, cache, history, retrace
+from ui.routes import status, onboarding, settings, instruments, prompts, digests, sources, cache, history, retrace, scorecard
 
 app = FastAPI(title="Market Digest Command Center", version="1.0.0")
 
@@ -35,6 +35,7 @@ app.include_router(sources.router)
 app.include_router(cache.router)
 app.include_router(history.router)
 app.include_router(retrace.router)
+app.include_router(scorecard.router)
 
 # Serve built React frontend as static files
 FRONTEND_DIST = Path(__file__).parent / "frontend" / "dist"

@@ -424,6 +424,41 @@ class DigestBuilder:
         """Retrieve morning snapshot for comparison."""
         return cache.get_stale("morning_snapshot")
 
+    # ── Custom Sources ─────────────────────────────────────────────
+
+    def fetch_custom_sources(self, digest_type: str) -> dict[str, dict | list]:
+        """Fetch all enabled custom sources for this digest type.
+
+        Returns {source_id: fetched_data} for sources that match the digest_type.
+        """
+        from config.settings import load_custom_sources
+        from src.fetchers.custom_fetcher import CustomSourceFetcher
+
+        sources = load_custom_sources()
+        results = {}
+
+        for src in sources:
+            if not src.get("enabled", True):
+                continue
+            integration = src.get("digest_integration", {})
+            allowed_types = integration.get("digest_types", [])
+            if allowed_types and digest_type not in allowed_types:
+                continue
+
+            try:
+                fetcher = CustomSourceFetcher(src)
+                data = fetcher.fetch()
+                if data is not None:
+                    results[src["id"]] = {
+                        "data": data,
+                        "config": src,
+                    }
+            except Exception as e:
+                logger.warning(f"Custom source '{src.get('id')}' fetch failed: {e}")
+                continue
+
+        return results
+
     # ── LLM Provider ─────────────────────────────────────────────
 
     def get_llm_provider(self):

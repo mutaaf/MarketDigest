@@ -5,6 +5,7 @@ from src.digest.formatter import (
     bold, code, esc, italic, section_header, price_line,
     economic_event_line, sentiment_block, analysis_block, quick_take_block,
     unavailable, comprehensive_event_line, earnings_line, forward_calendar_block,
+    custom_section_block,
 )
 from src.analysis.performance import (
     change_indicator, rank_by_performance, sector_comparison, get_top_movers,
@@ -325,7 +326,20 @@ def build_weekly_digest(builder: DigestBuilder, mode: str = "facts", out_data: d
     except Exception as e:
         logger.warning(f"Quick Take failed: {e}")
 
-    # 8. Next Week — Key Themes
+    # 8. Custom Data Sources
+    try:
+        custom_sources = builder.fetch_custom_sources("weekly")
+        for src_id, src_info in custom_sources.items():
+            cfg = src_info["config"]
+            integration = cfg.get("digest_integration", {})
+            if integration.get("mode") == "section":
+                title = integration.get("section_title", cfg.get("name", src_id))
+                parts.append(section_header(f"\U0001f4cc {title}"))
+                parts.append(custom_section_block(title, src_info["data"], cfg.get("type", "http")))
+    except Exception as e:
+        logger.warning(f"Custom sources failed: {e}")
+
+    # 9. Next Week — Key Themes
     if analyzer and digest_data:
         parts.append(section_header("🎯 NEXT WEEK — KEY THEMES"))
         try:
@@ -340,6 +354,15 @@ def build_weekly_digest(builder: DigestBuilder, mode: str = "facts", out_data: d
 
     # Footer
     parts.append(f"\n\n{esc('─' * 30)}\n{italic('Have a great weekend!')}")
+
+    # Save retrace snapshot
+    try:
+        from src.retrace.snapshot import save_snapshot
+        from src.retrace.versioning import get_current_version_id
+        save_snapshot(digest_data, {}, get_current_version_id("prompts") or "unversioned",
+                      digest_type="weekly")
+    except Exception as e:
+        logger.warning(f"Retrace snapshot save failed: {e}")
 
     if out_data is not None:
         out_data.update(digest_data)

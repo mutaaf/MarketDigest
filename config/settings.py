@@ -285,3 +285,38 @@ def save_instruments(instruments: dict[str, Any]) -> None:
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
         raise
+
+
+# ── Custom sources ─────────────────────────────────────────────
+
+
+def load_custom_sources() -> list[dict[str, Any]]:
+    """Load custom data sources from config/custom_sources.yaml."""
+    yaml_path = PROJECT_ROOT / "config" / "custom_sources.yaml"
+    if not yaml_path.exists():
+        return []
+    with open(yaml_path) as f:
+        data = yaml.safe_load(f) or {}
+    return data.get("sources", [])
+
+
+def save_custom_sources(sources: list[dict[str, Any]]) -> None:
+    """Atomic write of custom_sources.yaml."""
+    yaml_path = PROJECT_ROOT / "config" / "custom_sources.yaml"
+    fd, tmp_path = tempfile.mkstemp(dir=yaml_path.parent, suffix=".yaml")
+    try:
+        with os.fdopen(fd, "w") as f:
+            yaml.dump({"sources": sources}, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+        os.replace(tmp_path, yaml_path)
+    except Exception:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+        raise
+
+
+def get_custom_source_by_id(source_id: str) -> dict[str, Any] | None:
+    """Look up a single custom source by its id."""
+    for s in load_custom_sources():
+        if s.get("id") == source_id:
+            return s
+    return None

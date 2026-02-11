@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import {
   BarChart3, Sliders, GitBranch, Clock,
-  Trophy, TrendingDown, Target, RefreshCw, RotateCcw, ChevronDown,
+  Trophy, TrendingDown, Target, RefreshCw, RotateCcw, ChevronDown, CalendarDays,
 } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
 import api from '../api/client'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import ScoreCardDetail from '../components/common/ScoreCardDetail'
 import ToastContainer from '../components/common/Toast'
 import type {
   SnapshotMeta, PerformanceData, ScoringWeights,
   ConfigVersion, VersionDiff, GradingSummary, PickGrading,
 } from '../api/retrace-types'
+import type { ScoreCardFull } from '../api/scorecard-types'
 
 const tabs = [
   { id: 'performance', label: 'Performance', icon: BarChart3 },
@@ -69,6 +71,27 @@ function PerformanceTab({ addToast }: { addToast: (msg: string, type: 'success' 
   const { data: perf, loading: perfLoading, refetch: refetchPerf } = useApi<PerformanceData>('/retrace/performance')
   const { data: snapshots, loading: snapsLoading, refetch: refetchSnaps } = useApi<SnapshotMeta[]>('/retrace/snapshots')
   const [grading, setGrading] = useState<string | null>(null)
+  const [backfillDate, setBackfillDate] = useState('')
+  const [backfilling, setBackfilling] = useState(false)
+
+  const backfillAndGrade = async () => {
+    if (!backfillDate) return
+    setBackfilling(true)
+    try {
+      const res = await api.post(`/retrace/backfill-and-grade/${backfillDate}`)
+      const msg = res.data.grading
+        ? `Backfilled & graded ${backfillDate} — ${res.data.grading.win_rate}% WR`
+        : `Backfilled ${backfillDate} (grading: ${res.data.grading_error || 'pending'})`
+      addToast(msg, 'success')
+      setBackfillDate('')
+      refetchPerf()
+      refetchSnaps()
+    } catch (err: any) {
+      addToast(err.response?.data?.detail || 'Backfill failed', 'error')
+    } finally {
+      setBackfilling(false)
+    }
+  }
 
   const gradeDate = async (date: string) => {
     setGrading(date)
@@ -91,7 +114,7 @@ function PerformanceTab({ addToast }: { addToast: (msg: string, type: 'success' 
       addToast(`Graded ${res.data.graded} snapshots (${res.data.skipped} skipped)`, 'success')
       refetchPerf()
       refetchSnaps()
-    } catch (err: any) {
+    } catch {
       addToast('Grading failed', 'error')
     } finally {
       setGrading(null)
@@ -160,6 +183,33 @@ function PerformanceTab({ addToast }: { addToast: (msg: string, type: 'success' 
         <BreakdownTable title="Win Rate by Trend" data={perf.by_trend} />
       )}
 
+      {/* Backfill past date */}
+      <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-apple-gray-700 mb-3 flex items-center gap-2">
+          <CalendarDays size={16} className="text-yellow-500" />
+          Backfill Past Date
+        </h3>
+        <p className="text-xs text-apple-gray-400 mb-3">
+          Generate a retroactive snapshot for a date that didn't have one, then grade it against actual next-day prices.
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={backfillDate}
+            onChange={e => setBackfillDate(e.target.value)}
+            max={new Date(Date.now() - 86400000).toISOString().split('T')[0]}
+            className="flex-1 px-3 py-2 border border-apple-gray-200 rounded-lg text-sm"
+          />
+          <button
+            onClick={backfillAndGrade}
+            disabled={!backfillDate || backfilling}
+            className="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-xl hover:bg-yellow-600 disabled:opacity-50 whitespace-nowrap"
+          >
+            {backfilling ? 'Backfilling...' : 'Backfill & Grade'}
+          </button>
+        </div>
+      </div>
+
       {/* Snapshots list */}
       <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
         <div className="flex items-center justify-between mb-4">
@@ -175,31 +225,51 @@ function PerformanceTab({ addToast }: { addToast: (msg: string, type: 'success' 
         </div>
         {!snapshots || snapshots.length === 0 ? (
           <p className="text-sm text-apple-gray-400 text-center py-8">
-            No snapshots yet. Run a daytrade digest to create one.
+            No snapshots yet. Run a digest to create one.
           </p>
         ) : (
           <div className="space-y-2">
-            {snapshots.map(snap => (
-              <div key={snap.date} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-apple-gray-50">
-                <div>
-                  <span className="text-sm font-medium text-apple-gray-800">{snap.date}</span>
-                  <span className="text-xs text-apple-gray-400 ml-2">{snap.pick_count} picks</span>
+            {snapshots.map(snap => {
+              const digestType = snap.digest_type || 'daytrade'
+              const isDaytrade = digestType === 'daytrade'
+              const typeBadgeColors: Record<string, string> = {
+                daytrade: 'bg-blue-100 text-blue-700',
+                morning: 'bg-amber-100 text-amber-700',
+                afternoon: 'bg-orange-100 text-orange-700',
+                weekly: 'bg-purple-100 text-purple-700',
+              }
+              return (
+                <div key={snap.date} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-apple-gray-50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-apple-gray-800">{snap.date}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${typeBadgeColors[digestType] || 'bg-gray-100 text-gray-700'}`}>
+                      {digestType}
+                    </span>
+                    {isDaytrade && (
+                      <span className="text-xs text-apple-gray-400">{snap.pick_count} picks</span>
+                    )}
+                    {snap.backfilled && (
+                      <span className="text-[10px] px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded-full font-semibold">Backfilled</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isDaytrade && (
+                      snap.has_grading ? (
+                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Graded</span>
+                      ) : (
+                        <button
+                          onClick={() => gradeDate(snap.date)}
+                          disabled={grading !== null}
+                          className="text-xs px-2 py-0.5 bg-apple-blue/10 text-apple-blue rounded-full font-medium hover:bg-apple-blue/20 disabled:opacity-50"
+                        >
+                          {grading === snap.date ? 'Grading...' : 'Grade'}
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {snap.has_grading ? (
-                    <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Graded</span>
-                  ) : (
-                    <button
-                      onClick={() => gradeDate(snap.date)}
-                      disabled={grading !== null}
-                      className="text-xs px-2 py-0.5 bg-apple-blue/10 text-apple-blue rounded-full font-medium hover:bg-apple-blue/20 disabled:opacity-50"
-                    >
-                      {grading === snap.date ? 'Grading...' : 'Grade'}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -224,6 +294,29 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
 }
 
 function PicksTable({ title, icon, picks }: { title: string; icon: React.ReactNode; picks: PickGrading[] }) {
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const [cardData, setCardData] = useState<ScoreCardFull | null>(null)
+  const [cardLoading, setCardLoading] = useState(false)
+
+  const toggleRow = async (symbol: string) => {
+    if (expanded === symbol) {
+      setExpanded(null)
+      setCardData(null)
+      return
+    }
+    setExpanded(symbol)
+    setCardData(null)
+    setCardLoading(true)
+    try {
+      const res = await api.get<ScoreCardFull>(`/scorecard/${symbol}`)
+      setCardData(res.data)
+    } catch {
+      setCardData(null)
+    } finally {
+      setCardLoading(false)
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
       <h3 className="text-sm font-semibold text-apple-gray-700 mb-3 flex items-center gap-2">{icon}{title}</h3>
@@ -238,16 +331,35 @@ function PicksTable({ title, icon, picks }: { title: string; icon: React.ReactNo
         </thead>
         <tbody>
           {picks.map((p, i) => (
-            <tr key={i} className="border-t border-apple-gray-100">
-              <td className="py-1.5 font-medium text-apple-gray-800">{p.symbol}</td>
-              <td className="py-1.5 text-right text-apple-gray-600">${p.entry?.toFixed(2)}</td>
-              <td className={`py-1.5 text-right font-medium ${(p.actual_return_pct ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {p.actual_return_pct !== undefined ? `${p.actual_return_pct > 0 ? '+' : ''}${p.actual_return_pct}%` : '-'}
-              </td>
-              <td className={`py-1.5 text-right font-medium ${(p.r_multiple ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {p.r_multiple !== undefined ? `${p.r_multiple > 0 ? '+' : ''}${p.r_multiple}R` : '-'}
-              </td>
-            </tr>
+            <>
+              <tr
+                key={i}
+                onClick={() => toggleRow(p.symbol)}
+                className="border-t border-apple-gray-100 cursor-pointer hover:bg-apple-gray-50 transition-colors"
+              >
+                <td className="py-1.5 font-medium text-apple-blue">{p.symbol}</td>
+                <td className="py-1.5 text-right text-apple-gray-600">${p.entry?.toFixed(2)}</td>
+                <td className={`py-1.5 text-right font-medium ${(p.actual_return_pct ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {p.actual_return_pct !== undefined ? `${p.actual_return_pct > 0 ? '+' : ''}${p.actual_return_pct}%` : '-'}
+                </td>
+                <td className={`py-1.5 text-right font-medium ${(p.r_multiple ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {p.r_multiple !== undefined ? `${p.r_multiple > 0 ? '+' : ''}${p.r_multiple}R` : '-'}
+                </td>
+              </tr>
+              {expanded === p.symbol && (
+                <tr key={`${i}-detail`}>
+                  <td colSpan={4} className="py-3 px-1">
+                    {cardLoading && <LoadingSpinner />}
+                    {cardData && <ScoreCardDetail card={cardData} />}
+                    {!cardLoading && !cardData && (
+                      <p className="text-xs text-apple-gray-400 text-center py-2">
+                        Could not load score card for {p.symbol}
+                      </p>
+                    )}
+                  </td>
+                </tr>
+              )}
+            </>
           ))}
         </tbody>
       </table>
@@ -613,10 +725,12 @@ function AuditTab() {
   })
 
   snapshots?.forEach(s => {
+    const dtype = s.digest_type || 'daytrade'
+    const pickInfo = dtype === 'daytrade' ? ` — ${s.pick_count} picks` : ''
     events.push({
       timestamp: s.timestamp,
       type: 'digest',
-      description: `Daytrade digest — ${s.pick_count} picks${s.has_grading ? ' (graded)' : ''}`,
+      description: `${dtype.charAt(0).toUpperCase() + dtype.slice(1)} digest${pickInfo}${s.has_grading ? ' (graded)' : ''}`,
       id: s.date,
     })
   })

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, List, Play, Database, Settings,
-  MoreHorizontal, MessageSquare, Sliders, X, Target,
+  MoreHorizontal, MessageSquare, Sliders, X, Target, Award,
 } from 'lucide-react'
 
 const mainTabs = [
@@ -17,6 +17,7 @@ const moreTabs = [
   { to: '/prompts', icon: MessageSquare, label: 'Prompts' },
   { to: '/digests', icon: Sliders, label: 'Digest Config' },
   { to: '/retrace', icon: Target, label: 'Retrace' },
+  { to: '/scorecard', icon: Award, label: 'Score Cards' },
 ]
 
 export default function BottomNav() {

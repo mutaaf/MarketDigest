@@ -3,8 +3,10 @@ export interface SnapshotMeta {
   timestamp: string
   pick_count: number
   has_grading: boolean
+  backfilled: boolean
   scoring_weights: Record<string, number>
   prompts_version: string
+  digest_type?: string
 }
 
 export interface PickGrading {

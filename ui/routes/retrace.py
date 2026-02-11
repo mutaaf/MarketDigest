@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from src.retrace.snapshot import list_snapshots, load_snapshot
 from src.retrace.grader import grade_snapshot, aggregate_performance
+from src.retrace.backfill import backfill_snapshot
 from src.retrace.scoring_config import (
     load_scoring_weights, save_scoring_weights, validate_weights, DEFAULT_WEIGHTS,
 )
@@ -33,6 +34,39 @@ def get_snapshot(date: str):
     return snapshot
 
 
+# ── Backfill ───────────────────────────────────────────────────
+
+@router.post("/backfill/{date}")
+def backfill_date(date: str, overwrite: bool = Query(False)):
+    """Generate a retroactive snapshot for a past date."""
+    try:
+        snapshot = backfill_snapshot(date, overwrite=overwrite)
+        return {"success": True, "date": date, "pick_count": len(snapshot.get("top_picks", []))}
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.post("/backfill-and-grade/{date}")
+def backfill_and_grade_date(date: str, overwrite: bool = Query(False)):
+    """Generate a retroactive snapshot and immediately grade it."""
+    try:
+        snapshot = backfill_snapshot(date, overwrite=overwrite)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+    result = grade_snapshot(snapshot)
+    if "error" in result:
+        return {"success": True, "date": date, "backfilled": True, "grading_error": result["error"]}
+
+    return {
+        "success": True,
+        "date": date,
+        "backfilled": True,
+        "pick_count": len(snapshot.get("top_picks", [])),
+        "grading": result,
+    }
+
+
 # ── Grading ─────────────────────────────────────────────────────
 
 @router.post("/grade/{date}")
@@ -50,11 +84,15 @@ def grade_date(date: str):
 
 @router.post("/grade-all")
 def grade_all():
-    """Grade all ungraded snapshots."""
+    """Grade all ungraded daytrade snapshots."""
     snapshots = list_snapshots(limit=200)
     results = {"graded": 0, "skipped": 0, "errors": []}
 
     for meta in snapshots:
+        # Only grade daytrade snapshots (grading logic is daytrade-specific)
+        if meta.get("digest_type", "daytrade") != "daytrade":
+            results["skipped"] += 1
+            continue
         if meta.get("has_grading"):
             results["skipped"] += 1
             continue
@@ -79,10 +117,12 @@ def grade_all():
 
 @router.get("/performance")
 def get_performance(days: int = Query(30, ge=1, le=365)):
-    """Get aggregate performance stats across graded snapshots."""
+    """Get aggregate performance stats across graded daytrade snapshots."""
     metas = list_snapshots(limit=200)
     snapshots = []
     for meta in metas:
+        if meta.get("digest_type", "daytrade") != "daytrade":
+            continue
         if meta.get("has_grading"):
             snap = load_snapshot(meta["date"])
             if snap:

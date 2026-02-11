@@ -81,3 +81,50 @@ class ScoringWeightsUpdate(BaseModel):
 class RollbackRequest(BaseModel):
     config_name: str
     version_id: str
+
+
+class CustomSourceAuth(BaseModel):
+    type: str = "none"  # api_key | bearer | header | none
+    env_var: str | None = None
+    header_name: str | None = None
+
+
+class CustomSourceDigestIntegration(BaseModel):
+    mode: str = "section"  # section | merge
+    merge_target: str | None = None
+    section_title: str = ""
+    digest_types: list[str] = []
+
+
+class CustomSourceCreate(BaseModel):
+    name: str
+    type: str  # http | rss | csv
+    enabled: bool = True
+    url: str | None = None
+    path: str | None = None
+    auth: CustomSourceAuth | None = None
+    response_root: str | None = None
+    response_mapping: dict[str, str] | None = None
+    instruments: list[str] | None = None
+    field_mapping: dict[str, str] | None = None
+    columns: dict[str, str] | None = None
+    max_items: int | None = None
+    cache_ttl: int = 300
+    digest_integration: CustomSourceDigestIntegration | None = None
+
+
+class CustomSourceUpdate(BaseModel):
+    name: str | None = None
+    type: str | None = None
+    enabled: bool | None = None
+    url: str | None = None
+    path: str | None = None
+    auth: CustomSourceAuth | None = None
+    response_root: str | None = None
+    response_mapping: dict[str, str] | None = None
+    instruments: list[str] | None = None
+    field_mapping: dict[str, str] | None = None
+    columns: dict[str, str] | None = None
+    max_items: int | None = None
+    cache_ttl: int | None = None
+    digest_integration: CustomSourceDigestIntegration | None = None

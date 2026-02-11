@@ -1,6 +1,22 @@
 """Day-trade scoring — rank instruments by intraday opportunity."""
 
 
+GRADE_SCALE = [
+    (90, "A+"), (85, "A"), (80, "A-"),
+    (75, "B+"), (70, "B"), (65, "B-"),
+    (60, "C+"), (55, "C"), (50, "C-"),
+    (40, "D"),
+]
+
+
+def score_to_grade(score: float) -> str:
+    """Convert a numeric score (0-100) to a letter grade."""
+    for threshold, grade in GRADE_SCALE:
+        if score >= threshold:
+            return grade
+    return "F"
+
+
 def _score_rsi(rsi: float | None) -> float:
     """RSI momentum score (0-100). Sweet spot is recovery zone 30-50."""
     if rsi is None:
@@ -183,25 +199,80 @@ def score_instrument(ta: dict, price_data: dict, weights: dict | None = None) ->
     target = max(r1, price + atr_val)
     stop = max(s1, price - 0.5 * atr_val)
 
+    # Determine pivot level labels
+    target_level = "R1" if target == r1 else "ATR"
+    stop_level = "S1" if stop == s1 else "ATR"
+
     # Avoid division by zero
     risk = entry - stop
     reward = target - entry
     risk_reward = round(reward / risk, 2) if risk > 0 else 0.0
 
+    rounded_score = round(composite, 1)
+
     return {
         "symbol": ta.get("ticker", price_data.get("ticker", "?")),
         "name": price_data.get("name", ta.get("name", "?")),
-        "score": round(composite, 1),
+        "score": rounded_score,
+        "grade": score_to_grade(rounded_score),
         "entry": round(entry, 2),
         "target": round(target, 2),
         "stop": round(stop, 2),
+        "target_level": target_level,
+        "stop_level": stop_level,
         "signals": _build_signals(ta, price),
         "risk_reward": risk_reward,
+        "atr_pct": round((atr / price) * 100, 1) if atr and price > 0 else None,
         "rsi": rsi,
         "trend": trend,
         "trend_emoji": ta.get("trend_emoji", ""),
         "volume_ratio": volume_ratio,
         "price": round(price, 2),
+    }
+
+
+def get_condensed_track_record(symbol: str) -> dict | None:
+    """W-L summary from retrace grading history.
+
+    Returns {wins, losses, win_rate, avg_r} or None if no graded history.
+    """
+    from src.retrace.snapshot import list_snapshots, load_snapshot
+
+    metas = list_snapshots(limit=100)
+    wins = 0
+    losses = 0
+    r_multiples: list[float] = []
+
+    for meta in metas:
+        if not meta.get("has_grading"):
+            continue
+        if meta.get("digest_type", "daytrade") != "daytrade":
+            continue
+        snap = load_snapshot(meta["date"])
+        if not snap or not snap.get("grading"):
+            continue
+
+        for pick in snap["grading"].get("picks", []):
+            if pick.get("symbol") != symbol:
+                continue
+            outcome = pick.get("outcome", "pending")
+            if outcome == "win":
+                wins += 1
+            elif outcome == "loss":
+                losses += 1
+            r = pick.get("r_multiple")
+            if r is not None:
+                r_multiples.append(r)
+
+    total = wins + losses
+    if total == 0:
+        return None
+
+    return {
+        "wins": wins,
+        "losses": losses,
+        "win_rate": round(wins / total * 100, 1),
+        "avg_r": round(sum(r_multiples) / len(r_multiples), 2) if r_multiples else None,
     }
 
 

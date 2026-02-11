@@ -155,10 +155,11 @@ def grade_snapshot(snapshot: dict) -> dict:
         ),
     }
 
-    # Save back to snapshot
+    # Save back to snapshot (use snapshot_id for new-format files, fallback to date for legacy)
     snapshot["grading"] = grading_summary
     from src.retrace.snapshot import save_snapshot_data
-    save_snapshot_data(pick_date, snapshot)
+    snapshot_id = snapshot.get("snapshot_id", pick_date)
+    save_snapshot_data(snapshot_id, snapshot)
 
     logger.info(f"Graded {pick_date}: {outcomes['win']}W/{outcomes['loss']}L/{outcomes['scratch']}S — {win_rate}% WR")
     return grading_summary
