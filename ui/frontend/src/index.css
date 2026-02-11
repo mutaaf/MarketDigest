@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply min-h-screen;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-apple-gray-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-apple-gray-400;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl border border-apple-gray-200 p-4 md:p-6 shadow-sm;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-apple-blue text-white rounded-lg font-medium text-sm
+           hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-apple-gray-200 text-apple-gray-800 rounded-lg font-medium text-sm
+           hover:bg-apple-gray-300 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-apple-red text-white rounded-lg font-medium text-sm
+           hover:opacity-90 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg border border-apple-gray-200 bg-white
+           text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent
+           placeholder:text-apple-gray-400;
+  }
+
+  .textarea-field {
+    @apply w-full px-3 py-2 rounded-lg border border-apple-gray-200 bg-white
+           text-sm font-mono resize-y focus:outline-none focus:ring-2 focus:ring-apple-blue
+           focus:border-transparent placeholder:text-apple-gray-400;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-apple-gray-500 uppercase tracking-wide mb-1;
+  }
+
+  /* Digest viewer styles */
+  .digest-data {
+    @apply text-sm leading-relaxed whitespace-pre-wrap;
+  }
+  .digest-data code {
+    @apply bg-apple-gray-100 text-apple-gray-800 px-1 py-0.5 rounded text-xs font-mono;
+  }
+  .digest-data b {
+    @apply font-semibold text-apple-gray-800;
+  }
+  .digest-data i {
+    @apply text-apple-gray-500;
+  }
+
+  .digest-analysis {
+    @apply border-l-2 border-blue-400 bg-blue-50 rounded-r-lg px-3 py-2;
+  }
+
+  .digest-quick-take-card {
+    @apply bg-gradient-to-br from-amber-50 to-orange-50 !border-amber-200;
+  }
+
+  .digest-quick-take {
+    @apply space-y-2;
+  }
+
+  .digest-quick-take-line {
+    @apply flex items-baseline gap-1.5 text-sm;
+  }
+}

@@ -1,0 +1,394 @@
+forex:
+  majors:
+  - symbol: EURUSD
+    yfinance: EURUSD=X
+    twelvedata: EUR/USD
+    name: EUR/USD
+    enabled: true
+  - symbol: GBPUSD
+    yfinance: GBPUSD=X
+    twelvedata: GBP/USD
+    name: GBP/USD
+    enabled: true
+  - symbol: USDJPY
+    yfinance: JPY=X
+    twelvedata: USD/JPY
+    name: USD/JPY
+    enabled: true
+  - symbol: USDCHF
+    yfinance: CHF=X
+    twelvedata: USD/CHF
+    name: USD/CHF
+    enabled: false
+  - symbol: USDCAD
+    yfinance: CAD=X
+    twelvedata: USD/CAD
+    name: USD/CAD
+    enabled: false
+  - symbol: AUDUSD
+    yfinance: AUDUSD=X
+    twelvedata: AUD/USD
+    name: AUD/USD
+    enabled: false
+  - symbol: NZDUSD
+    yfinance: NZDUSD=X
+    twelvedata: NZD/USD
+    name: NZD/USD
+    enabled: false
+  indices:
+  - symbol: DXY
+    yfinance: DX-Y.NYB
+    name: US Dollar Index
+    enabled: false
+us_indices:
+  spot:
+  - symbol: SPX
+    yfinance: ^GSPC
+    name: S&P 500
+    enabled: true
+  - symbol: NDX
+    yfinance: ^IXIC
+    name: NASDAQ
+    enabled: true
+  - symbol: DJI
+    yfinance: ^DJI
+    name: Dow Jones
+    enabled: true
+  - symbol: VIX
+    yfinance: ^VIX
+    name: VIX
+    enabled: true
+  futures:
+  - symbol: ES
+    yfinance: ES=F
+    name: S&P 500 Futures
+    enabled: true
+  - symbol: NQ
+    yfinance: NQ=F
+    name: NASDAQ Futures
+    enabled: true
+  - symbol: YM
+    yfinance: YM=F
+    name: Dow Futures
+    enabled: false
+commodities:
+  metals:
+  - symbol: GOLD
+    yfinance: GC=F
+    name: Gold
+    enabled: true
+  - symbol: SILVER
+    yfinance: SI=F
+    name: Silver
+    enabled: true
+  - symbol: PLATINUM
+    yfinance: PL=F
+    name: Platinum
+    enabled: true
+  - symbol: COPPER
+    yfinance: HG=F
+    name: Copper
+    enabled: true
+  energy:
+  - symbol: WTI
+    yfinance: CL=F
+    name: WTI Crude
+    enabled: true
+  - symbol: BRENT
+    yfinance: BZ=F
+    name: Brent Crude
+    enabled: true
+  - symbol: NATGAS
+    yfinance: NG=F
+    name: Natural Gas
+    enabled: true
+  agriculture:
+  - symbol: WHEAT
+    yfinance: ZW=F
+    name: Wheat
+    enabled: true
+  - symbol: CORN
+    yfinance: ZC=F
+    name: Corn
+    enabled: true
+  - symbol: SOYBEANS
+    yfinance: ZS=F
+    name: Soybeans
+    enabled: true
+  - symbol: COFFEE
+    yfinance: KC=F
+    name: Coffee
+    enabled: true
+  - symbol: SUGAR
+    yfinance: SB=F
+    name: Sugar
+    enabled: true
+  - symbol: COTTON
+    yfinance: CT=F
+    name: Cotton
+    enabled: true
+  - symbol: COCOA
+    yfinance: CC=F
+    name: Cocoa
+    enabled: true
+crypto:
+- symbol: BTC
+  yfinance: BTC-USD
+  name: Bitcoin
+  enabled: true
+- symbol: ETH
+  yfinance: ETH-USD
+  name: Ethereum
+  enabled: true
+- symbol: SOL
+  yfinance: SOL-USD
+  name: Solana
+  enabled: true
+- symbol: XRP
+  yfinance: XRP-USD
+  name: XRP
+  enabled: true
+- symbol: ADA
+  yfinance: ADA-USD
+  name: Cardano
+  enabled: true
+us_stocks:
+- symbol: AAPL
+  yfinance: AAPL
+  name: Apple
+  enabled: true
+- symbol: MSFT
+  yfinance: MSFT
+  name: Microsoft
+  enabled: true
+- symbol: NVDA
+  yfinance: NVDA
+  name: NVIDIA
+  enabled: true
+- symbol: TSLA
+  yfinance: TSLA
+  name: Tesla
+  enabled: true
+- symbol: AMZN
+  yfinance: AMZN
+  name: Amazon
+  enabled: true
+- symbol: META
+  yfinance: META
+  name: Meta
+  enabled: true
+- symbol: GOOGL
+  yfinance: GOOGL
+  name: Alphabet
+  enabled: true
+- symbol: AMD
+  yfinance: AMD
+  name: AMD
+  enabled: true
+- symbol: INTC
+  yfinance: INTC
+  name: Intel
+  enabled: true
+- symbol: MU
+  yfinance: MU
+  name: Micron
+  enabled: true
+- symbol: AVGO
+  yfinance: AVGO
+  name: Broadcom
+  enabled: true
+- symbol: QCOM
+  yfinance: QCOM
+  name: Qualcomm
+  enabled: true
+- symbol: NFLX
+  yfinance: NFLX
+  name: Netflix
+  enabled: true
+- symbol: CRM
+  yfinance: CRM
+  name: Salesforce
+  enabled: true
+- symbol: ADBE
+  yfinance: ADBE
+  name: Adobe
+  enabled: true
+- symbol: ORCL
+  yfinance: ORCL
+  name: Oracle
+  enabled: true
+- symbol: BABA
+  yfinance: BABA
+  name: Alibaba
+  enabled: true
+- symbol: JPM
+  yfinance: JPM
+  name: JPMorgan
+  enabled: true
+- symbol: BAC
+  yfinance: BAC
+  name: Bank of America
+  enabled: true
+- symbol: GS
+  yfinance: GS
+  name: Goldman Sachs
+  enabled: true
+- symbol: WFC
+  yfinance: WFC
+  name: Wells Fargo
+  enabled: true
+- symbol: MS
+  yfinance: MS
+  name: Morgan Stanley
+  enabled: true
+- symbol: XOM
+  yfinance: XOM
+  name: Exxon Mobil
+  enabled: true
+- symbol: CVX
+  yfinance: CVX
+  name: Chevron
+  enabled: true
+- symbol: COP
+  yfinance: COP
+  name: ConocoPhillips
+  enabled: true
+- symbol: UNH
+  yfinance: UNH
+  name: UnitedHealth
+  enabled: true
+- symbol: JNJ
+  yfinance: JNJ
+  name: J&J
+  enabled: true
+- symbol: PFE
+  yfinance: PFE
+  name: Pfizer
+  enabled: true
+- symbol: LLY
+  yfinance: LLY
+  name: Eli Lilly
+  enabled: true
+- symbol: MRK
+  yfinance: MRK
+  name: Merck
+  enabled: true
+- symbol: WMT
+  yfinance: WMT
+  name: Walmart
+  enabled: true
+- symbol: HD
+  yfinance: HD
+  name: Home Depot
+  enabled: true
+- symbol: COST
+  yfinance: COST
+  name: Costco
+  enabled: true
+- symbol: NKE
+  yfinance: NKE
+  name: Nike
+  enabled: true
+- symbol: MCD
+  yfinance: MCD
+  name: McDonald's
+  enabled: true
+- symbol: SBUX
+  yfinance: SBUX
+  name: Starbucks
+  enabled: true
+- symbol: DIS
+  yfinance: DIS
+  name: Disney
+  enabled: true
+- symbol: BA
+  yfinance: BA
+  name: Boeing
+  enabled: true
+- symbol: CAT
+  yfinance: CAT
+  name: Caterpillar
+  enabled: true
+- symbol: UPS
+  yfinance: UPS
+  name: UPS
+  enabled: true
+- symbol: DE
+  yfinance: DE
+  name: Deere
+  enabled: true
+- symbol: V
+  yfinance: V
+  name: Visa
+  enabled: true
+- symbol: MA
+  yfinance: MA
+  name: Mastercard
+  enabled: true
+- symbol: PYPL
+  yfinance: PYPL
+  name: PayPal
+  enabled: true
+- symbol: SQ
+  yfinance: SQ
+  name: Block
+  enabled: true
+- symbol: COIN
+  yfinance: COIN
+  name: Coinbase
+  enabled: true
+- symbol: SNAP
+  yfinance: SNAP
+  name: Snap
+  enabled: true
+- symbol: PLTR
+  yfinance: PLTR
+  name: Palantir
+  enabled: true
+- symbol: SOFI
+  yfinance: SOFI
+  name: SoFi
+  enabled: true
+- symbol: RIVN
+  yfinance: RIVN
+  name: Rivian
+  enabled: true
+economic:
+  fred_series:
+  - series_id: CPIAUCSL
+    name: CPI
+    frequency: monthly
+  - series_id: CPILFESL
+    name: Core CPI
+    frequency: monthly
+  - series_id: GDPC1
+    name: Real GDP
+    frequency: quarterly
+  - series_id: PAYEMS
+    name: Nonfarm Payrolls
+    frequency: monthly
+  - series_id: UNRATE
+    name: Unemployment Rate
+    frequency: monthly
+  - series_id: FEDFUNDS
+    name: Fed Funds Rate
+    frequency: monthly
+  - series_id: DGS10
+    name: 10-Year Treasury
+    frequency: daily
+  - series_id: DGS2
+    name: 2-Year Treasury
+    frequency: daily
+sessions:
+  sydney:
+    open_ct: '16:00'
+    close_ct: 01:00
+  tokyo:
+    open_ct: '18:00'
+    close_ct: 03:00
+  london:
+    open_ct: 02:00
+    close_ct: '11:00'
+  new_york:
+    open_ct: 07:00
+    close_ct: '16:00'

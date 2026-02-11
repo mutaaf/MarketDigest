@@ -1,0 +1,165 @@
+system_prompt: |
+  You are a global financial market analyst writing a daily digest for readers who are NOT professional investors. Your job is to make markets understandable and actionable.
+
+  Rules:
+  - Explain what each number means and why it matters in plain language
+  - Define financial terms briefly when you first use them (e.g. "RSI (a momentum gauge from 0-100)")
+  - Connect moves across regions: how did Asia affect Europe? How does the dollar affect commodities?
+  - Identify catalysts: central bank policy shifts, geopolitical events, economic data surprises
+  - Explain cross-asset causality: why a strong dollar pressures gold, how bond yields affect equities
+  - Be specific — reference the actual numbers from the data
+  - Keep each section to 4-6 clear sentences
+  - Write in flowing prose, no bullet points or headers
+  - Do NOT use emojis or markdown formatting
+  - End each section with one sentence on what to watch next
+
+default_max_tokens: 500
+
+provider_priority:
+  - anthropic
+  - openai
+  - gemini
+
+provider_models:
+  anthropic: claude-haiku-4-5-20251001
+  openai: gpt-4o-mini
+  gemini: gemini-2.0-flash
+
+sections:
+  overnight:
+    prompt: |
+      Explain what happened in Asian and early-European trading sessions overnight. What catalysts drove the moves — central bank commentary, economic data releases, or geopolitical developments? How might these moves set the tone for European and US markets today?
+    max_tokens: 500
+    include_cross_context: true
+
+  futures:
+    prompt: |
+      Explain what US futures are signaling ahead of the market open. Are futures confirming or diverging from overnight price action? What catalysts (earnings, economic data, geopolitics) could shift the direction at the open?
+    max_tokens: 500
+    include_cross_context: true
+
+  forex:
+    prompt: |
+      Explain what's happening across the major currency pairs and what's driving dollar strength or weakness. Connect moves to interest rate differentials, central bank policy expectations, and risk appetite. How do these forex moves affect commodity prices and emerging market sentiment?
+    max_tokens: 500
+    include_cross_context: true
+
+  commodities:
+    prompt: |
+      Explain the moves in commodities today considering dollar direction, geopolitical factors, and supply/demand dynamics. How do gold and oil relate to current risk sentiment and inflation expectations? What do agricultural commodity moves signal about global supply chains?
+    max_tokens: 500
+    include_cross_context: true
+
+  crypto:
+    prompt: |
+      Analyze the cryptocurrency moves in the context of broader risk appetite and dollar strength. How does BTC correlate with equity futures today — is it trading as a risk asset or safe haven? What's driving altcoin performance relative to BTC, and are there any protocol-specific catalysts?
+    max_tokens: 500
+    include_cross_context: true
+
+  calendar:
+    prompt: |
+      Summarize the key economic events and their potential market impact. Which release matters most for central bank policy and why? How might surprises in these numbers shift rate expectations and risk appetite?
+    max_tokens: 500
+    include_cross_context: true
+
+  sentiment:
+    prompt: |
+      Explain what this sentiment reading means in plain terms and what's driving the mood. How does current sentiment compare to recent history — are we at extremes that suggest a reversal? What would need to happen to shift sentiment meaningfully from here?
+    max_tokens: 500
+    include_cross_context: true
+
+  indices_close:
+    prompt: |
+      Summarize how US stock indices performed today and what drove the session. Was it sector rotation, macro data surprises, earnings, or global spillover? How did intraday price action evolve — was the close near the highs or lows of the day?
+    max_tokens: 500
+    include_cross_context: true
+
+  sentiment_shift:
+    prompt: |
+      Explain how market sentiment evolved from the morning open to the close. What specific catalysts caused the shift during the trading session? Does the closing sentiment suggest continuation or reversal for tomorrow's open?
+    max_tokens: 500
+    include_cross_context: true
+
+  movers:
+    prompt: |
+      Explain why these instruments moved the most today — identify the specific catalysts. What common themes connect the biggest winners and losers (risk-on/off, sector trends, earnings)? Do these moves suggest a broader market theme or are they idiosyncratic?
+    max_tokens: 500
+    include_cross_context: true
+
+  week_review:
+    prompt: |
+      Provide a narrative summary of the trading week highlighting dominant themes and catalysts. How did central bank policy, economic data, and geopolitical events shape price action? How did events in one region or asset class ripple across to others? What's the key takeaway?
+    max_tokens: 700
+    include_cross_context: true
+
+  rankings:
+    prompt: |
+      Explain the performance rankings for the week and what patterns stand out. Why did the top and bottom performers diverge — was it macro-driven or instrument-specific? What do these rankings tell us about the current market regime (risk-on, defensive, rotational)?
+    max_tokens: 500
+    include_cross_context: true
+
+  sectors:
+    prompt: |
+      Explain the sector performance and what's driving the rotation. Which sectors led and lagged, and what does that say about economic growth expectations? How does sector rotation connect to interest rate expectations and risk appetite?
+    max_tokens: 500
+    include_cross_context: true
+
+  economic:
+    prompt: |
+      Summarize the week's economic data releases and what they signal about the economy. Were there any surprises relative to expectations, and how did markets react? How might these data points influence central bank policy at the next meeting?
+    max_tokens: 500
+    include_cross_context: true
+
+  technicals:
+    prompt: |
+      Summarize the technical picture across major instruments. Are there overbought or oversold extremes that historically precede reversals? What key support and resistance levels should readers watch in the week ahead?
+    max_tokens: 500
+    include_cross_context: true
+
+  quick_take:
+    prompt: |
+      Output ONLY 3-5 market insights, one per line. Each line MUST start with one of these prefixes: Bullish:, Bearish:, Event:, Data:, or Earnings:. One sentence per line, reference specific numbers. No preamble, no numbering, no closing remarks. Focus on what matters most to a general investor right now.
+    max_tokens: 400
+    include_cross_context: false
+
+  events:
+    prompt: |
+      Summarize the economic events and earnings data provided. Highlight the most market-moving releases and connect them to Fed policy expectations, risk appetite, and sector implications. If earnings data is present, note any bellwether surprises. Keep it to 4-6 clear sentences in flowing prose.
+    max_tokens: 500
+    include_cross_context: true
+
+  action_items_summary:
+    prompt: |
+      Based on all the market data above, write a 2-3 sentence executive summary highlighting the most important thing a general investor should know right now. Focus on the single biggest risk or opportunity, the key level to watch, and whether the overall setup is risk-on or risk-off. No bullet points, no headers, no emojis — just concise prose.
+    max_tokens: 200
+    include_cross_context: false
+
+  next_steps_morning:
+    prompt: |
+      Based on all the data above, provide 3-5 actionable items for TODAY. For each item: name the specific instrument or asset class, cite a key price level or threshold, and describe the scenario (e.g. 'if X breaks above Y, watch for Z'). Focus on what readers should monitor during today's trading session. Number each item. Write concisely — one sentence per item, no preamble.
+    max_tokens: 500
+    include_cross_context: false
+
+  next_steps_afternoon:
+    prompt: |
+      Based on today's full session data above, provide 3-5 actionable items for positioning TOMORROW. For each item: explain how today's close sets up tomorrow — continuation or reversal scenarios, key levels to watch at tomorrow's open, and which catalysts could drive the next move. Number each item. Write concisely — one sentence per item, no preamble.
+    max_tokens: 500
+    include_cross_context: false
+
+  daytrade_summary:
+    prompt: |
+      Based on the scored day trade picks and market conditions data above, write a 2-3 sentence pre-open thesis for today's day trading session. Identify the dominant theme (momentum, mean-reversion, sector rotation), highlight the best setup among the top picks with specific price levels, and note the key risk (VIX level, gap risk, low volume). Write concisely — no bullet points, no headers, no emojis.
+    max_tokens: 200
+    include_cross_context: false
+
+  next_steps_daytrade:
+    prompt: |
+      Based on the day trade picks data above, provide 3-5 actionable trading items for TODAY's session. For each item: name the specific instrument, cite entry/target/stop levels, and describe the setup (e.g. 'NVDA breaking R1 at $125 with 1.8x volume — target $128, stop $123'). Focus on the highest-conviction setups from the scored picks. Number each item. Write concisely — one sentence per item, no preamble.
+    max_tokens: 500
+    include_cross_context: false
+
+  next_steps_weekly:
+    prompt: |
+      Based on this week's full data above, provide 3-5 key themes for NEXT WEEK. For each theme: identify the catalyst (economic release, central bank event, earnings), the instruments most affected, and what would confirm or invalidate the theme. Number each item. Write concisely — one sentence per item, no preamble.
+    max_tokens: 500
+    include_cross_context: false

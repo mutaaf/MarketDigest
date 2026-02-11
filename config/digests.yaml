@@ -1,0 +1,49 @@
+morning:
+  sections:
+  - quick_take
+  - overnight
+  - futures
+  - forex
+  - commodities
+  - crypto
+  - events
+  - sentiment
+  - next_steps
+  default_mode: full
+  schedule: 06:30
+afternoon:
+  sections:
+  - quick_take
+  - indices_close
+  - forex
+  - commodities
+  - crypto
+  - sentiment_shift
+  - movers
+  - events
+  - next_steps
+  default_mode: both
+  schedule: '16:30'
+weekly:
+  sections:
+  - quick_take
+  - week_review
+  - rankings
+  - sectors
+  - crypto
+  - economic
+  - events
+  - technicals
+  - sentiment
+  - next_steps
+  default_mode: full
+  schedule: fri 17:30
+daytrade:
+  sections:
+  - market_conditions
+  - top_picks
+  - honorable_mentions
+  - avoid_list
+  - next_steps
+  default_mode: facts
+  schedule: 08:15

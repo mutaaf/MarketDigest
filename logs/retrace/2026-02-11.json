@@ -1,0 +1,962 @@
+{
+  "date": "2026-02-11",
+  "timestamp": "2026-02-11T11:52:03.584909",
+  "scoring_weights": {
+    "atr": 0.2,
+    "gap": 0.1,
+    "pivot": 0.2,
+    "rsi": 0.2,
+    "trend": 0.15,
+    "volume": 0.15
+  },
+  "prompts_version": "unversioned",
+  "top_picks": [
+    {
+      "symbol": "GOLD",
+      "name": "Gold",
+      "score": 86.0,
+      "entry": 5114.9,
+      "target": 5320.5,
+      "stop": 5012.1,
+      "signals": [
+        "Trend: bullish",
+        "Vol 12.9x avg",
+        "Breaking R1"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 61.6,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 12.92,
+      "price": 5114.9
+    },
+    {
+      "symbol": "COPPER",
+      "name": "Copper",
+      "score": 85.0,
+      "entry": 5.97,
+      "target": 6.16,
+      "stop": 5.88,
+      "signals": [
+        "Trend: bullish",
+        "Vol 51.0x avg",
+        "Breaking R1"
+      ],
+      "risk_reward": 2.23,
+      "rsi": 54.7,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 51.0,
+      "price": 5.97
+    },
+    {
+      "symbol": "SILVER",
+      "name": "Silver",
+      "score": 84.2,
+      "entry": 84.47,
+      "target": 93.9,
+      "stop": 79.76,
+      "signals": [
+        "RSI bounce (50)",
+        "Trend: weakly bullish",
+        "Vol 94.4x avg"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 50.0,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 94.4,
+      "price": 84.47
+    },
+    {
+      "symbol": "META",
+      "name": "Meta",
+      "score": 77.1,
+      "entry": 664.45,
+      "target": 687.3,
+      "stop": 666.79,
+      "signals": [
+        "RSI bounce (50)",
+        "Trend: bullish",
+        "Near S1 support"
+      ],
+      "risk_reward": 0.0,
+      "rsi": 49.6,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 0.4,
+      "price": 664.45
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet",
+      "score": 76.1,
+      "entry": 311.93,
+      "target": 323.19,
+      "stop": 314.9,
+      "signals": [
+        "RSI bounce (36)",
+        "Trend: weakly bullish"
+      ],
+      "risk_reward": 0.0,
+      "rsi": 35.9,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 0.58,
+      "price": 311.93
+    },
+    {
+      "symbol": "VIX",
+      "name": "VIX",
+      "score": 76.0,
+      "entry": 17.43,
+      "target": 19.98,
+      "stop": 17.3,
+      "signals": [
+        "Trend: bullish"
+      ],
+      "risk_reward": 19.1,
+      "rsi": 50.7,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": null,
+      "price": 17.43
+    },
+    {
+      "symbol": "PLATINUM",
+      "name": "Platinum",
+      "score": 76.0,
+      "entry": 2143.7,
+      "target": 2241.1,
+      "stop": 2095.0,
+      "signals": [
+        "RSI bounce (46)",
+        "Trend: weakly bullish",
+        "Vol 279.1x avg"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 46.1,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 279.07,
+      "price": 2143.7
+    },
+    {
+      "symbol": "NATGAS",
+      "name": "Natural Gas",
+      "score": 75.8,
+      "entry": 3.17,
+      "target": 3.78,
+      "stop": 3.05,
+      "signals": [
+        "RSI bounce (42)",
+        "Trend: weakly bullish",
+        "Gap up 1.4%"
+      ],
+      "risk_reward": 4.98,
+      "rsi": 42.0,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 0.36,
+      "price": 3.17
+    },
+    {
+      "symbol": "AMD",
+      "name": "AMD",
+      "score": 75.5,
+      "entry": 212.38,
+      "target": 226.63,
+      "stop": 211.34,
+      "signals": [
+        "RSI bounce (44)",
+        "Trend: weakly bullish",
+        "Near S1 support"
+      ],
+      "risk_reward": 13.66,
+      "rsi": 43.6,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 0.44,
+      "price": 212.38
+    },
+    {
+      "symbol": "BABA",
+      "name": "Alibaba",
+      "score": 74.2,
+      "entry": 164.12,
+      "target": 169.74,
+      "stop": 163.12,
+      "signals": [
+        "RSI bounce (50)",
+        "Trend: weakly bullish",
+        "Gap down 1.5%"
+      ],
+      "risk_reward": 5.63,
+      "rsi": 50.0,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 0.44,
+      "price": 164.12
+    }
+  ],
+  "honorable_mentions": [
+    {
+      "symbol": "WHEAT",
+      "name": "Wheat",
+      "score": 74.0,
+      "entry": 533.5,
+      "target": 542.92,
+      "stop": 528.79,
+      "signals": [
+        "Trend: bullish",
+        "Breaking R1"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 56.6,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 1.01,
+      "price": 533.5
+    },
+    {
+      "symbol": "GS",
+      "name": "Goldman Sachs",
+      "score": 73.0,
+      "entry": 946.04,
+      "target": 978.25,
+      "stop": 932.0,
+      "signals": [
+        "Trend: bullish"
+      ],
+      "risk_reward": 2.29,
+      "rsi": 54.5,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 0.48,
+      "price": 946.04
+    },
+    {
+      "symbol": "WTI",
+      "name": "WTI Crude",
+      "score": 72.0,
+      "entry": 64.83,
+      "target": 67.03,
+      "stop": 63.73,
+      "signals": [
+        "Trend: bullish",
+        "Breaking R1"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 60.0,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 0.52,
+      "price": 64.83
+    },
+    {
+      "symbol": "COP",
+      "name": "ConocoPhillips",
+      "score": 71.0,
+      "entry": 109.87,
+      "target": 112.79,
+      "stop": 108.41,
+      "signals": [
+        "Trend: bullish",
+        "Breaking R1",
+        "Gap up 0.9%"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 67.0,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 0.39,
+      "price": 109.87
+    },
+    {
+      "symbol": "BA",
+      "name": "Boeing",
+      "score": 70.2,
+      "entry": 238.01,
+      "target": 246.68,
+      "stop": 239.68,
+      "signals": [
+        "Trend: weakly bullish",
+        "Gap up 0.8%"
+      ],
+      "risk_reward": 0.0,
+      "rsi": 52.9,
+      "trend": "weakly_bullish",
+      "trend_emoji": "\u2197\ufe0f",
+      "volume_ratio": 0.29,
+      "price": 238.01
+    }
+  ],
+  "avoid_list": [
+    {
+      "symbol": "COTTON",
+      "name": "Cotton",
+      "score": 48.0,
+      "entry": 64.09,
+      "target": 65.09,
+      "stop": 63.59,
+      "signals": [
+        "Breaking R1",
+        "Gap up 2.5%"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 57.3,
+      "trend": "weakly_bearish",
+      "trend_emoji": "\u2198\ufe0f",
+      "volume_ratio": 0.76,
+      "price": 64.09
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple",
+      "score": 49.0,
+      "entry": 279.97,
+      "target": 286.0,
+      "stop": 276.95,
+      "signals": [
+        "Breaking R1"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 67.5,
+      "trend": "weakly_bearish",
+      "trend_emoji": "\u2198\ufe0f",
+      "volume_ratio": 0.31,
+      "price": 279.97
+    },
+    {
+      "symbol": "CRM",
+      "name": "Salesforce",
+      "score": 50.0,
+      "entry": 183.62,
+      "target": 198.12,
+      "stop": 189.77,
+      "signals": [
+        "Oversold RSI (21)"
+      ],
+      "risk_reward": 0.0,
+      "rsi": 20.9,
+      "trend": "bearish",
+      "trend_emoji": "\ud83d\udcc9",
+      "volume_ratio": 0.67,
+      "price": 183.62
+    },
+    {
+      "symbol": "SOYBEANS",
+      "name": "Soybeans",
+      "score": 51.0,
+      "entry": 1122.25,
+      "target": 1141.33,
+      "stop": 1112.71,
+      "signals": [
+        "Overbought RSI (70)",
+        "Trend: bullish"
+      ],
+      "risk_reward": 2.0,
+      "rsi": 70.2,
+      "trend": "bullish",
+      "trend_emoji": "\ud83d\udcc8",
+      "volume_ratio": 0.62,
+      "price": 1122.25
+    },
+    {
+      "symbol": "COIN",
+      "name": "Coinbase",
+      "score": 51.0,
+      "entry": 150.26,
+      "target": 166.33,
+      "stop": 160.27,
+      "signals": [
+        "Oversold RSI (25)",
+        "Gap down 3.0%"
+      ],
+      "risk_reward": 0.0,
+      "rsi": 25.0,
+      "trend": "bearish",
+      "trend_emoji": "\ud83d\udcc9",
+      "volume_ratio": 0.48,
+      "price": 150.26
+    }
+  ],
+  "prices": {
+    "EURUSD": {
+      "price": 1.1889,
+      "open": 1.1898,
+      "high": 1.193,
+      "low": 1.1841,
+      "volume": 0,
+      "change_pct": -0.13
+    },
+    "GBPUSD": {
+      "price": 1.3661,
+      "open": 1.3638,
+      "high": 1.3713,
+      "low": 1.3614,
+      "volume": 0,
+      "change_pct": -0.16
+    },
+    "VIX": {
+      "price": 17.43,
+      "open": 17.87,
+      "high": 18.96,
+      "low": 16.75,
+      "volume": 0,
+      "change_pct": -2.02
+    },
+    "ES": {
+      "price": 6974.25,
+      "open": 6971.5,
+      "high": 7011.5,
+      "low": 6931.0,
+      "volume": 992388,
+      "change_pct": 0.18
+    },
+    "NQ": {
+      "price": 25285.25,
+      "open": 25259.0,
+      "high": 25465.25,
+      "low": 25058.25,
+      "volume": 383309,
+      "change_pct": 0.27
+    },
+    "GOLD": {
+      "price": 5114.8999,
+      "open": 5048.0,
+      "high": 5144.5,
+      "low": 5036.2998,
+      "volume": 106639,
+      "change_pct": 2.22
+    },
+    "SILVER": {
+      "price": 84.47,
+      "open": 80.5,
+      "high": 86.12,
+      "low": 80.415,
+      "volume": 49603,
+      "change_pct": 5.3
+    },
+    "PLATINUM": {
+      "price": 2143.7,
+      "open": 2089.8999,
+      "high": 2202.0,
+      "low": 2080.5,
+      "volume": 14149,
+      "change_pct": 2.49
+    },
+    "COPPER": {
+      "price": 5.966,
+      "open": 5.9085,
+      "high": 6.088,
+      "low": 5.893,
+      "volume": 54944,
+      "change_pct": 1.19
+    },
+    "WTI": {
+      "price": 64.83,
+      "open": 64.2,
+      "high": 65.83,
+      "low": 64.15,
+      "volume": 186063,
+      "change_pct": 1.36
+    },
+    "BRENT": {
+      "price": 69.64,
+      "open": 69.11,
+      "high": 70.72,
+      "low": 69.01,
+      "volume": 35927,
+      "change_pct": 1.22
+    },
+    "NATGAS": {
+      "price": 3.168,
+      "open": 3.159,
+      "high": 3.202,
+      "low": 3.055,
+      "volume": 86187,
+      "change_pct": 1.7
+    },
+    "WHEAT": {
+      "price": 533.5,
+      "open": 529.75,
+      "high": 534.5,
+      "low": 528.0,
+      "volume": 76346,
+      "change_pct": 0.99
+    },
+    "CORN": {
+      "price": 426.0,
+      "open": 428.75,
+      "high": 429.5,
+      "low": 425.25,
+      "volume": 140588,
+      "change_pct": -0.64
+    },
+    "SOYBEANS": {
+      "price": 1122.25,
+      "open": 1122.5,
+      "high": 1125.0,
+      "low": 1113.0,
+      "volume": 94042,
+      "change_pct": -0.02
+    },
+    "COFFEE": {
+      "price": 292.65,
+      "open": 294.4,
+      "high": 295.45,
+      "low": 289.7,
+      "volume": 25008,
+      "change_pct": -0.53
+    },
+    "SUGAR": {
+      "price": 13.53,
+      "open": 14.1,
+      "high": 13.77,
+      "low": 13.48,
+      "volume": 118871,
+      "change_pct": -4.18
+    },
+    "COTTON": {
+      "price": 64.09,
+      "open": 63.15,
+      "high": 63.7,
+      "low": 63.15,
+      "volume": 25634,
+      "change_pct": 4.06
+    },
+    "COCOA": {
+      "price": 3873.0,
+      "open": 3795.0,
+      "high": 3960.0,
+      "low": 3842.0,
+      "volume": 20145,
+      "change_pct": 1.79
+    },
+    "BTC": {
+      "price": 66566.1172,
+      "open": 68791.1797,
+      "high": 69225.9062,
+      "low": 65934.6484,
+      "volume": 47914020864,
+      "change_pct": -3.24
+    },
+    "ETH": {
+      "price": 1934.1587,
+      "open": 2020.3572,
+      "high": 2029.2528,
+      "low": 1911.9039,
+      "volume": 22300798976,
+      "change_pct": -4.23
+    },
+    "SOL": {
+      "price": 79.2993,
+      "open": 82.9127,
+      "high": 84.2159,
+      "low": 78.4242,
+      "volume": 4055996672,
+      "change_pct": -4.36
+    },
+    "XRP": {
+      "price": 1.372,
+      "open": 1.3994,
+      "high": 1.4188,
+      "low": 1.3453,
+      "volume": 3361530880,
+      "change_pct": -1.96
+    },
+    "ADA": {
+      "price": 0.2553,
+      "open": 0.2617,
+      "high": 0.2644,
+      "low": 0.2515,
+      "volume": 447227904,
+      "change_pct": -2.45
+    },
+    "AAPL": {
+      "price": 279.97,
+      "open": 274.695,
+      "high": 280.18,
+      "low": 274.45,
+      "volume": 17621041,
+      "change_pct": 2.3
+    },
+    "MSFT": {
+      "price": 404.36,
+      "open": 416.094,
+      "high": 416.46,
+      "low": 401.01,
+      "volume": 16090487,
+      "change_pct": -2.16
+    },
+    "AMZN": {
+      "price": 204.01,
+      "open": 208.07,
+      "high": 208.57,
+      "low": 202.49,
+      "volume": 26644769,
+      "change_pct": -1.43
+    },
+    "META": {
+      "price": 664.445,
+      "open": 674.0,
+      "high": 679.2675,
+      "low": 659.14,
+      "volume": 7646861,
+      "change_pct": -0.94
+    },
+    "GOOGL": {
+      "price": 311.9311,
+      "open": 319.05,
+      "high": 321.06,
+      "low": 310.61,
+      "volume": 15869586,
+      "change_pct": -2.09
+    },
+    "AMD": {
+      "price": 212.38,
+      "open": 217.65,
+      "high": 219.65,
+      "low": 209.21,
+      "volume": 15880272,
+      "change_pct": -0.56
+    },
+    "INTC": {
+      "price": 48.075,
+      "open": 48.148,
+      "high": 49.55,
+      "low": 46.86,
+      "volume": 47137260,
+      "change_pct": 2.01
+    },
+    "AVGO": {
+      "price": 342.09,
+      "open": 346.8,
+      "high": 347.2,
+      "low": 333.74,
+      "volume": 5854988,
+      "change_pct": 0.48
+    },
+    "QCOM": {
+      "price": 142.31,
+      "open": 140.02,
+      "high": 142.39,
+      "low": 139.11,
+      "volume": 3034399,
+      "change_pct": 1.58
+    },
+    "CRM": {
+      "price": 183.615,
+      "open": 193.15,
+      "high": 193.665,
+      "low": 181.81,
+      "volume": 8762866,
+      "change_pct": -5.08
+    },
+    "ADBE": {
+      "price": 258.245,
+      "open": 263.075,
+      "high": 264.2,
+      "low": 255.71,
+      "volume": 3797329,
+      "change_pct": -2.43
+    },
+    "ORCL": {
+      "price": 156.5,
+      "open": 163.66,
+      "high": 163.66,
+      "low": 154.0,
+      "volume": 15639867,
+      "change_pct": -2.12
+    },
+    "BABA": {
+      "price": 164.12,
+      "open": 164.09,
+      "high": 164.565,
+      "low": 161.38,
+      "volume": 5642505,
+      "change_pct": -1.44
+    },
+    "JPM": {
+      "price": 313.72,
+      "open": 323.24,
+      "high": 325.28,
+      "low": 313.0,
+      "volume": 2932593,
+      "change_pct": -1.43
+    },
+    "BAC": {
+      "price": 54.305,
+      "open": 55.97,
+      "high": 56.11,
+      "low": 54.205,
+      "volume": 16887692,
+      "change_pct": -1.96
+    },
+    "GS": {
+      "price": 946.045,
+      "open": 950.64,
+      "high": 968.13,
+      "low": 931.28,
+      "volume": 1279169,
+      "change_pct": -0.31
+    },
+    "WFC": {
+      "price": 89.96,
+      "open": 92.65,
+      "high": 93.08,
+      "low": 89.762,
+      "volume": 6195859,
+      "change_pct": -2.12
+    },
+    "MS": {
+      "price": 176.175,
+      "open": 179.77,
+      "high": 181.04,
+      "low": 174.3,
+      "volume": 3708462,
+      "change_pct": -0.96
+    },
+    "XOM": {
+      "price": 155.78,
+      "open": 153.97,
+      "high": 156.93,
+      "low": 153.57,
+      "volume": 10269038,
+      "change_pct": 2.76
+    },
+    "CVX": {
+      "price": 185.63,
+      "open": 183.94,
+      "high": 186.52,
+      "low": 183.55,
+      "volume": 4554470,
+      "change_pct": 1.85
+    },
+    "COP": {
+      "price": 109.87,
+      "open": 108.5,
+      "high": 110.7,
+      "low": 108.43,
+      "volume": 3429705,
+      "change_pct": 2.2
+    },
+    "UNH": {
+      "price": 277.005,
+      "open": 272.44,
+      "high": 278.38,
+      "low": 269.8,
+      "volume": 3102041,
+      "change_pct": 1.39
+    },
+    "JNJ": {
+      "price": 240.75,
+      "open": 239.34,
+      "high": 241.0,
+      "low": 237.4,
+      "volume": 2667925,
+      "change_pct": 1.01
+    },
+    "PFE": {
+      "price": 27.885,
+      "open": 27.55,
+      "high": 27.94,
+      "low": 27.31,
+      "volume": 20541562,
+      "change_pct": 1.0
+    },
+    "LLY": {
+      "price": 1022.91,
+      "open": 1026.5,
+      "high": 1030.1,
+      "low": 1020.59,
+      "volume": 855341,
+      "change_pct": -0.2
+    },
+    "MRK": {
+      "price": 118.69,
+      "open": 117.04,
+      "high": 118.795,
+      "low": 116.31,
+      "volume": 3612820,
+      "change_pct": 1.31
+    },
+    "WMT": {
+      "price": 129.59,
+      "open": 126.695,
+      "high": 129.61,
+      "low": 126.63,
+      "volume": 5356169,
+      "change_pct": 2.28
+    },
+    "HD": {
+      "price": 389.74,
+      "open": 385.0,
+      "high": 391.42,
+      "low": 382.08,
+      "volume": 1439501,
+      "change_pct": 0.02
+    },
+    "COST": {
+      "price": 989.34,
+      "open": 971.1,
+      "high": 989.47,
+      "low": 967.1201,
+      "volume": 528874,
+      "change_pct": 1.86
+    },
+    "NKE": {
+      "price": 62.125,
+      "open": 63.9,
+      "high": 64.005,
+      "low": 61.675,
+      "volume": 7922664,
+      "change_pct": -1.45
+    },
+    "MCD": {
+      "price": 324.4778,
+      "open": 323.58,
+      "high": 324.9999,
+      "low": 320.81,
+      "volume": 1483698,
+      "change_pct": -0.46
+    },
+    "SBUX": {
+      "price": 98.525,
+      "open": 97.74,
+      "high": 98.72,
+      "low": 97.325,
+      "volume": 1449015,
+      "change_pct": 1.02
+    },
+    "DIS": {
+      "price": 108.805,
+      "open": 108.93,
+      "high": 109.8699,
+      "low": 108.3496,
+      "volume": 3777985,
+      "change_pct": -1.05
+    },
+    "BA": {
+      "price": 238.015,
+      "open": 244.48,
+      "high": 244.7,
+      "low": 236.55,
+      "volume": 2412004,
+      "change_pct": -1.89
+    },
+    "CAT": {
+      "price": 772.0,
+      "open": 758.68,
+      "high": 775.54,
+      "low": 756.1,
+      "volume": 1824331,
+      "change_pct": 3.99
+    },
+    "UPS": {
+      "price": 119.8316,
+      "open": 119.7,
+      "high": 120.9,
+      "low": 119.29,
+      "volume": 2447553,
+      "change_pct": 0.95
+    },
+    "DE": {
+      "price": 606.145,
+      "open": 592.5,
+      "high": 607.98,
+      "low": 590.5001,
+      "volume": 621529,
+      "change_pct": 2.15
+    },
+    "V": {
+      "price": 329.2736,
+      "open": 326.92,
+      "high": 329.9,
+      "low": 326.42,
+      "volume": 3132595,
+      "change_pct": 0.34
+    },
+    "MA": {
+      "price": 539.25,
+      "open": 538.15,
+      "high": 540.7,
+      "low": 533.11,
+      "volume": 1627455,
+      "change_pct": -0.21
+    },
+    "COIN": {
+      "price": 150.2601,
+      "open": 157.705,
+      "high": 158.1,
+      "low": 149.63,
+      "volume": 8025777,
+      "change_pct": -7.54
+    },
+    "SNAP": {
+      "price": 5.0042,
+      "open": 5.22,
+      "high": 5.22,
+      "low": 4.98,
+      "volume": 35577746,
+      "change_pct": -4.32
+    },
+    "SOFI": {
+      "price": 20.42,
+      "open": 21.05,
+      "high": 21.05,
+      "low": 20.14,
+      "volume": 24672252,
+      "change_pct": -3.59
+    },
+    "RIVN": {
+      "price": 14.395,
+      "open": 15.155,
+      "high": 15.24,
+      "low": 14.37,
+      "volume": 8374485,
+      "change_pct": -3.78
+    }
+  },
+  "sentiment": {
+    "composite_score": 56,
+    "classification": "Neutral",
+    "components": {
+      "vix": {
+        "score": 65,
+        "label": "Normal",
+        "weight": 25,
+        "raw": 17.43
+      },
+      "dxy": {
+        "score": 50,
+        "label": "N/A",
+        "weight": 0
+      },
+      "fear_greed": {
+        "score": 49,
+        "label": "Neutral",
+        "weight": 30,
+        "raw": 49
+      },
+      "news": {
+        "score": 58,
+        "label": "Slightly Positive",
+        "weight": 15,
+        "raw": 0.155
+      },
+      "technicals": {
+        "score": 51,
+        "label": "Mixed",
+        "weight": 15,
+        "raw": {
+          "bullish": 39,
+          "bearish": 38,
+          "total": 77
+        }
+      }
+    }
+  },
+  "grading": null
+}
