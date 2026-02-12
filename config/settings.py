@@ -314,6 +314,28 @@ def save_custom_sources(sources: list[dict[str, Any]]) -> None:
         raise
 
 
+def load_digest_config(digest_type: str) -> dict:
+    """Load config for a digest type from digests.yaml. Returns {} if missing."""
+    yaml_path = PROJECT_ROOT / "config" / "digests.yaml"
+    if not yaml_path.exists():
+        return {}
+    try:
+        with open(yaml_path) as f:
+            data = yaml.safe_load(f) or {}
+        return data.get(digest_type, {})
+    except Exception:
+        return {}
+
+
+def get_enabled_sections(digest_type: str, all_sections: list[str]) -> set[str]:
+    """Return set of enabled sections. Falls back to all_sections if YAML unconfigured."""
+    cfg = load_digest_config(digest_type)
+    sections = cfg.get("sections")
+    if not sections:
+        return set(all_sections)
+    return set(sections)
+
+
 def get_custom_source_by_id(source_id: str) -> dict[str, Any] | None:
     """Look up a single custom source by its id."""
     for s in load_custom_sources():

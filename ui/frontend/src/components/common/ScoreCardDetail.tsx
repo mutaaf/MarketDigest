@@ -1,10 +1,19 @@
-import type { ScoreCardFull } from '../../api/scorecard-types'
+import { useState } from 'react'
+import type { ScoreCardFull, IndicatorAnalysis, TimeframeTarget } from '../../api/scorecard-types'
 
 const gradeColors: Record<string, string> = {
   'A+': 'bg-green-500', A: 'bg-green-500', 'A-': 'bg-green-400',
   'B+': 'bg-blue-500', B: 'bg-blue-500', 'B-': 'bg-blue-400',
   'C+': 'bg-yellow-500', C: 'bg-yellow-500', 'C-': 'bg-yellow-400',
   D: 'bg-orange-500', F: 'bg-red-500',
+}
+
+const scoreBadgeColor = (score: number): string => {
+  if (score >= 80) return 'bg-green-100 text-green-700'
+  if (score >= 60) return 'bg-blue-100 text-blue-700'
+  if (score >= 40) return 'bg-yellow-100 text-yellow-700'
+  if (score >= 20) return 'bg-orange-100 text-orange-700'
+  return 'bg-red-100 text-red-700'
 }
 
 function fmt(val: number | null | undefined, decimals = 2): string {
@@ -17,7 +26,7 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
 
   return (
     <div className="space-y-4">
-      {/* Grade + Setup */}
+      {/* 1. Grade + Setup */}
       <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
         <div className="flex items-start gap-4 mb-4">
           <div className={`${bgColor} text-white text-3xl font-black w-16 h-16 rounded-2xl flex items-center justify-center shrink-0`}>
@@ -46,11 +55,15 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
             <p className="text-sm font-semibold text-apple-gray-800">${fmt(card.setup.entry)}</p>
           </div>
           <div>
-            <p className="text-xs text-apple-gray-400">Target</p>
+            <p className="text-xs text-apple-gray-400">
+              Target{card.setup.target_level ? ` (${card.setup.target_level})` : ''}
+            </p>
             <p className="text-sm font-semibold text-green-600">${fmt(card.setup.target)}</p>
           </div>
           <div>
-            <p className="text-xs text-apple-gray-400">Stop</p>
+            <p className="text-xs text-apple-gray-400">
+              Stop{card.setup.stop_level ? ` (${card.setup.stop_level})` : ''}
+            </p>
             <p className="text-sm font-semibold text-red-600">${fmt(card.setup.stop)}</p>
           </div>
           <div>
@@ -71,7 +84,36 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
         )}
       </div>
 
-      {/* Technicals */}
+      {/* 2. Multi-Timeframe Targets */}
+      {card.multi_tf_targets && (
+        <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+          <h4 className="text-sm font-semibold text-apple-gray-700 mb-3">Price Targets by Timeframe</h4>
+          <div className="space-y-3">
+            <TimeframeRow label="Daily" tf={card.multi_tf_targets.daily} />
+            {card.multi_tf_targets.weekly ? (
+              <TimeframeRow label="Weekly" tf={card.multi_tf_targets.weekly} />
+            ) : (
+              <div className="border border-apple-gray-100 rounded-xl p-3">
+                <p className="text-xs text-apple-gray-400 text-center">Weekly targets unavailable (insufficient data)</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 3. Indicator Analysis */}
+      {card.indicator_analyses && card.indicator_analyses.length > 0 && (
+        <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+          <h4 className="text-sm font-semibold text-apple-gray-700 mb-3">Indicator Analysis</h4>
+          <div className="space-y-2">
+            {card.indicator_analyses.map((ia) => (
+              <IndicatorAccordion key={ia.key} analysis={ia} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 4. Technicals (compact reference) */}
       <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
         <h4 className="text-sm font-semibold text-apple-gray-700 mb-3">Technicals</h4>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs">
@@ -90,7 +132,7 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
         </div>
       </div>
 
-      {/* Track Record */}
+      {/* 5. Track Record */}
       <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
         <h4 className="text-sm font-semibold text-apple-gray-700 mb-3">Track Record</h4>
         {card.history.appearances === 0 ? (
@@ -144,6 +186,91 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
           </>
         )}
       </div>
+    </div>
+  )
+}
+
+/* ── Sub-components ─────────────────────────────────────────── */
+
+function TimeframeRow({ label, tf }: { label: string; tf: TimeframeTarget }) {
+  return (
+    <div className="border border-apple-gray-100 rounded-xl p-3">
+      <p className="text-[11px] font-semibold text-apple-gray-500 uppercase tracking-wide mb-2">{label}</p>
+      <div className="grid grid-cols-4 gap-3 text-center">
+        <div>
+          <p className="text-[10px] text-apple-gray-400">Entry</p>
+          <p className="text-xs font-semibold text-apple-gray-800">${fmt(tf.entry)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-apple-gray-400">
+            Target{tf.target_level ? ` (${tf.target_level})` : ''}
+          </p>
+          <p className="text-xs font-semibold text-green-600">${fmt(tf.target)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-apple-gray-400">
+            Stop{tf.stop_level ? ` (${tf.stop_level})` : ''}
+          </p>
+          <p className="text-xs font-semibold text-red-600">${fmt(tf.stop)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-apple-gray-400">R:R</p>
+          <p className="text-xs font-semibold text-apple-gray-800">{fmt(tf.risk_reward)}:1</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function IndicatorAccordion({ analysis }: { analysis: IndicatorAnalysis }) {
+  const [open, setOpen] = useState(false)
+  const badgeClass = scoreBadgeColor(analysis.score)
+
+  return (
+    <div className="border border-apple-gray-100 rounded-xl overflow-hidden">
+      {/* Header — always visible */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-apple-gray-50 transition-colors"
+      >
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass} min-w-[32px] text-center`}>
+          {analysis.score}
+        </span>
+        <div className="flex-1 min-w-0">
+          <span className="text-xs font-semibold text-apple-gray-800">{analysis.name}</span>
+          <span className="text-[10px] text-apple-gray-400 ml-2">{analysis.value_display}</span>
+        </div>
+        <span className="text-[10px] text-apple-gray-400">{analysis.weight_pct}%</span>
+        <span className={`text-[10px] font-medium ${badgeClass.replace('bg-', 'text-').replace('-100', '-600')}`}>
+          {analysis.score_label}
+        </span>
+        <svg
+          className={`w-3.5 h-3.5 text-apple-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Expandable body */}
+      {open && (
+        <div className="px-3 pb-3 space-y-2.5 border-t border-apple-gray-50">
+          <AnalysisSection title="What It Measures" text={analysis.what_it_measures} />
+          <AnalysisSection title="Current Reading" text={analysis.current_reading} />
+          <AnalysisSection title="Why It Matters" text={analysis.why_it_matters} />
+          <AnalysisSection title="Score Breakdown" text={analysis.score_explanation} />
+          <AnalysisSection title="Trading Insight" text={analysis.trading_insight} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AnalysisSection({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="pt-2">
+      <p className="text-[10px] font-semibold text-apple-gray-500 uppercase tracking-wide mb-0.5">{title}</p>
+      <p className="text-xs text-apple-gray-700 leading-relaxed">{text}</p>
     </div>
   )
 }

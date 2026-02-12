@@ -958,5 +958,335 @@
       }
     }
   },
-  "grading": null
+  "grading": {
+    "graded_at": "2026-02-12T07:55:52.664329",
+    "picks": [
+      {
+        "symbol": "GOLD",
+        "score": 86.0,
+        "entry": 5114.9,
+        "target": 5320.5,
+        "stop": 5012.1,
+        "signals": [
+          "Trend: bullish",
+          "Vol 12.9x avg",
+          "Breaking R1"
+        ],
+        "trend": "bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 64.25,
+        "next_day_high": 66.5,
+        "next_day_low": 58.12,
+        "next_day_close": 62.87,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": -5048.4,
+        "mae": 5056.78,
+        "actual_return": -5052.03,
+        "actual_return_pct": -98.77,
+        "r_multiple": -49.14
+      },
+      {
+        "symbol": "COPPER",
+        "score": 85.0,
+        "entry": 5.97,
+        "target": 6.16,
+        "stop": 5.88,
+        "signals": [
+          "Trend: bullish",
+          "Vol 51.0x avg",
+          "Breaking R1"
+        ],
+        "trend": "bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "SILVER",
+        "score": 84.2,
+        "entry": 84.47,
+        "target": 93.9,
+        "stop": 79.76,
+        "signals": [
+          "RSI bounce (50)",
+          "Trend: weakly bullish",
+          "Vol 94.4x avg"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "META",
+        "score": 77.1,
+        "entry": 664.45,
+        "target": 687.3,
+        "stop": 666.79,
+        "signals": [
+          "RSI bounce (50)",
+          "Trend: bullish",
+          "Near S1 support"
+        ],
+        "trend": "bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 674.0,
+        "next_day_high": 679.27,
+        "next_day_low": 657.15,
+        "next_day_close": 668.69,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 14.82,
+        "mae": 7.3,
+        "actual_return": 4.24,
+        "actual_return_pct": 0.64,
+        "r_multiple": 0.64
+      },
+      {
+        "symbol": "GOOGL",
+        "score": 76.1,
+        "entry": 311.93,
+        "target": 323.19,
+        "stop": 314.9,
+        "signals": [
+          "RSI bounce (36)",
+          "Trend: weakly bullish"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 319.05,
+        "next_day_high": 321.06,
+        "next_day_low": 309.66,
+        "next_day_close": 310.96,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 9.13,
+        "mae": 2.27,
+        "actual_return": -0.97,
+        "actual_return_pct": -0.31,
+        "r_multiple": -0.31
+      },
+      {
+        "symbol": "VIX",
+        "score": 76.0,
+        "entry": 17.43,
+        "target": 19.98,
+        "stop": 17.3,
+        "signals": [
+          "Trend: bullish"
+        ],
+        "trend": "bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "PLATINUM",
+        "score": 76.0,
+        "entry": 2143.7,
+        "target": 2241.1,
+        "stop": 2095.0,
+        "signals": [
+          "RSI bounce (46)",
+          "Trend: weakly bullish",
+          "Vol 279.1x avg"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "NATGAS",
+        "score": 75.8,
+        "entry": 3.17,
+        "target": 3.78,
+        "stop": 3.05,
+        "signals": [
+          "RSI bounce (42)",
+          "Trend: weakly bullish",
+          "Gap up 1.4%"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "AMD",
+        "score": 75.5,
+        "entry": 212.38,
+        "target": 226.63,
+        "stop": 211.34,
+        "signals": [
+          "RSI bounce (44)",
+          "Trend: weakly bullish",
+          "Near S1 support"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 217.65,
+        "next_day_high": 219.65,
+        "next_day_low": 209.21,
+        "next_day_close": 213.58,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 7.27,
+        "mae": 3.17,
+        "actual_return": 1.2,
+        "actual_return_pct": 0.57,
+        "r_multiple": 1.15
+      },
+      {
+        "symbol": "BABA",
+        "score": 74.2,
+        "entry": 164.12,
+        "target": 169.74,
+        "stop": 163.12,
+        "signals": [
+          "RSI bounce (50)",
+          "Trend: weakly bullish",
+          "Gap down 1.5%"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 164.09,
+        "next_day_high": 165.2,
+        "next_day_low": 161.38,
+        "next_day_close": 164.32,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 1.08,
+        "mae": 2.74,
+        "actual_return": 0.2,
+        "actual_return_pct": 0.12,
+        "r_multiple": 0.2
+      },
+      {
+        "symbol": "WHEAT",
+        "score": 74.0,
+        "entry": 533.5,
+        "target": 542.92,
+        "stop": 528.79,
+        "signals": [
+          "Trend: bullish",
+          "Breaking R1"
+        ],
+        "trend": "bullish",
+        "outcome": "pending",
+        "reason": "no next-day data"
+      },
+      {
+        "symbol": "GS",
+        "score": 73.0,
+        "entry": 946.04,
+        "target": 978.25,
+        "stop": 932.0,
+        "signals": [
+          "Trend: bullish"
+        ],
+        "trend": "bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 950.64,
+        "next_day_high": 968.13,
+        "next_day_low": 931.28,
+        "next_day_close": 944.59,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 22.09,
+        "mae": 14.76,
+        "actual_return": -1.45,
+        "actual_return_pct": -0.15,
+        "r_multiple": -0.1
+      },
+      {
+        "symbol": "WTI",
+        "score": 72.0,
+        "entry": 64.83,
+        "target": 67.03,
+        "stop": 63.73,
+        "signals": [
+          "Trend: bullish",
+          "Breaking R1"
+        ],
+        "trend": "bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 2.56,
+        "next_day_high": 2.65,
+        "next_day_low": 2.5,
+        "next_day_close": 2.62,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": -62.18,
+        "mae": 62.33,
+        "actual_return": -62.21,
+        "actual_return_pct": -95.96,
+        "r_multiple": -56.55
+      },
+      {
+        "symbol": "COP",
+        "score": 71.0,
+        "entry": 109.87,
+        "target": 112.79,
+        "stop": 108.41,
+        "signals": [
+          "Trend: bullish",
+          "Breaking R1",
+          "Gap up 0.9%"
+        ],
+        "trend": "bullish",
+        "outcome": "win",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 108.5,
+        "next_day_high": 111.43,
+        "next_day_low": 108.43,
+        "next_day_close": 111.21,
+        "hit_target": false,
+        "hit_stop": false,
+        "mfe": 1.56,
+        "mae": 1.44,
+        "actual_return": 1.34,
+        "actual_return_pct": 1.22,
+        "r_multiple": 0.92
+      },
+      {
+        "symbol": "BA",
+        "score": 70.2,
+        "entry": 238.01,
+        "target": 246.68,
+        "stop": 239.68,
+        "signals": [
+          "Trend: weakly bullish",
+          "Gap up 0.8%"
+        ],
+        "trend": "weakly_bullish",
+        "outcome": "loss",
+        "next_day_date": "2026-02-11",
+        "next_day_open": 244.48,
+        "next_day_high": 244.7,
+        "next_day_low": 235.5,
+        "next_day_close": 236.26,
+        "hit_target": false,
+        "hit_stop": true,
+        "mfe": 6.69,
+        "mae": 2.51,
+        "actual_return": -1.75,
+        "actual_return_pct": -0.74,
+        "r_multiple": -0.74
+      }
+    ],
+    "total_graded": 9,
+    "outcomes": {
+      "win": 1,
+      "loss": 8,
+      "scratch": 0,
+      "ambiguous": 0,
+      "pending": 6
+    },
+    "win_rate": 11.1,
+    "avg_r_multiple": -11.55
+  }
 }

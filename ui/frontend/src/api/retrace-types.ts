@@ -82,6 +82,57 @@ export interface ScoringWeights {
   version: string | null
 }
 
+// ── Optimizer types ─────────────────────────────────────────────
+
+export interface OptimizationMetrics {
+  spearman_correlation: number
+  mean_r_top_k: number
+  profit_factor: number
+}
+
+export interface WeightChange {
+  current: number
+  suggested: number
+  change: number
+}
+
+export interface IndicatorEffectiveness {
+  name: string
+  correlation_with_r: number
+  p_value: number
+  avg_score_for_wins: number
+  avg_score_for_losses: number
+  score_spread: number
+  predictive_win_rate: number
+  median_score: number
+  effectiveness_rank: number
+}
+
+export interface OptimizationResult {
+  suggested_weights: Record<string, number>
+  current_weights: Record<string, number>
+  pick_count: number
+  optimization_converged: boolean
+  metrics: {
+    current: OptimizationMetrics
+    suggested: OptimizationMetrics
+  }
+  weight_changes: Record<string, WeightChange>
+}
+
+export interface OptimizationResponse {
+  success: boolean
+  optimization: OptimizationResult
+  indicator_effectiveness: IndicatorEffectiveness[]
+  data_summary: {
+    total_picks: number
+    snapshots_used: number
+    outcomes: Record<string, number>
+    status: string
+  }
+  caveats: string[]
+}
+
 export interface ConfigVersion {
   version_id: string
   timestamp: string

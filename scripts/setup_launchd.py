@@ -2,6 +2,7 @@
 """Generate & install launchd plists for macOS scheduling."""
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -10,14 +11,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 PROJECT_ROOT = Path(__file__).parent.parent
-LAUNCHD_SRC = PROJECT_ROOT / "launchd"
 LAUNCH_AGENTS = Path.home() / "Library" / "LaunchAgents"
 
-PLIST_FILES = [
-    "com.mutaafaziz.market-digest-morning.plist",
-    "com.mutaafaziz.market-digest-afternoon.plist",
-    "com.mutaafaziz.market-digest-weekly.plist",
-]
+# Hardcoded defaults if digests.yaml is missing or incomplete
+DEFAULT_SCHEDULES = {
+    "morning": "06:30",
+    "afternoon": "16:30",
+    "weekly": "fri 17:30",
+    "daytrade": "08:15",
+}
+
+DIGEST_TYPES = ["morning", "afternoon", "weekly", "daytrade"]
 
 
 def find_python() -> str:
@@ -33,12 +37,97 @@ def find_python() -> str:
     return sys.executable
 
 
-def update_plist_python_path(plist_path: Path, python_path: str) -> None:
-    """Update the Python path in a plist file to match the local system."""
-    content = plist_path.read_text()
-    # Replace the default python path with the detected one
-    content = content.replace("/usr/local/bin/python3", python_path)
-    plist_path.write_text(content)
+def _parse_schedule(schedule_str: str) -> tuple[int, int, list[int]]:
+    """Parse schedule string into (hour, minute, weekdays).
+
+    Formats:
+        "06:30"         -> (6, 30, [1,2,3,4,5])  (Mon-Fri)
+        "fri 17:30"     -> (17, 30, [5])          (Friday only)
+        "mon,wed 09:00" -> (9, 0, [1,3])          (Mon+Wed)
+    """
+    schedule_str = schedule_str.strip().lower()
+
+    # Check for day prefix
+    day_map = {"mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6, "sun": 7}
+    weekdays = []
+
+    parts = schedule_str.split()
+    if len(parts) == 2:
+        day_part, time_part = parts
+        for day_str in day_part.split(","):
+            day_str = day_str.strip()
+            if day_str in day_map:
+                weekdays.append(day_map[day_str])
+    else:
+        time_part = parts[0]
+
+    # Default to Mon-Fri if no days specified
+    if not weekdays:
+        weekdays = [1, 2, 3, 4, 5]
+
+    # Parse HH:MM
+    match = re.match(r"(\d{1,2}):(\d{2})", time_part)
+    if not match:
+        raise ValueError(f"Invalid time format: {time_part}")
+
+    hour = int(match.group(1))
+    minute = int(match.group(2))
+    return hour, minute, weekdays
+
+
+def _generate_plist(label: str, digest_type: str, python_path: str,
+                    hour: int, minute: int, weekdays: list[int]) -> str:
+    """Generate a launchd plist XML string."""
+    # Build calendar interval entries
+    intervals = []
+    for day in weekdays:
+        intervals.append(
+            f"        <dict>\n"
+            f"            <key>Weekday</key><integer>{day}</integer>\n"
+            f"            <key>Hour</key><integer>{hour}</integer>\n"
+            f"            <key>Minute</key><integer>{minute}</integer>\n"
+            f"        </dict>"
+        )
+    intervals_xml = "\n".join(intervals)
+
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>{label}</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>{python_path}</string>
+        <string>{PROJECT_ROOT}/scripts/run_digest.py</string>
+        <string>--type</string>
+        <string>{digest_type}</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>{PROJECT_ROOT}</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+        <key>PYTHONPATH</key>
+        <string>{PROJECT_ROOT}</string>
+    </dict>
+
+    <key>StartCalendarInterval</key>
+    <array>
+{intervals_xml}
+    </array>
+
+    <key>StandardOutPath</key>
+    <string>{PROJECT_ROOT}/logs/{digest_type}_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>{PROJECT_ROOT}/logs/{digest_type}_stderr.log</string>
+</dict>
+</plist>
+"""
 
 
 def install():
@@ -49,26 +138,41 @@ def install():
     python_path = find_python()
     print(f"\nDetected Python: {python_path}")
 
+    # Load schedules from digests.yaml
+    from config.settings import load_digest_config
+    schedules = {}
+    for dtype in DIGEST_TYPES:
+        cfg = load_digest_config(dtype)
+        schedule_str = cfg.get("schedule", DEFAULT_SCHEDULES.get(dtype, "06:30"))
+        schedules[dtype] = str(schedule_str)
+
     LAUNCH_AGENTS.mkdir(exist_ok=True)
 
-    for plist_name in PLIST_FILES:
-        src = LAUNCHD_SRC / plist_name
+    schedule_summary = []
+
+    for dtype in DIGEST_TYPES:
+        label = f"com.mutaafaziz.market-digest-{dtype}"
+        plist_name = f"{label}.plist"
         dst = LAUNCH_AGENTS / plist_name
 
-        if not src.exists():
-            print(f"  WARNING: {src} not found, skipping")
-            continue
+        schedule_str = schedules[dtype]
+        try:
+            hour, minute, weekdays = _parse_schedule(schedule_str)
+        except ValueError as e:
+            print(f"  WARNING: Bad schedule for {dtype} ({schedule_str}): {e}, using default")
+            default_str = DEFAULT_SCHEDULES[dtype]
+            hour, minute, weekdays = _parse_schedule(default_str)
+            schedule_str = default_str
 
-        # Copy plist
-        shutil.copy2(src, dst)
-        update_plist_python_path(dst, python_path)
-        print(f"\n  Installed: {dst}")
+        # Generate plist dynamically
+        plist_content = _generate_plist(label, dtype, python_path, hour, minute, weekdays)
 
         # Unload if already loaded
-        subprocess.run(
-            ["launchctl", "unload", str(dst)],
-            capture_output=True,
-        )
+        subprocess.run(["launchctl", "unload", str(dst)], capture_output=True)
+
+        # Write plist
+        dst.write_text(plist_content)
+        print(f"\n  Installed: {dst}")
 
         # Load the plist
         result = subprocess.run(
@@ -81,12 +185,16 @@ def install():
         else:
             print(f"  WARNING: Failed to load {plist_name}: {result.stderr}")
 
+        # Build summary
+        day_names = {1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat", 7: "Sun"}
+        day_str = ",".join(day_names[d] for d in weekdays)
+        schedule_summary.append(f"  {dtype.title():12s} {day_str} {hour:02d}:{minute:02d}")
+
     print("\n" + "=" * 50)
     print("Installation complete!")
     print("\nScheduled digests:")
-    print("  Morning:   Mon-Fri 6:30 AM CT")
-    print("  Afternoon: Mon-Fri 4:30 PM CT")
-    print("  Weekly:    Friday  5:30 PM CT")
+    for line in schedule_summary:
+        print(line)
     print("\nManagement commands:")
     print("  launchctl list | grep market-digest   # Check status")
     print("  launchctl start com.mutaafaziz.market-digest-morning  # Run now")
@@ -95,7 +203,8 @@ def install():
 
 def uninstall():
     print("Uninstalling market-digest launchd jobs...")
-    for plist_name in PLIST_FILES:
+    for dtype in DIGEST_TYPES:
+        plist_name = f"com.mutaafaziz.market-digest-{dtype}.plist"
         dst = LAUNCH_AGENTS / plist_name
         if dst.exists():
             subprocess.run(["launchctl", "unload", str(dst)], capture_output=True)

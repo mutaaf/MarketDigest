@@ -92,8 +92,8 @@ def main():
     parser.add_argument(
         "--mode",
         choices=["facts", "full", "both"],
-        default="facts",
-        help="facts = data only, full = data + LLM analysis, both = send facts then full",
+        default=None,
+        help="facts = data only, full = data + LLM analysis, both = send facts then full (default: from digests.yaml or facts)",
     )
     parser.add_argument(
         "--dry-run",
@@ -106,6 +106,14 @@ def main():
         help="Generate and send a separate Action Items message after the main digest",
     )
     args = parser.parse_args()
+
+    # Resolve default mode from digests.yaml if --mode not specified
+    if args.mode is None:
+        from config.settings import load_digest_config
+        cfg = load_digest_config(args.type)
+        args.mode = cfg.get("default_mode", "facts")
+        if args.mode not in ("facts", "full", "both"):
+            args.mode = "facts"
 
     # Warn if LLM mode requested but no keys configured
     settings = get_settings()

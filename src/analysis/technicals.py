@@ -136,6 +136,58 @@ def compute_atr(df: pd.DataFrame, period: int = 14) -> float | None:
     return round(float(atr), 5) if not np.isnan(atr) else None
 
 
+def compute_weekly_pivots(df: pd.DataFrame) -> dict | None:
+    """Classic pivot points from the last *completed* weekly bar.
+
+    Resamples daily OHLCV to weekly, uses iloc[-2] (the last fully closed week)
+    to avoid partial-week distortion. Returns the same structure as daily pivots
+    plus week_high, week_low, week_close for context.
+    """
+    if df is None or len(df) < 10:
+        return None
+    try:
+        weekly = df.resample("W").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(weekly) < 2:
+            return None
+        # Use the last *completed* week (iloc[-2]); iloc[-1] may be partial
+        last_week = weekly.iloc[-2]
+        h, l, c = float(last_week["High"]), float(last_week["Low"]), float(last_week["Close"])
+        pivots = compute_pivot_points(h, l, c)
+        pivots["week_high"] = round(h, 5)
+        pivots["week_low"] = round(l, 5)
+        pivots["week_close"] = round(c, 5)
+        return pivots
+    except Exception:
+        return None
+
+
+def compute_weekly_atr(df: pd.DataFrame, period: int = 14) -> float | None:
+    """ATR on weekly-resampled bars for wider stop/target levels."""
+    if df is None or len(df) < (period + 1) * 5:
+        return None
+    try:
+        weekly = df.resample("W").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(weekly) < period + 1:
+            return None
+        high = weekly["High"]
+        low = weekly["Low"]
+        close = weekly["Close"]
+        prev_close = close.shift(1)
+        tr = pd.concat([
+            high - low,
+            (high - prev_close).abs(),
+            (low - prev_close).abs(),
+        ], axis=1).max(axis=1)
+        atr = tr.ewm(span=period, adjust=False).mean().iloc[-1]
+        return round(float(atr), 5) if not np.isnan(atr) else None
+    except Exception:
+        return None
+
+
 def compute_gap_pct(df: pd.DataFrame) -> float | None:
     """Today's open vs yesterday's close as a percentage."""
     if df is None or len(df) < 2:

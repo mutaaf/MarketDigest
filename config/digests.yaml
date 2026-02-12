@@ -9,8 +9,8 @@ morning:
   - events
   - sentiment
   - next_steps
-  default_mode: full
-  schedule: 06:30
+  default_mode: both
+  schedule: 07:30
 afternoon:
   sections:
   - quick_take
@@ -23,7 +23,7 @@ afternoon:
   - events
   - next_steps
   default_mode: both
-  schedule: '16:30'
+  schedule: '15:30'
 weekly:
   sections:
   - quick_take
@@ -36,7 +36,7 @@ weekly:
   - technicals
   - sentiment
   - next_steps
-  default_mode: full
+  default_mode: both
   schedule: fri 17:30
 daytrade:
   sections:

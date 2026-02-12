@@ -228,6 +228,8 @@ def score_instrument(ta: dict, price_data: dict, weights: dict | None = None) ->
         "trend_emoji": ta.get("trend_emoji", ""),
         "volume_ratio": volume_ratio,
         "price": round(price, 2),
+        "component_scores": scores,
+        "gap_pct": gap_pct,
     }
 
 

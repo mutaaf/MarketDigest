@@ -12,6 +12,7 @@ from src.retrace.versioning import (
     list_versions, get_version, diff_versions, rollback,
     save_version, get_current_version_id,
 )
+from src.retrace.optimizer import run_optimization
 from ui.models import ScoringWeightsUpdate, RollbackRequest
 
 router = APIRouter(prefix="/api/retrace", tags=["retrace"])
@@ -160,6 +161,29 @@ def reset_scoring():
     """Reset scoring weights to defaults."""
     save_scoring_weights(dict(DEFAULT_WEIGHTS), "Reset to defaults")
     return {"success": True, "weights": DEFAULT_WEIGHTS}
+
+
+# ── Optimizer ───────────────────────────────────────────────────
+
+@router.post("/optimize")
+def run_scoring_optimization(min_picks: int = Query(30, ge=5), top_k: int = Query(10, ge=3)):
+    """Analyze graded pick history and suggest optimized scoring weights."""
+    result = run_optimization(min_picks=min_picks, top_k=top_k)
+    if not result.get("success"):
+        raise HTTPException(400, result.get("error", "Optimization failed"))
+    return result
+
+
+@router.post("/optimize/apply")
+def apply_optimized_weights(body: ScoringWeightsUpdate):
+    """Apply optimizer-suggested weights (validates and saves with version)."""
+    ok, msg = validate_weights(body.weights)
+    if not ok:
+        raise HTTPException(400, msg)
+
+    desc = body.description or "Auto-tuned weights from optimizer"
+    save_scoring_weights(body.weights, desc)
+    return {"success": True, "weights": body.weights}
 
 
 # ── Versioning ──────────────────────────────────────────────────

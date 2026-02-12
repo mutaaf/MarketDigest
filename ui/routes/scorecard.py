@@ -7,8 +7,9 @@ from fastapi import APIRouter, HTTPException, Query
 import yfinance as yf
 
 from config.settings import get_all_yfinance_tickers
-from src.analysis.technicals import full_analysis
+from src.analysis.technicals import full_analysis, compute_weekly_pivots, compute_weekly_atr, compute_pivot_points
 from src.analysis.daytrade_scorer import score_instrument, score_to_grade
+from src.analysis.indicator_analysis import generate_indicator_analyses
 from src.retrace.scoring_config import load_scoring_weights
 from src.retrace.snapshot import list_snapshots, load_snapshot
 
@@ -101,6 +102,47 @@ def _build_history(symbol: str) -> dict:
     }
 
 
+def _build_multi_tf_targets(scored: dict, weekly_pivots: dict | None, weekly_atr: float | None) -> dict:
+    """Build daily + weekly target sets from scored data and weekly computations."""
+    price = scored.get("price", scored["entry"])
+
+    daily = {
+        "entry": scored["entry"],
+        "target": scored["target"],
+        "stop": scored["stop"],
+        "risk_reward": scored["risk_reward"],
+        "target_level": scored.get("target_level", ""),
+        "stop_level": scored.get("stop_level", ""),
+    }
+
+    weekly = None
+    if weekly_pivots:
+        w_r1 = weekly_pivots.get("r1")
+        w_s1 = weekly_pivots.get("s1")
+        w_atr = weekly_atr or (price * 0.02)
+
+        w_target = max(w_r1, price + w_atr) if w_r1 else price + w_atr
+        w_stop = max(w_s1, price - 0.5 * w_atr) if w_s1 else price - 0.5 * w_atr
+
+        w_target_level = "Weekly R1" if w_r1 and w_target == w_r1 else "Weekly ATR"
+        w_stop_level = "Weekly S1" if w_s1 and w_stop == w_s1 else "Weekly ATR"
+
+        w_risk = price - w_stop
+        w_reward = w_target - price
+        w_rr = round(w_reward / w_risk, 2) if w_risk > 0 else 0.0
+
+        weekly = {
+            "entry": round(price, 2),
+            "target": round(w_target, 2),
+            "stop": round(w_stop, 2),
+            "risk_reward": w_rr,
+            "target_level": w_target_level,
+            "stop_level": w_stop_level,
+        }
+
+    return {"daily": daily, "weekly": weekly}
+
+
 def _run_analysis(sym: str, weights: dict) -> dict | None:
     """Fetch data and run TA + scoring for a single symbol."""
     try:
@@ -127,7 +169,20 @@ def _run_analysis(sym: str, weights: dict) -> dict | None:
         if not scored:
             return None
 
-        return {"ta": ta, "scored": scored}
+        # Weekly computations for multi-timeframe targets
+        weekly_pivots = compute_weekly_pivots(df)
+        weekly_atr = compute_weekly_atr(df)
+
+        # Indicator analyses
+        analyses = generate_indicator_analyses(ta, scored, price, sym)
+
+        return {
+            "ta": ta,
+            "scored": scored,
+            "weekly_pivots": weekly_pivots,
+            "weekly_atr": weekly_atr,
+            "indicator_analyses": analyses,
+        }
     except Exception:
         return None
 
@@ -224,7 +279,12 @@ def get_scorecard_detail(symbol: str, refresh: bool = Query(False)):
         "stop": scored["stop"],
         "risk_reward": scored["risk_reward"],
         "signals": scored.get("signals", []),
+        "target_level": scored.get("target_level"),
+        "stop_level": scored.get("stop_level"),
     }
+
+    # ── Multi-timeframe targets ──
+    multi_tf_targets = _build_multi_tf_targets(scored, result.get("weekly_pivots"), result.get("weekly_atr"))
 
     response = {
         "symbol": scored["symbol"],
@@ -239,6 +299,8 @@ def get_scorecard_detail(symbol: str, refresh: bool = Query(False)):
         "setup": setup,
         "technicals": technicals,
         "history": history,
+        "multi_tf_targets": multi_tf_targets,
+        "indicator_analyses": result.get("indicator_analyses", []),
     }
 
     _detail_cache[sym_upper] = {"data": response, "ts": now}

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import {
-  BarChart3, Sliders, GitBranch, Clock,
+  BarChart3, Sliders, GitBranch, Clock, Zap,
   Trophy, TrendingDown, Target, RefreshCw, RotateCcw, ChevronDown, CalendarDays,
+  ArrowRight, AlertCircle, Check,
 } from 'lucide-react'
 import { useApi } from '../hooks/useApi'
 import { useToast } from '../hooks/useToast'
@@ -12,12 +13,14 @@ import ToastContainer from '../components/common/Toast'
 import type {
   SnapshotMeta, PerformanceData, ScoringWeights,
   ConfigVersion, VersionDiff, GradingSummary, PickGrading,
+  OptimizationResponse,
 } from '../api/retrace-types'
 import type { ScoreCardFull } from '../api/scorecard-types'
 
 const tabs = [
   { id: 'performance', label: 'Performance', icon: BarChart3 },
   { id: 'scoring', label: 'Scoring', icon: Sliders },
+  { id: 'optimize', label: 'Optimize', icon: Zap },
   { id: 'versions', label: 'Versions', icon: GitBranch },
   { id: 'audit', label: 'Audit Trail', icon: Clock },
 ] as const
@@ -57,6 +60,7 @@ export default function Retrace() {
 
       {activeTab === 'performance' && <PerformanceTab addToast={addToast} />}
       {activeTab === 'scoring' && <ScoringTab addToast={addToast} />}
+      {activeTab === 'optimize' && <OptimizeTab addToast={addToast} />}
       {activeTab === 'versions' && <VersionsTab addToast={addToast} />}
       {activeTab === 'audit' && <AuditTab />}
 
@@ -513,6 +517,323 @@ function ScoringTab({ addToast }: { addToast: (msg: string, type: 'success' | 'e
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Optimize Tab ────────────────────────────────────────────────
+
+const indicatorLabels: Record<string, string> = {
+  rsi: 'RSI Momentum',
+  trend: 'Trend Alignment',
+  pivot: 'Pivot Proximity',
+  atr: 'ATR Volatility',
+  volume: 'Volume',
+  gap: 'Gap Analysis',
+}
+
+function OptimizeTab({ addToast }: { addToast: (msg: string, type: 'success' | 'error' | 'info') => void }) {
+  const [result, setResult] = useState<OptimizationResponse | null>(null)
+  const [running, setRunning] = useState(false)
+  const [applying, setApplying] = useState(false)
+  const [confirmApply, setConfirmApply] = useState(false)
+
+  const runOptimizer = async () => {
+    setRunning(true)
+    setResult(null)
+    setConfirmApply(false)
+    try {
+      const res = await api.post<OptimizationResponse>('/retrace/optimize')
+      setResult(res.data)
+      addToast('Optimization complete', 'success')
+    } catch (err: any) {
+      addToast(err.response?.data?.detail || 'Optimization failed — not enough graded data?', 'error')
+    } finally {
+      setRunning(false)
+    }
+  }
+
+  const applyWeights = async () => {
+    if (!result || !confirmApply) {
+      setConfirmApply(true)
+      return
+    }
+    setApplying(true)
+    try {
+      const opt = result.optimization
+      const changes = Object.entries(opt.weight_changes)
+        .filter(([, v]) => Math.abs(v.change) >= 0.01)
+        .map(([k, v]) => `${k} ${v.change > 0 ? '+' : ''}${(v.change * 100).toFixed(0)}%`)
+        .join(', ')
+      await api.post('/retrace/optimize/apply', {
+        weights: opt.suggested_weights,
+        description: `Auto-tuned (${opt.pick_count} picks): ${changes}`,
+      })
+      addToast('Optimized weights applied and versioned', 'success')
+      setConfirmApply(false)
+    } catch (err: any) {
+      addToast(err.response?.data?.detail || 'Apply failed', 'error')
+    } finally {
+      setApplying(false)
+    }
+  }
+
+  const opt = result?.optimization
+
+  return (
+    <div className="space-y-6">
+      {/* Run button card */}
+      <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-amber-100 rounded-xl shrink-0">
+            <Zap size={20} className="text-amber-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-apple-gray-800">Auto-Tune Scoring Weights</h3>
+            <p className="text-xs text-apple-gray-400 mt-1">
+              Analyzes your graded pick history to find weights that maximize the correlation between
+              composite scores and actual R-multiples. Requires at least 30 graded picks.
+            </p>
+          </div>
+          <button
+            onClick={runOptimizer}
+            disabled={running}
+            className="px-5 py-2.5 bg-amber-500 text-white text-sm font-medium rounded-xl hover:bg-amber-600 disabled:opacity-50 shrink-0 flex items-center gap-2"
+          >
+            {running ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" />
+                Running...
+              </>
+            ) : (
+              <>
+                <Zap size={14} />
+                Run Optimization
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Data summary */}
+      {result && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-white rounded-xl border border-apple-gray-200 p-3 text-center">
+            <p className="text-2xl font-bold text-apple-gray-800">{result.data_summary.total_picks}</p>
+            <p className="text-xs text-apple-gray-400">Total Picks</p>
+          </div>
+          <div className="bg-white rounded-xl border border-apple-gray-200 p-3 text-center">
+            <p className="text-2xl font-bold text-apple-gray-800">{result.data_summary.snapshots_used}</p>
+            <p className="text-xs text-apple-gray-400">Snapshots</p>
+          </div>
+          <div className="bg-white rounded-xl border border-apple-gray-200 p-3 text-center">
+            <p className="text-2xl font-bold text-green-600">{result.data_summary.outcomes.win || 0}W</p>
+            <p className="text-xs text-apple-gray-400">
+              / {result.data_summary.outcomes.loss || 0}L / {result.data_summary.outcomes.scratch || 0}S
+            </p>
+          </div>
+          <div className="bg-white rounded-xl border border-apple-gray-200 p-3 text-center">
+            <p className={`text-2xl font-bold ${opt?.optimization_converged ? 'text-green-600' : 'text-amber-500'}`}>
+              {opt?.optimization_converged ? 'Yes' : 'No'}
+            </p>
+            <p className="text-xs text-apple-gray-400">Converged</p>
+          </div>
+        </div>
+      )}
+
+      {/* Weight comparison */}
+      {opt && (
+        <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-apple-gray-700 mb-4">Weight Comparison</h3>
+          <div className="space-y-4">
+            {Object.entries(opt.weight_changes).map(([key, wc]) => {
+              const changeColor = wc.change > 0.005 ? 'text-green-600' : wc.change < -0.005 ? 'text-red-500' : 'text-apple-gray-400'
+              const changeSign = wc.change > 0 ? '+' : ''
+              return (
+                <div key={key}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-apple-gray-700">{indicatorLabels[key] || key}</span>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="text-apple-gray-400 font-mono">{(wc.current * 100).toFixed(0)}%</span>
+                      <ArrowRight size={12} className="text-apple-gray-300" />
+                      <span className="text-apple-gray-800 font-mono font-semibold">{(wc.suggested * 100).toFixed(0)}%</span>
+                      <span className={`font-mono font-semibold ${changeColor}`}>
+                        {changeSign}{(wc.change * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 h-2">
+                    <div className="flex-1 bg-apple-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-apple-gray-300 rounded-full" style={{ width: `${wc.current * 100 * 2}%` }} />
+                    </div>
+                    <div className="flex-1 bg-amber-50 rounded-full overflow-hidden">
+                      <div className="h-full bg-amber-400 rounded-full" style={{ width: `${wc.suggested * 100 * 2}%` }} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Metrics improvement */}
+      {opt && (
+        <div className="grid md:grid-cols-3 gap-4">
+          <MetricCard
+            label="Spearman Correlation"
+            current={opt.metrics.current.spearman_correlation}
+            suggested={opt.metrics.suggested.spearman_correlation}
+            format={v => v.toFixed(3)}
+            higherBetter
+          />
+          <MetricCard
+            label="Mean R (Top-K)"
+            current={opt.metrics.current.mean_r_top_k}
+            suggested={opt.metrics.suggested.mean_r_top_k}
+            format={v => `${v > 0 ? '+' : ''}${v.toFixed(2)}R`}
+            higherBetter
+          />
+          <MetricCard
+            label="Profit Factor"
+            current={opt.metrics.current.profit_factor}
+            suggested={opt.metrics.suggested.profit_factor}
+            format={v => v.toFixed(2)}
+            higherBetter
+          />
+        </div>
+      )}
+
+      {/* Indicator effectiveness */}
+      {result && result.indicator_effectiveness.length > 0 && (
+        <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-apple-gray-700 mb-4">Indicator Effectiveness</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-apple-gray-400 border-b border-apple-gray-100">
+                  <th className="text-left pb-2 pr-3">#</th>
+                  <th className="text-left pb-2 pr-3">Indicator</th>
+                  <th className="text-right pb-2 pr-3">Corr w/ R</th>
+                  <th className="text-right pb-2 pr-3">p-value</th>
+                  <th className="text-right pb-2 pr-3">Avg Win</th>
+                  <th className="text-right pb-2 pr-3">Avg Loss</th>
+                  <th className="text-right pb-2 pr-3">Spread</th>
+                  <th className="text-right pb-2">Pred WR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.indicator_effectiveness.map(ind => {
+                  const corrColor = ind.correlation_with_r > 0.1 ? 'text-green-600' : ind.correlation_with_r < -0.1 ? 'text-red-500' : 'text-apple-gray-500'
+                  const sigMarker = ind.p_value < 0.05 ? '*' : ''
+                  return (
+                    <tr key={ind.name} className="border-b border-apple-gray-50">
+                      <td className="py-2 pr-3 text-apple-gray-400">{ind.effectiveness_rank}</td>
+                      <td className="py-2 pr-3 font-medium text-apple-gray-800">{indicatorLabels[ind.name] || ind.name}</td>
+                      <td className={`py-2 pr-3 text-right font-mono font-semibold ${corrColor}`}>
+                        {ind.correlation_with_r.toFixed(3)}{sigMarker}
+                      </td>
+                      <td className="py-2 pr-3 text-right font-mono text-apple-gray-400">{ind.p_value.toFixed(3)}</td>
+                      <td className="py-2 pr-3 text-right text-green-600">{ind.avg_score_for_wins.toFixed(0)}</td>
+                      <td className="py-2 pr-3 text-right text-red-500">{ind.avg_score_for_losses.toFixed(0)}</td>
+                      <td className="py-2 pr-3 text-right text-apple-gray-500">{ind.score_spread.toFixed(1)}</td>
+                      <td className="py-2 text-right font-medium text-apple-gray-700">{ind.predictive_win_rate}%</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Caveats */}
+      {result && result.caveats.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle size={14} className="text-amber-600" />
+            <span className="text-xs font-semibold text-amber-700">Caveats</span>
+          </div>
+          <ul className="space-y-1">
+            {result.caveats.map((c, i) => (
+              <li key={i} className="text-xs text-amber-700">{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Apply button */}
+      {opt && (
+        <div className="bg-white rounded-2xl border border-apple-gray-200 p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-apple-gray-700">Apply Suggested Weights</h3>
+              <p className="text-xs text-apple-gray-400 mt-0.5">
+                Saves the optimized weights and creates a version snapshot.
+              </p>
+            </div>
+            <button
+              onClick={applyWeights}
+              disabled={applying}
+              className={`px-5 py-2.5 text-sm font-medium rounded-xl flex items-center gap-2 transition-colors ${
+                confirmApply
+                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  : 'bg-apple-blue text-white hover:bg-blue-600'
+              } disabled:opacity-50`}
+            >
+              {applying ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  Applying...
+                </>
+              ) : confirmApply ? (
+                <>
+                  <Check size={14} />
+                  Confirm Apply
+                </>
+              ) : (
+                'Apply Suggested Weights'
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MetricCard({ label, current, suggested, format, higherBetter }: {
+  label: string
+  current: number
+  suggested: number
+  format: (v: number) => string
+  higherBetter: boolean
+}) {
+  const improved = higherBetter ? suggested > current : suggested < current
+  const diff = suggested - current
+  const pctChange = current !== 0 ? ((diff / Math.abs(current)) * 100) : 0
+
+  return (
+    <div className="bg-white rounded-2xl border border-apple-gray-200 p-4">
+      <p className="text-xs text-apple-gray-400 font-medium mb-3">{label}</p>
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="text-xs text-apple-gray-400">Current</p>
+          <p className="text-lg font-bold text-apple-gray-600">{format(current)}</p>
+        </div>
+        <ArrowRight size={14} className="text-apple-gray-300 mb-2" />
+        <div className="text-right">
+          <p className="text-xs text-apple-gray-400">Suggested</p>
+          <p className={`text-lg font-bold ${improved ? 'text-green-600' : 'text-apple-gray-800'}`}>
+            {format(suggested)}
+          </p>
+        </div>
+      </div>
+      {Math.abs(pctChange) > 0.5 && (
+        <p className={`text-xs mt-2 font-medium ${improved ? 'text-green-600' : 'text-red-500'}`}>
+          {pctChange > 0 ? '+' : ''}{pctChange.toFixed(0)}% {improved ? 'improvement' : 'change'}
+        </p>
+      )}
     </div>
   )
 }

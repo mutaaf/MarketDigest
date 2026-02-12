@@ -5,6 +5,7 @@ from src.digest.formatter import (
     bold, code, esc, italic, section_header, analysis_block, unavailable,
     enhanced_pick_line, custom_section_block,
 )
+from config.settings import get_enabled_sections
 from src.analysis.technicals import full_analysis, get_trend_emoji
 from src.analysis.daytrade_scorer import score_instrument, rank_daytrade_picks, get_condensed_track_record
 from src.analysis.performance import change_indicator
@@ -26,6 +27,10 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
     parts = []
     analyzer = None
     digest_data = {}
+
+    ALL_SECTIONS = ["market_conditions", "top_picks", "honorable_mentions",
+                    "avoid_list", "next_steps"]
+    enabled = get_enabled_sections("daytrade", ALL_SECTIONS)
 
     if mode == "full":
         try:
@@ -52,43 +57,44 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
         return "\n".join(parts)
 
     # ── Market conditions ───────────────────────────────────────
-    parts.append(section_header("\U0001f30d MARKET CONDITIONS"))
-    try:
-        vix_data = prices.get("VIX", {})
-        es_data = prices.get("ES", {})
-        nq_data = prices.get("NQ", {})
-
-        vix_price = vix_data.get("price")
-        vix_label = "Low" if vix_price and vix_price < 15 else "Normal" if vix_price and vix_price < 25 else "Elevated" if vix_price else "N/A"
-
-        # Sentiment from builder
-        sentiment = None
+    if "market_conditions" in enabled:
+        parts.append(section_header("\U0001f30d MARKET CONDITIONS"))
         try:
-            technicals_data = builder.run_technicals()
-            sentiment = builder.compute_sentiment(prices=prices, technicals=technicals_data)
-            digest_data["sentiment"] = sentiment
-        except Exception:
-            pass
+            vix_data = prices.get("VIX", {})
+            es_data = prices.get("ES", {})
+            nq_data = prices.get("NQ", {})
 
-        cond_lines = []
-        if vix_price:
-            cond_lines.append(f"VIX: {code(f'{vix_price:.1f}')} ({esc(vix_label)})")
-        if es_data.get("change_pct") is not None:
-            cond_lines.append(f"ES Futures: {change_indicator(es_data['change_pct'])}")
-        if nq_data.get("change_pct") is not None:
-            cond_lines.append(f"NQ Futures: {change_indicator(nq_data['change_pct'])}")
-        if sentiment and sentiment.get("composite_score"):
-            score = sentiment["composite_score"]
-            label = sentiment.get("classification", "")
-            cond_lines.append(f"Sentiment: {code(f'{score:.0f}/100')} ({esc(label)})")
+            vix_price = vix_data.get("price")
+            vix_label = "Low" if vix_price and vix_price < 15 else "Normal" if vix_price and vix_price < 25 else "Elevated" if vix_price else "N/A"
 
-        if cond_lines:
-            parts.append("  " + " | ".join(cond_lines))
-        else:
+            # Sentiment from builder
+            sentiment = None
+            try:
+                technicals_data = builder.run_technicals()
+                sentiment = builder.compute_sentiment(prices=prices, technicals=technicals_data)
+                digest_data["sentiment"] = sentiment
+            except Exception:
+                pass
+
+            cond_lines = []
+            if vix_price:
+                cond_lines.append(f"VIX: {code(f'{vix_price:.1f}')} ({esc(vix_label)})")
+            if es_data.get("change_pct") is not None:
+                cond_lines.append(f"ES Futures: {change_indicator(es_data['change_pct'])}")
+            if nq_data.get("change_pct") is not None:
+                cond_lines.append(f"NQ Futures: {change_indicator(nq_data['change_pct'])}")
+            if sentiment and sentiment.get("composite_score"):
+                score = sentiment["composite_score"]
+                label = sentiment.get("classification", "")
+                cond_lines.append(f"Sentiment: {code(f'{score:.0f}/100')} ({esc(label)})")
+
+            if cond_lines:
+                parts.append("  " + " | ".join(cond_lines))
+            else:
+                parts.append(unavailable("Market conditions"))
+        except Exception as e:
+            logger.warning(f"Market conditions failed: {e}")
             parts.append(unavailable("Market conditions"))
-    except Exception as e:
-        logger.warning(f"Market conditions failed: {e}")
-        parts.append(unavailable("Market conditions"))
 
     # ── Run technicals and scoring ──────────────────────────────
     logger.info("Running technical analysis on daytrade universe...")
@@ -159,17 +165,18 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
             logger.warning(f"Daytrade LLM summary failed: {e}")
 
     # ── Top 10 Day Trade Picks ──────────────────────────────────
-    parts.append(section_header("\U0001f3af TOP 10 DAY TRADE PICKS"))
-    for i, pick in enumerate(top_picks, 1):
-        track = None
-        try:
-            track = get_condensed_track_record(pick["symbol"])
-        except Exception:
-            pass
-        parts.append(enhanced_pick_line(i, pick, track))
+    if "top_picks" in enabled:
+        parts.append(section_header("\U0001f3af TOP 10 DAY TRADE PICKS"))
+        for i, pick in enumerate(top_picks, 1):
+            track = None
+            try:
+                track = get_condensed_track_record(pick["symbol"])
+            except Exception:
+                pass
+            parts.append(enhanced_pick_line(i, pick, track))
 
     # ── Honorable Mentions ──────────────────────────────────────
-    if honorable:
+    if "honorable_mentions" in enabled and honorable:
         parts.append(section_header("\U0001f4a1 HONORABLE MENTIONS"))
         for i, pick in enumerate(honorable, 11):
             trend_emoji = pick.get("trend_emoji", "")
@@ -181,7 +188,7 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
             )
 
     # ── Avoid List ──────────────────────────────────────────────
-    if avoid_list:
+    if "avoid_list" in enabled and avoid_list:
         parts.append(section_header("\u26d4 AVOID TODAY"))
         for pick in avoid_list[:5]:
             reasons = []
@@ -213,7 +220,7 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
         logger.warning(f"Custom sources failed: {e}")
 
     # ── Next Steps (full mode) ──────────────────────────────────
-    if analyzer and digest_data:
+    if "next_steps" in enabled and analyzer and digest_data:
         parts.append(section_header("\U0001f3af NEXT STEPS"))
         try:
             next_steps = analyzer.analyze_section("next_steps_daytrade", digest_data, context=digest_data)

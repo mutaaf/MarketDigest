@@ -65,6 +65,8 @@ def run_digest(body: DigestRunRequest):
         raise HTTPException(status_code=400, detail=f"Invalid mode: {body.mode}")
 
     reload_settings()
+    from src.analysis.llm_analyzer import reload_prompts
+    reload_prompts()
 
     try:
         from src.digest.builder import DigestBuilder
