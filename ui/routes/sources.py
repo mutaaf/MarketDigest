@@ -5,8 +5,12 @@ import re
 from fastapi import APIRouter, HTTPException
 
 from config.settings import (
-    get_settings, update_env_var, reload_settings,
-    load_custom_sources, save_custom_sources, get_custom_source_by_id,
+    get_custom_source_by_id,
+    get_settings,
+    load_custom_sources,
+    reload_settings,
+    save_custom_sources,
+    update_env_var,
 )
 from ui.models import ApiKeyUpdate, CustomSourceCreate, CustomSourceUpdate, SourceToggle
 

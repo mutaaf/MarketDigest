@@ -1,13 +1,13 @@
 """Finnhub fetcher — economic calendar and market news."""
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
 import finnhub
 
 from config.settings import get_settings
 from src.fetchers.base import BaseFetcher, FetcherError
-from src.utils.timezone import now_ct, format_date
+from src.utils.timezone import now_ct
 
 
 class FinnhubFetcher(BaseFetcher):

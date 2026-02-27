@@ -6,7 +6,7 @@ from typing import Any
 import pandas as pd
 
 from src.utils.logging_config import get_logger
-from src.utils.timezone import session_times_utc, now_ct, CT, UTC
+from src.utils.timezone import now_ct, session_times_utc
 
 logger = get_logger("session_tracker")
 

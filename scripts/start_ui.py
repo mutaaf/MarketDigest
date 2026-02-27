@@ -154,7 +154,7 @@ def _kill_stale_port():
             else:
                 print(f"\n  ERROR: Port {PORT} is held by another program (PID {pid}):")
                 print(f"    {cmd}")
-                print(f"  Free the port or change PORT in start_ui.py.\n")
+                print("  Free the port or change PORT in start_ui.py.\n")
                 sys.exit(1)
 
         # Brief pause for port to fully release
@@ -209,8 +209,8 @@ def _install_service():
         sys.exit(1)
 
     print(f"  Service installed and loaded: {LAUNCHD_LABEL}")
-    print(f"  The server will start automatically at login.")
-    print(f"  Use --status to check, --uninstall-service to remove.")
+    print("  The server will start automatically at login.")
+    print("  Use --status to check, --uninstall-service to remove.")
 
 
 def _uninstall_service():
@@ -248,12 +248,12 @@ def _check_status():
     # Not in launchctl list at all
     if PLIST_DEST.exists():
         print(f"  Service: {LAUNCHD_LABEL}")
-        print(f"  Status:  INSTALLED but NOT LOADED")
+        print("  Status:  INSTALLED but NOT LOADED")
         print(f"  Run: launchctl load {PLIST_DEST}")
     else:
         print(f"  Service: {LAUNCHD_LABEL}")
-        print(f"  Status:  NOT INSTALLED")
-        print(f"  Run: python scripts/start_ui.py --install-service")
+        print("  Status:  NOT INSTALLED")
+        print("  Run: python scripts/start_ui.py --install-service")
 
 
 # ── Main ─────────────────────────────────────────────────────────

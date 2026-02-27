@@ -2,21 +2,17 @@
 
 from typing import Any
 
-import pandas as pd
-
-from config.settings import get_settings, get_all_yfinance_tickers
-from src.fetchers.yfinance_fetcher import YFinanceFetcher
-from src.fetchers.twelvedata_fetcher import TwelveDataFetcher
+from config.settings import get_all_yfinance_tickers, get_settings
+from src.analysis.sentiment import compute_composite_sentiment
+from src.analysis.session_tracker import get_overnight_recap
+from src.analysis.technicals import full_analysis
+from src.cache.manager import cache
+from src.fetchers.feargreed_fetcher import FearGreedFetcher
 from src.fetchers.finnhub_fetcher import FinnhubFetcher
 from src.fetchers.fred_fetcher import FREDFetcher
 from src.fetchers.newsapi_fetcher import NewsAPIFetcher
-from src.fetchers.feargreed_fetcher import FearGreedFetcher
-from src.fetchers.base import FetcherError
-from src.analysis.technicals import full_analysis
-from src.analysis.sentiment import compute_composite_sentiment
-from src.analysis.performance import get_top_movers, sector_comparison
-from src.analysis.session_tracker import get_overnight_recap, get_session_levels
-from src.cache.manager import cache
+from src.fetchers.twelvedata_fetcher import TwelveDataFetcher
+from src.fetchers.yfinance_fetcher import YFinanceFetcher
 from src.utils.logging_config import get_logger
 
 logger = get_logger("builder")

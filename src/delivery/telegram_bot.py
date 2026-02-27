@@ -1,7 +1,6 @@
 """Send messages via python-telegram-bot."""
 
 import asyncio
-from typing import Any
 
 from telegram import Bot
 from telegram.constants import ParseMode

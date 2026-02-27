@@ -3,7 +3,6 @@
 from typing import Any
 
 import requests
-from bs4 import BeautifulSoup
 
 from src.fetchers.base import BaseFetcher
 

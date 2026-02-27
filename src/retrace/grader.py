@@ -10,8 +10,9 @@ logger = get_logger("retrace.grader")
 def _get_next_trading_day_data(symbol: str, pick_date: str) -> dict | None:
     """Fetch next-trading-day OHLCV for a symbol after pick_date."""
     try:
-        import yfinance as yf
         from datetime import datetime, timedelta
+
+        import yfinance as yf
 
         dt = datetime.strptime(pick_date, "%Y-%m-%d")
         # Fetch a window to ensure we capture the next trading day

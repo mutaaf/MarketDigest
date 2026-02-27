@@ -1,18 +1,31 @@
 """Morning digest template (~6:30 AM CT, Mon-Fri)."""
 
+from config.settings import get_enabled_sections
+from src.analysis.events import get_forward_calendar
+from src.analysis.performance import change_indicator
 from src.digest.builder import DigestBuilder
 from src.digest.formatter import (
-    bold, code, esc, italic, section_header, price_line, forex_line,
-    commodity_line, index_line, economic_event_line, sentiment_block,
-    session_block, analysis_block, quick_take_block, unavailable,
-    comprehensive_event_line, earnings_line, forward_calendar_block,
+    analysis_block,
+    bold,
+    code,
+    commodity_line,
+    comprehensive_event_line,
     custom_section_block,
+    earnings_line,
+    esc,
+    forex_line,
+    forward_calendar_block,
+    index_line,
+    italic,
+    price_line,
+    quick_take_block,
+    section_header,
+    sentiment_block,
+    session_block,
+    unavailable,
 )
-from config.settings import get_enabled_sections
-from src.analysis.performance import change_indicator
-from src.analysis.events import get_forward_calendar
-from src.utils.timezone import now_ct, format_date, format_time_ct
 from src.utils.logging_config import get_logger
+from src.utils.timezone import format_date, format_time_ct, now_ct
 
 logger = get_logger("morning_digest")
 

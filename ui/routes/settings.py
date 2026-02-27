@@ -3,13 +3,12 @@
 import asyncio
 import io
 import zipfile
-from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from config.settings import get_settings, update_env_var, reload_settings, add_chat_id, remove_chat_id, PROJECT_ROOT
-from ui.models import SettingsUpdate, RecipientAdd
+from config.settings import PROJECT_ROOT, add_chat_id, get_settings, reload_settings, remove_chat_id, update_env_var
+from ui.models import RecipientAdd, SettingsUpdate
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 

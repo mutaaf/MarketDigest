@@ -3,12 +3,10 @@
 from datetime import datetime, timedelta
 from typing import Any
 
-import pandas as pd
 from fredapi import Fred
 
 from config.settings import get_settings
 from src.fetchers.base import BaseFetcher, FetcherError
-from src.utils.timezone import now_ct
 
 
 class FREDFetcher(BaseFetcher):

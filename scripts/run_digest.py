@@ -10,14 +10,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.utils.logging_config import setup_logging
 from config.settings import get_settings
-from src.digest.builder import DigestBuilder
-from src.digest.morning import build_morning_digest
-from src.digest.afternoon import build_afternoon_digest
-from src.digest.weekly import build_weekly_digest
-from src.digest.daytrade import build_daytrade_digest
 from src.delivery.telegram_bot import TelegramDelivery
+from src.digest.afternoon import build_afternoon_digest
+from src.digest.builder import DigestBuilder
+from src.digest.daytrade import build_daytrade_digest
+from src.digest.morning import build_morning_digest
+from src.digest.weekly import build_weekly_digest
+from src.utils.logging_config import setup_logging
 
 logger = setup_logging()
 

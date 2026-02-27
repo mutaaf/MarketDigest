@@ -2,18 +2,24 @@
 
 from fastapi import APIRouter, HTTPException, Query
 
-from src.retrace.snapshot import list_snapshots, load_snapshot
-from src.retrace.grader import grade_snapshot, aggregate_performance
 from src.retrace.backfill import backfill_snapshot
-from src.retrace.scoring_config import (
-    load_scoring_weights, save_scoring_weights, validate_weights, DEFAULT_WEIGHTS,
-)
-from src.retrace.versioning import (
-    list_versions, get_version, diff_versions, rollback,
-    save_version, get_current_version_id,
-)
+from src.retrace.grader import aggregate_performance, grade_snapshot
 from src.retrace.optimizer import run_optimization
-from ui.models import ScoringWeightsUpdate, RollbackRequest
+from src.retrace.scoring_config import (
+    DEFAULT_WEIGHTS,
+    load_scoring_weights,
+    save_scoring_weights,
+    validate_weights,
+)
+from src.retrace.snapshot import list_snapshots, load_snapshot
+from src.retrace.versioning import (
+    diff_versions,
+    get_current_version_id,
+    get_version,
+    list_versions,
+    rollback,
+)
+from ui.models import RollbackRequest, ScoringWeightsUpdate
 
 router = APIRouter(prefix="/api/retrace", tags=["retrace"])
 

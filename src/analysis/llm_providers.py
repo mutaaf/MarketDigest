@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
-from tenacity import retry, stop_after_attempt, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from config.settings import get_settings
 from src.cache.manager import cache

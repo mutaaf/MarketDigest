@@ -1,15 +1,13 @@
 """Retrace backfill — retroactively generate snapshots for past dates."""
 
 import json
-import math
 from datetime import datetime
-from pathlib import Path
 
 import yfinance as yf
 
 from config.settings import get_all_yfinance_tickers
-from src.analysis.technicals import full_analysis
 from src.analysis.daytrade_scorer import score_instrument
+from src.analysis.technicals import full_analysis
 from src.retrace.scoring_config import load_scoring_weights
 from src.retrace.snapshot import RETRACE_DIR, _sanitize_value
 from src.utils.logging_config import get_logger

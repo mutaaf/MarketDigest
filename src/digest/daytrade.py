@@ -1,18 +1,25 @@
 """Day Trade Picks digest — pre-market ranked instrument picks."""
 
+from config.settings import get_enabled_sections
+from src.analysis.daytrade_scorer import get_condensed_track_record, score_instrument
+from src.analysis.fundamentals import fetch_fundamentals, is_equity_symbol, score_fundamentals
+from src.analysis.multi_tf_scorer import score_instrument_longterm, score_instrument_swing
+from src.analysis.performance import change_indicator
+from src.analysis.technicals import full_analysis, monthly_full_analysis, weekly_full_analysis
 from src.digest.builder import DigestBuilder
 from src.digest.formatter import (
-    bold, code, esc, italic, section_header, analysis_block, unavailable,
-    enhanced_pick_line, custom_section_block,
+    analysis_block,
+    bold,
+    code,
+    custom_section_block,
+    enhanced_pick_line,
+    esc,
+    italic,
+    section_header,
+    unavailable,
 )
-from config.settings import get_enabled_sections
-from src.analysis.technicals import full_analysis, get_trend_emoji, weekly_full_analysis, monthly_full_analysis
-from src.analysis.daytrade_scorer import score_instrument, rank_daytrade_picks, get_condensed_track_record
-from src.analysis.multi_tf_scorer import score_instrument_swing, score_instrument_longterm
-from src.analysis.fundamentals import fetch_fundamentals, score_fundamentals, is_equity_symbol
-from src.analysis.performance import change_indicator
-from src.utils.timezone import now_ct, format_date, format_time_ct
 from src.utils.logging_config import get_logger
+from src.utils.timezone import format_date, format_time_ct, now_ct
 
 logger = get_logger("daytrade_digest")
 
@@ -198,8 +205,8 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
 
     # ── Save retrace snapshot ────────────────────────────────────
     try:
-        from src.retrace.snapshot import save_snapshot
         from src.retrace.scoring_config import load_scoring_weights
+        from src.retrace.snapshot import save_snapshot
         from src.retrace.versioning import get_current_version_id
         save_snapshot(digest_data, load_scoring_weights(),
                       get_current_version_id("prompts") or "unversioned",

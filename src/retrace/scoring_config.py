@@ -1,6 +1,5 @@
 """Scoring weights configuration — load/save/validate from config/scoring.yaml."""
 
-from pathlib import Path
 
 import yaml
 

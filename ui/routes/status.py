@@ -1,11 +1,10 @@
 """Dashboard status endpoint."""
 
 import json
-from pathlib import Path
 
 from fastapi import APIRouter
 
-from config.settings import get_settings, PROJECT_ROOT
+from config.settings import PROJECT_ROOT, get_settings
 
 router = APIRouter(prefix="/api", tags=["status"])
 

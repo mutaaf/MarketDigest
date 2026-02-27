@@ -1,15 +1,13 @@
 """Digest configuration, run, and send endpoints."""
 
-import asyncio
 import json
 from datetime import datetime, timezone
-from pathlib import Path
 
 import yaml
 from fastapi import APIRouter, HTTPException
 
 from config.settings import PROJECT_ROOT, reload_settings
-from ui.models import DigestRunRequest, DigestSendRequest, DigestConfigUpdate
+from ui.models import DigestConfigUpdate, DigestRunRequest, DigestSendRequest
 
 router = APIRouter(prefix="/api/digests", tags=["digests"])
 
@@ -69,11 +67,11 @@ def run_digest(body: DigestRunRequest):
     reload_prompts()
 
     try:
-        from src.digest.builder import DigestBuilder
-        from src.digest.morning import build_morning_digest
         from src.digest.afternoon import build_afternoon_digest
-        from src.digest.weekly import build_weekly_digest
+        from src.digest.builder import DigestBuilder
         from src.digest.daytrade import build_daytrade_digest
+        from src.digest.morning import build_morning_digest
+        from src.digest.weekly import build_weekly_digest
 
         builders = {
             "morning": build_morning_digest,

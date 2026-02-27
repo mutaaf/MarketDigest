@@ -1,13 +1,18 @@
 """Prompts management endpoints."""
 
-from pathlib import Path
 
 import yaml
 from fastapi import APIRouter, HTTPException
 
 from config.settings import PROJECT_ROOT
-from src.analysis.llm_analyzer import reload_prompts, _DEFAULT_PROMPTS, _DEFAULT_SYSTEM_PROMPT, _DEFAULT_TOKEN_OVERRIDES, DEFAULT_MAX_TOKENS
-from ui.models import PromptUpdate, SystemPromptUpdate, LLMProviderConfig
+from src.analysis.llm_analyzer import (
+    _DEFAULT_PROMPTS,
+    _DEFAULT_SYSTEM_PROMPT,
+    _DEFAULT_TOKEN_OVERRIDES,
+    DEFAULT_MAX_TOKENS,
+    reload_prompts,
+)
+from ui.models import LLMProviderConfig, PromptUpdate, SystemPromptUpdate
 
 router = APIRouter(prefix="/api/prompts", tags=["prompts"])
 

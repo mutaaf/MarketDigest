@@ -345,7 +345,7 @@ def _build_longterm_signals(ta: dict, price: float, fundamentals: dict | None, i
     if trend in ("bullish", "weakly_bullish"):
         signals.append(f"Monthly trend: {trend.replace('_', ' ')}")
     elif trend in ("bearish", "weakly_bearish"):
-        signals.append(f"Monthly downtrend")
+        signals.append("Monthly downtrend")
 
     if is_equity and fundamentals:
         composite = fundamentals.get("composite", 50)

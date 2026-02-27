@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, HTTPException
 
-from config.settings import get_settings, save_instruments, reload_settings
+from config.settings import get_settings, reload_settings, save_instruments
 from ui.models import InstrumentToggle, NewInstrument
 
 router = APIRouter(prefix="/api/instruments", tags=["instruments"])

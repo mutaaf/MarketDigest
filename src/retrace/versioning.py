@@ -137,14 +137,14 @@ def rollback(config_name: str, version_id: str) -> str:
 
     # Save current as new version before overwriting
     if config_name == "scoring":
-        from src.retrace.scoring_config import load_scoring_weights, SCORING_YAML
+        from src.retrace.scoring_config import SCORING_YAML, load_scoring_weights
         current = {"weights": load_scoring_weights(), "description": "Pre-rollback state"}
         new_id = save_version(config_name, current, f"Rollback to {version_id}")
         # Write old content back to live config
         with open(SCORING_YAML, "w") as f:
             yaml.dump(old["content"], f, default_flow_style=False, sort_keys=False)
     elif config_name == "prompts":
-        from ui.routes.prompts import _load_prompts_yaml, PROMPTS_YAML
+        from ui.routes.prompts import PROMPTS_YAML, _load_prompts_yaml
         current = _load_prompts_yaml()
         new_id = save_version(config_name, current, f"Rollback to {version_id}")
         with open(PROMPTS_YAML, "w") as f:
