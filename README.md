@@ -2,16 +2,16 @@
 
 # Market Digest
 
-**Your entire pre-market routine — automated, scored, and delivered to Telegram.**
+**Your entire pre-market routine — automated, scored, and delivered to your phone.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/mutaafaziz/market-digest?style=flat&color=yellow)](https://github.com/mutaafaziz/market-digest/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://python.org)
 [![CI](https://github.com/mutaafaziz/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaafaziz/market-digest/actions)
 
-Tired of checking 6 platforms before market open?<br>
-Market Digest grabs live data, scores every instrument from 0–100, and texts you the results.<br>
-Then it tracks which picks actually hit — so your analysis gets better over time.
+**Tired of checking 6 different websites before the market opens?**<br>
+Market Digest does it for you. It grabs live prices, analyzes every instrument, gives each one a score from 0 to 100, and sends you a clean summary on Telegram.<br>
+Then it tracks whether those picks actually worked — so your results improve over time.
 
 <!-- TODO: Add demo GIF here. See assets/screenshots/README.md for recording instructions. -->
 <!-- ![Market Digest Demo](assets/screenshots/demo.gif) -->
@@ -22,56 +22,81 @@ Then it tracks which picks actually hit — so your analysis gets better over ti
 
 ## What You Get
 
-| | |
-|---|---|
-| **📱 Wake up to a scored market brief** | Morning, afternoon, weekly, and day trade digests land on your phone via Telegram — automatically. |
-| **🎯 See exactly where to enter, target, and stop** | Every instrument scored 0–100 across daily, weekly, and monthly timeframes. Entry, target, and stop levels included. |
-| **📊 Track which picks actually hit** | The Retrace system snapshots every pick and grades it against real prices. See your win rate. Tune your weights. |
-| **🧠 Optional AI commentary** | Add Claude, GPT-4o, or Gemini for context — or run pure data with zero API keys. |
-| **🏗️ A full Command Center in your browser** | Configure instruments, preview digests, view multi-timeframe scorecards, and track performance — all from a React web UI. |
-| **🔒 100% self-hosted, 100% yours** | No cloud. No subscription. No data leaves your machine unless you send it to Telegram. |
+<table>
+<tr>
+<td width="60">📱</td>
+<td><strong>A market summary on your phone every morning</strong><br>Before you even open your laptop, a scored brief — morning, afternoon, weekly, or day trade — is already waiting in Telegram.</td>
+</tr>
+<tr>
+<td>🎯</td>
+<td><strong>Clear entry, target, and stop levels</strong><br>Every instrument gets a grade from A+ to F, plus exact price levels: where to buy, where to take profit, and where to cut your loss.</td>
+</tr>
+<tr>
+<td>📊</td>
+<td><strong>See which picks actually worked</strong><br>The <strong>Retrace</strong> system saves every pick you get, then checks the next day — did it hit the target? Did it hit the stop? You'll see your actual win rate.</td>
+</tr>
+<tr>
+<td>🧠</td>
+<td><strong>Optional AI analysis</strong><br>Connect Claude, ChatGPT, or Gemini and get AI-written commentary alongside your data. Or skip it entirely — the core system needs zero AI to work.</td>
+</tr>
+<tr>
+<td>🖥️</td>
+<td><strong>A full control panel in your browser</strong><br>The <strong>Command Center</strong> lets you tweak settings, preview digests, see scorecards, and track performance — all from a clean web interface.</td>
+</tr>
+<tr>
+<td>🔒</td>
+<td><strong>Runs on your computer. Nobody else's.</strong><br>No cloud service. No monthly fee. No company storing your data. Everything stays on your machine.</td>
+</tr>
+</table>
+
+> **New to trading terms?** Don't worry — this README explains everything in plain English.
+> If you see something you don't understand, [open a discussion](https://github.com/mutaafaziz/market-digest/discussions) and we'll help.
 
 ---
 
 ## See It In Action
 
 <details>
-<summary><strong>📸 Command Center Dashboard</strong></summary>
+<summary>📸 <strong>Command Center Dashboard</strong> — click to expand</summary>
+<br>
 
 <!-- TODO: Screenshot of the Command Center home page showing API health indicators -->
 <!-- ![Dashboard](assets/screenshots/dashboard.png) -->
 
-*Capture this: Open the web UI at localhost:8550. Show the home page with API health dots and digest controls visible.*
+*The home page shows you which data sources are connected (green = good), quick buttons to run digests, and a snapshot of your setup.*
 
 </details>
 
 <details>
-<summary><strong>📊 Multi-Timeframe ScoreCard</strong></summary>
+<summary>📊 <strong>Multi-Timeframe ScoreCard</strong> — click to expand</summary>
+<br>
 
 <!-- TODO: Screenshot of a ScoreCard detail panel -->
 <!-- ![ScoreCard](assets/screenshots/scorecard.png) -->
 
-*Capture this: Click into any instrument's ScoreCard. Show the grade badge (A+ through F), entry/target/stop levels, RSI zones, and fundamentals panel for a stock.*
+*Every instrument gets three grades: one for day trading (daily analysis), one for swing trading (weekly), and one for long-term (monthly). Click any instrument to see exactly why it scored the way it did — RSI, trend direction, how close it is to key price levels, and more.*
 
 </details>
 
 <details>
-<summary><strong>📱 Telegram Digest</strong></summary>
+<summary>📱 <strong>What the Telegram Message Looks Like</strong> — click to expand</summary>
+<br>
 
 <!-- TODO: Screenshot of a Telegram message on your phone -->
 <!-- ![Telegram](assets/screenshots/telegram.png) -->
 
-*Capture this: Open Telegram on your phone. Find a real digest message. Crop to show the formatted output with scored picks.*
+*A clean, formatted message on your phone with your top picks, scores, entry/target/stop levels, and market context. Ready to read in under a minute.*
 
 </details>
 
 <details>
-<summary><strong>🔄 Retrace Performance</strong></summary>
+<summary>🔄 <strong>Retrace — Performance Tracking</strong> — click to expand</summary>
+<br>
 
 <!-- TODO: Screenshot of the Retrace tracking page -->
 <!-- ![Retrace](assets/screenshots/retrace.png) -->
 
-*Capture this: Open the Retrace page in the web UI. Show the win rate and pick performance history.*
+*After a few days of running, you'll see your actual hit rate: how often picks reached their target, how often they hit the stop, and how the scoring is performing. Use this to fine-tune your settings.*
 
 </details>
 
@@ -79,39 +104,61 @@ Then it tracks which picks actually hit — so your analysis gets better over ti
 
 ## Get Running in 60 Seconds
 
+You need two things installed: **[Python](https://python.org/downloads/)** (3.10 or newer) and **[Git](https://git-scm.com/downloads)**. If you're not sure, open a terminal and type `python3 --version` — if you see a number, you're good.
+
+**Open your terminal** (on Mac: search for "Terminal". On Windows: search for "PowerShell") and paste these commands one at a time:
+
 ```bash
 git clone https://github.com/mutaafaziz/market-digest.git
+```
+> ☝️ This downloads the project to your computer.
+
+```bash
 cd market-digest
+```
+> ☝️ This moves you into the project folder.
+
+```bash
 ./setup.sh
+```
+> ☝️ This does all the heavy lifting — creates an isolated Python environment, installs everything, and asks you about API keys (you can skip all of them for now).
+
+```bash
 make ui
 ```
+> ☝️ This starts the web interface. Your browser will open to [localhost:8550](http://localhost:8550) — that's the **Command Center**.
 
-That's it. The setup script creates a virtual environment, installs everything, and walks you through API keys (all optional). `make ui` builds the frontend and opens the Command Center at [localhost:8550](http://localhost:8550).
+**That's it. You're running.**
 
-**Want to see a digest right now?** No API keys needed:
+---
+
+**Want to see a sample digest right now?** No accounts or API keys needed:
 
 ```bash
 make digest-dry
 ```
+> This pulls free stock data and shows you a scored day trade digest right in your terminal. It's a preview — to get digests on your phone, you'll set up Telegram (free, takes 2 minutes — see the [API Keys section](#api-keys--whats-free-whats-optional) below).
 
-This runs a day trade digest in your terminal using free yfinance data.
+---
 
 <details>
-<summary><strong>🐳 Docker alternative</strong></summary>
+<summary>🐳 <strong>Prefer Docker?</strong> (If you know what Docker is, this is the easiest path)</summary>
+<br>
 
 ```bash
 git clone https://github.com/mutaafaziz/market-digest.git
 cd market-digest
-cp .env.example .env    # Edit .env with your API keys (optional)
+cp .env.example .env    # Optional: edit .env with your API keys
 docker compose up --build
 ```
 
-Open [localhost:8550](http://localhost:8550).
+Open [localhost:8550](http://localhost:8550) in your browser. Done.
 
 </details>
 
 <details>
-<summary><strong>🪟 Windows</strong></summary>
+<summary>🪟 <strong>On Windows?</strong></summary>
+<br>
 
 ```powershell
 git clone https://github.com/mutaafaziz/market-digest.git
@@ -119,33 +166,38 @@ cd market-digest
 .\setup.bat
 ```
 
-Then start the UI:
+Then start the web interface:
 
 ```powershell
 .venv\Scripts\python scripts\start_ui.py
 ```
 
+> **Tip:** If you get a "running scripts is disabled" error, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first, then try again.
+
 </details>
 
 <details>
-<summary><strong>🛠️ Manual setup</strong></summary>
+<summary>🛠️ <strong>Want to do it manually?</strong> (step by step, full control)</summary>
+<br>
 
 ```bash
 git clone https://github.com/mutaafaziz/market-digest.git
 cd market-digest
 
-# Python
+# Create an isolated Python environment (keeps your system clean)
 python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate          # On Windows: .venv\Scripts\activate
+
+# Install all the Python packages Market Digest needs
 pip install -r requirements.txt
 
-# Environment
-cp .env.example .env               # Edit with your keys (all optional)
+# Create your config file (you'll edit this later with API keys)
+cp .env.example .env
 
-# Frontend
+# Build the web interface (needs Node.js — https://nodejs.org)
 cd ui/frontend && npm install && npm run build && cd ../..
 
-# Launch
+# Start everything
 python scripts/start_ui.py
 ```
 
@@ -153,134 +205,227 @@ python scripts/start_ui.py
 
 ---
 
-## How It Works
+## How It Works — The Simple Version
+
+Think of Market Digest as a robot assistant that does your pre-market homework:
 
 ```
-  6 Data Sources          Analysis Engine          Delivery
-┌──────────────┐      ┌──────────────────┐      ┌──────────────┐
-│  yfinance    │      │  RSI / MACD      │      │              │
-│  TwelveData  │─────▶│  Pivot Points    │─────▶│   Telegram   │
-│  Finnhub     │      │  Trend Detection │      │   (phone)    │
-│  FRED        │      │  Scoring (0-100) │      │              │
-│  NewsAPI     │      │  Fundamentals    │      ├──────────────┤
-│  Fear & Greed│      │  AI Commentary   │      │   Web UI     │
-└──────────────┘      └──────────────────┘      │  (browser)   │
-                                                └──────────────┘
+   You sleep               Market Digest works            You wake up
+  ┌──────────┐          ┌──────────────────────┐        ┌────────────┐
+  │  😴 zzz  │          │  1. Grab live prices  │        │  📱 Phone  │
+  │          │          │  2. Run analysis      │  ───▶  │   buzzes   │
+  │          │          │  3. Score everything  │        │  "Here are │
+  │          │          │  4. Pick the best     │        │  today's   │
+  │          │          │  5. Send to Telegram  │        │  top picks"│
+  └──────────┘          └──────────────────────┘        └────────────┘
 ```
 
-Market Digest pulls live data from 6 free sources, runs technical analysis across 3 timeframes (daily, weekly, monthly), scores every instrument from 0–100 using weighted composites (RSI, trend, pivot proximity, volatility, volume, gaps), and sends you a formatted digest.
+**Here's what happens under the hood:**
 
-For stocks, it also scores fundamentals — valuation, profitability, growth, and financial health — so long-term grades factor in both technicals and business quality.
+1. **Grabs data from 6 free sources** — live prices (yfinance), intraday data (TwelveData), earnings info (Finnhub), economic indicators like interest rates and GDP (FRED), financial news (NewsAPI), and market fear/greed levels.
 
-The Retrace system snapshots every day trade digest, then compares your picks against actual next-day prices. Over time, you see which scoring weights work best and adjust them.
+2. **Analyzes everything across 3 timeframes:**
+   - **Daily** — for day trades (buying and selling the same day)
+   - **Weekly** — for swing trades (holding for days to weeks)
+   - **Monthly** — for long-term positions (holding for weeks to months)
+
+3. **Scores each instrument from 0 to 100** using:
+   - **RSI** (Relative Strength Index) — measures if something is overbought (too expensive, might drop) or oversold (cheap, might bounce)
+   - **Trend direction** — is the price going up, down, or sideways?
+   - **Pivot proximity** — how close is the price to key support/resistance levels (floors and ceilings)?
+   - **Volatility** — how wild are the price swings?
+   - **Volume** — are more people trading it than usual?
+   - **Gap analysis** — did the price jump overnight?
+
+4. **For stocks, it also checks the business fundamentals:**
+   - Is the company fairly valued? (valuation)
+   - Is it making good money? (profitability)
+   - Is it growing? (growth)
+   - Is it financially healthy? (debt, cash flow)
+
+5. **Sends you a formatted summary** on Telegram with the top picks, their scores, and exact entry/target/stop price levels.
+
+6. **Tracks accuracy** — the Retrace system records every pick and checks the next day: did the price hit the target? Over time, you'll see which types of picks work best and can adjust the scoring weights.
 
 ---
 
 ## What You Can Track
 
-84 instruments pre-configured across 7 categories:
+84 instruments come pre-loaded across 7 categories. You can add, remove, or toggle any of them:
 
-| Category | Examples | Count |
-|----------|----------|-------|
-| US Stocks | AAPL, NVDA, TSLA, META, JPM, LLY, PLTR | 48 |
-| US Indices | S&P 500, NASDAQ, Dow Jones, VIX | 6 |
-| Forex | EUR/USD, GBP/USD, USD/JPY | 8 |
-| Commodities | Gold, Oil, Natural Gas, Coffee, Copper | 14 |
-| Crypto | BTC, ETH, SOL, XRP, ADA | 5 |
-| Futures | ES, NQ, YM | 3 |
-| Economic | Fed Rate, CPI, GDP, Unemployment (via FRED) | 8 |
+| Category | What's Included | Count |
+|----------|----------------|-------|
+| **US Stocks** | Apple, NVIDIA, Tesla, Meta, Amazon, JPMorgan, Eli Lilly, Palantir, and 40 more | 48 |
+| **US Indices** | S&P 500, NASDAQ, Dow Jones, VIX (the "fear index") | 6 |
+| **Forex** | EUR/USD, GBP/USD, USD/JPY (currency pairs) | 8 |
+| **Commodities** | Gold, Silver, Oil, Natural Gas, Coffee, Copper, Wheat, and more | 14 |
+| **Crypto** | Bitcoin, Ethereum, Solana, XRP, Cardano | 5 |
+| **Futures** | S&P 500 Futures, NASDAQ Futures, Dow Futures | 3 |
+| **Economic Data** | Fed interest rate, CPI (inflation), GDP, unemployment | 8 |
 
-Add or remove instruments anytime through the web UI or by editing `config/instruments.yaml`.
+> **Want to add something?** Open the Command Center → Instruments page, and add any ticker. Or edit `config/instruments.yaml` directly.
 
 ---
 
 ## API Keys — What's Free, What's Optional
 
-**Market Digest works out of the box with zero API keys.** yfinance provides all core price data for free, no signup needed.
+**Market Digest works right away with zero API keys and zero signups.** The core data source (yfinance) is completely free and built in.
 
-| Service | Required? | Free Tier | What It Adds |
-|---------|-----------|-----------|--------------|
-| yfinance | Built-in | Free, no key | Core prices, fundamentals — always available |
-| [Telegram](https://t.me/BotFather) | For delivery | Free | Digest delivery to your phone |
-| [TwelveData](https://twelvedata.com) | No | 800 calls/day | Real-time and intraday prices |
-| [Finnhub](https://finnhub.io) | No | 60 calls/min | Earnings calendar, economic events |
-| [FRED](https://fred.stlouisfed.org/docs/api/api_key.html) | No | Unlimited | Fed rate, GDP, CPI, unemployment |
-| [NewsAPI](https://newsapi.org) | No | 100 calls/day | Financial news headlines |
-| [Anthropic](https://console.anthropic.com) / [OpenAI](https://platform.openai.com) / [Gemini](https://aistudio.google.com) | No | Varies | AI commentary on digests |
+Everything else is optional — add keys later to unlock more data:
 
-Add keys to `.env` as you go. Each one unlocks more data. The setup script walks you through it interactively.
+| Service | Do I Need It? | Cost | What It Adds | Sign Up |
+|---------|:---:|------|--------------|---------|
+| **yfinance** | Already included | Free | Stock prices, fundamentals — this is the engine | No signup needed |
+| **Telegram** | Only if you want phone delivery | Free | Get digests sent to your phone | [Create a bot](https://t.me/BotFather) (2 min) |
+| **TwelveData** | No | Free (800 calls/day) | Better real-time and intraday prices | [Sign up](https://twelvedata.com) |
+| **Finnhub** | No | Free (60 calls/min) | Earnings dates, economic events | [Sign up](https://finnhub.io) |
+| **FRED** | No | Free (unlimited) | Fed rate, GDP, inflation, unemployment | [Get key](https://fred.stlouisfed.org/docs/api/api_key.html) |
+| **NewsAPI** | No | Free (100 calls/day) | Financial news headlines | [Sign up](https://newsapi.org) |
+| **Claude / ChatGPT / Gemini** | No | Varies (has free tiers) | AI-written commentary on digests | [Anthropic](https://console.anthropic.com) / [OpenAI](https://platform.openai.com) / [Google](https://aistudio.google.com) |
 
----
-
-## The Command Center — Web UI
-
-Start it with `make ui` and open [localhost:8550](http://localhost:8550). Ten pages:
-
-| Page | What It Does |
-|------|-------------|
-| **Dashboard** | Home page with API health status and quick actions |
-| **Digest** | Preview and send any digest type (morning, afternoon, weekly, day trade) |
-| **Instruments** | Add, remove, or toggle the 84 tracked instruments |
-| **ScoreCard** | Multi-timeframe scorecards — daily, weekly, monthly grades for every instrument |
-| **Weights** | Tune scoring weights (RSI, trend, pivot, volatility, volume, gaps, fundamentals) |
-| **Prompts** | Edit LLM prompt templates for each digest section |
-| **Retrace** | Pick performance tracking — see which calls hit their targets |
-| **Settings** | Timezone, digest preferences, delivery config |
-| **Cache** | View and clear the dual-tier cache |
-| **Logs** | Browse digest history and runtime logs |
-
-**Access from your phone:** Open `http://<your-LAN-IP>:8550` on any device on your network.
+> **How to add keys:** Edit the `.env` file in the project folder, or re-run `./setup.sh` — it'll walk you through each one interactively.
+>
+> **Our recommendation:** Start with zero keys. Play with `make digest-dry`. Then add Telegram when you're ready for phone delivery. Add the rest whenever you feel like it.
 
 ---
 
-## Automate It — Set and Forget
+## The Command Center — Your Control Panel
 
-Schedule digests to run automatically so they're waiting on your phone when you wake up.
+Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your browser. Here's what you get:
+
+| Page | What You'll Do There |
+|------|---------------------|
+| **Dashboard** | See which data sources are connected, quick-launch digests |
+| **Digest** | Preview any digest (morning, afternoon, weekly, day trade) and send it |
+| **Instruments** | Turn instruments on/off, add new tickers, organize by category |
+| **ScoreCard** | See every instrument's grade (A+ to F) across all three timeframes |
+| **Weights** | Adjust how much each factor matters in the scoring (e.g., "care more about trends, less about volume") |
+| **Prompts** | Customize the AI prompts if you're using Claude/GPT/Gemini |
+| **Retrace** | See your pick accuracy — which calls hit, which missed |
+| **Settings** | Change your timezone, delivery preferences, and more |
+| **Cache** | See what data is cached and clear it if needed |
+| **Logs** | Browse past digests and system logs |
+
+> **Access from your phone or tablet:** If your computer and phone are on the same Wi-Fi, open `http://<your-computer's-IP>:8550` on your phone's browser. (Find your IP: on Mac run `ipconfig getifaddr en0`, on Windows run `ipconfig`.)
+
+---
+
+## Automate It — Set It and Forget It
+
+The real power is automation. Set up a schedule and digests arrive on your phone without you lifting a finger.
 
 <details>
-<summary><strong>macOS (launchd)</strong></summary>
+<summary><strong>macOS</strong></summary>
+<br>
 
 ```bash
 make schedule-install
 ```
 
-This creates scheduled jobs for:
-- **Morning brief** — 6:30 AM CT
-- **Day trade picks** — 8:15 AM CT
-- **Afternoon recap** — 4:30 PM CT
-- **Weekly summary** — Friday 5:30 PM CT
+This sets up automatic runs:
+| Digest | When |
+|--------|------|
+| Morning brief | 6:30 AM CT |
+| Day trade picks | 8:15 AM CT |
+| Afternoon recap | 4:30 PM CT |
+| Weekly summary | Friday 5:30 PM CT |
 
 </details>
 
 <details>
-<summary><strong>Linux (systemd)</strong></summary>
+<summary><strong>Linux</strong></summary>
+<br>
 
 See [`systemd/README.md`](systemd/README.md) for service files and timer setup.
 
 </details>
 
 <details>
-<summary><strong>Any platform (cron / Task Scheduler)</strong></summary>
+<summary><strong>Any system (the manual way)</strong></summary>
+<br>
 
-Run any digest from the command line:
+You can run any digest from the command line:
 
 ```bash
-# Digest types: morning, afternoon, weekly, daytrade
-# Modes: facts (data only), full (data + AI), both
-
 .venv/bin/python scripts/run_digest.py --type daytrade --mode facts
-.venv/bin/python scripts/run_digest.py --type morning --mode full
 ```
 
-Point your OS scheduler (cron, Windows Task Scheduler, etc.) at these commands.
+**Digest types:** `morning`, `afternoon`, `weekly`, `daytrade`
+**Modes:** `facts` (data only), `full` (data + AI commentary), `both` (sends both separately)
+
+Point your system's scheduler (cron on Linux/Mac, Task Scheduler on Windows) at any of these commands to run them automatically.
 
 </details>
 
 ---
 
-## Configuration
+## Frequently Asked Questions
 
-All config lives in YAML files under `config/`. Edit by hand or through the web UI — changes apply instantly.
+<details>
+<summary><strong>Do I need to know how to code?</strong></summary>
+<br>
+
+Nope. If you can copy-paste 4 commands into a terminal, you can run Market Digest. The setup script handles everything. The web UI handles all configuration — no code editing required.
+
+</details>
+
+<details>
+<summary><strong>Is this free?</strong></summary>
+<br>
+
+Yes, completely. Market Digest is open source under the MIT license. No premium tier, no trial period, no catch. The data sources it uses have generous free tiers. You can run it forever without paying anything.
+
+</details>
+
+<details>
+<summary><strong>Is this financial advice?</strong></summary>
+<br>
+
+No. Market Digest is a data analysis tool. It scores instruments based on technical and fundamental indicators, but it doesn't tell you what to buy or sell. Always do your own research and never trade money you can't afford to lose.
+
+</details>
+
+<details>
+<summary><strong>What's "self-hosted" mean?</strong></summary>
+<br>
+
+It means the software runs on your own computer, not on someone else's server. Your data stays with you. There's no company collecting your information or charging you monthly. The downside: you have to run the setup yourself (but it only takes 60 seconds).
+
+</details>
+
+<details>
+<summary><strong>Can I run this on a Raspberry Pi / VPS / server?</strong></summary>
+<br>
+
+Yes — anywhere that runs Python 3.10+ and has internet access. A Raspberry Pi 4, a $5/month VPS, an old laptop — all work great. Docker makes it especially easy on servers.
+
+</details>
+
+<details>
+<summary><strong>What if something breaks?</strong></summary>
+<br>
+
+[Open an issue](https://github.com/mutaafaziz/market-digest/issues/new/choose) with what happened and we'll help. Include your operating system and Python version.
+
+</details>
+
+<details>
+<summary><strong>Can I add my own stocks/instruments?</strong></summary>
+<br>
+
+Yes, two ways: through the web UI (Instruments page → Add), or by editing `config/instruments.yaml`. Any ticker that works on [Yahoo Finance](https://finance.yahoo.com) works here.
+
+</details>
+
+---
+
+## For Developers
+
+<details>
+<summary><strong>Configuration</strong></summary>
+<br>
+
+All config is in YAML files under `config/`. Edit by hand or through the web UI — changes apply instantly, no restart needed.
 
 | File | Controls |
 |------|----------|
@@ -289,9 +434,11 @@ All config lives in YAML files under `config/`. Edit by hand or through the web 
 | `config/prompts.yaml` | LLM prompt templates and AI provider settings |
 | `config/digests.yaml` | Digest sections, modes, and delivery schedules |
 
----
+</details>
 
-## Architecture
+<details>
+<summary><strong>Architecture</strong></summary>
+<br>
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -312,9 +459,13 @@ All config lives in YAML files under `config/`. Edit by hand or through the web 
 └─────────────────────────────────┴───────────────────────────┘
 ```
 
----
+**Tech stack:** Python 3.12 + FastAPI (60 endpoints), React 18 + TypeScript + Vite + Tailwind (web UI), yfinance + TwelveData + Finnhub + FRED + NewsAPI (data), dual-tier cache (memory + JSON files), Telegram for delivery. No database — all persistence is YAML configs and JSON files.
 
-## Project Structure
+</details>
+
+<details>
+<summary><strong>Project Structure</strong></summary>
+<br>
 
 ```
 market-digest/
@@ -337,9 +488,11 @@ market-digest/
 └── cache/               # File-backed JSON cache
 ```
 
----
+</details>
 
-## Makefile Shortcuts
+<details>
+<summary><strong>Makefile Shortcuts</strong></summary>
+<br>
 
 ```bash
 make setup          # Full setup (venv + deps + frontend build)
@@ -352,14 +505,16 @@ make clean          # Remove build artifacts and cache
 make help           # Show all available targets
 ```
 
+</details>
+
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and how to add new features (fetchers, scoring dimensions, digest sections, API endpoints).
+Want to help make Market Digest better? See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and how to add new features.
 
 ---
 
 ## License
 
-[MIT](LICENSE) — do whatever you want with it.
+[MIT](LICENSE) — use it however you want, for free, forever.
