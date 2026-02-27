@@ -4,7 +4,7 @@
 
 **Your entire pre-market routine — automated, scored, and delivered to your phone.**
 
-[![GitHub Stars](https://img.shields.io/github/stars/mutaafaziz/market-digest?style=flat&color=yellow)](https://github.com/mutaafaziz/market-digest/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/mutaaf/market-digest?style=flat&color=yellow)](https://github.com/mutaaf/market-digest/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://python.org)
 [![CI](https://github.com/mutaafaziz/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaafaziz/market-digest/actions)
