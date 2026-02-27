@@ -7,7 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/mutaaf/market-digest?style=flat&color=yellow)](https://github.com/mutaaf/market-digest/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://python.org)
-[![CI](https://github.com/mutaafaziz/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaafaziz/market-digest/actions)
+[![CI](https://github.com/mutaafaziz/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaaf/market-digest/actions)
 
 **Tired of checking 6 different websites before the market opens?**<br>
 Market Digest does it for you. It grabs live prices, analyzes every instrument, gives each one a score from 0 to 100, and sends you a clean summary on Telegram.<br>
