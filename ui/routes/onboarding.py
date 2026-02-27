@@ -4,7 +4,7 @@ import asyncio
 
 from fastapi import APIRouter, HTTPException
 
-from config.settings import get_settings, update_env_var, reload_settings
+from config.settings import get_settings, reload_settings, update_env_var
 from ui.models import ApiKeyUpdate
 
 router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
@@ -129,7 +129,7 @@ def test_api(api_name: str):
         try:
             import anthropic
             client = anthropic.Anthropic(api_key=settings.llm_keys.anthropic)
-            resp = client.messages.create(
+            client.messages.create(
                 model="claude-haiku-4-5-20251001", max_tokens=10,
                 messages=[{"role": "user", "content": "Say OK"}]
             )
@@ -143,7 +143,7 @@ def test_api(api_name: str):
         try:
             import openai
             client = openai.OpenAI(api_key=settings.llm_keys.openai)
-            resp = client.chat.completions.create(
+            client.chat.completions.create(
                 model="gpt-4o-mini", max_tokens=10,
                 messages=[{"role": "user", "content": "Say OK"}]
             )
@@ -158,7 +158,7 @@ def test_api(api_name: str):
             import google.generativeai as genai
             genai.configure(api_key=settings.llm_keys.gemini)
             model = genai.GenerativeModel("gemini-2.0-flash")
-            resp = model.generate_content("Say OK")
+            model.generate_content("Say OK")
             return {"success": True, "message": "Connected to Gemini"}
         except Exception as e:
             return {"success": False, "message": str(e)}

@@ -1,8 +1,8 @@
 """Static reference data and helpers for market events, earnings, and FOMC calendar."""
 
-from datetime import date, datetime
-from src.utils.timezone import now_ct
+from datetime import date
 
+from src.utils.timezone import now_ct
 
 # ── FOMC Meeting Dates (updated annually from federalreserve.gov) ──────
 
@@ -112,7 +112,6 @@ def get_forward_calendar() -> list[dict]:
 
     Returns list of {event, date, days_until, formatted}.
     """
-    today = now_ct().date()
     items = []
 
     # FOMC countdown

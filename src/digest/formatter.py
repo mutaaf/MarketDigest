@@ -2,7 +2,6 @@
 
 import html
 import math
-from typing import Any
 
 from src.analysis.performance import change_indicator
 
@@ -263,8 +262,8 @@ def movers_block(movers: dict[str, list[dict]]) -> str:
 
     if movers.get("losers"):
         lines.append(f"  {bold('Top Losers')}")
-        for l in movers["losers"][:5]:
-            lines.append(f"    🔴 {esc(l.get('name', ''))} {change_indicator(l.get('change_pct', 0))}")
+        for loser in movers["losers"][:5]:
+            lines.append(f"    🔴 {esc(loser.get('name', ''))} {change_indicator(loser.get('change_pct', 0))}")
 
     return "\n".join(lines)
 
@@ -359,11 +358,11 @@ def enhanced_pick_line(rank: int, pick: dict, track: dict | None = None) -> str:
     # Line 5: track record (only if retrace history exists)
     if track:
         w = track.get("wins", 0)
-        l = track.get("losses", 0)
+        losses = track.get("losses", 0)
         wr = track.get("win_rate", 0)
         avg_r = track.get("avg_r")
         r_part = f", {avg_r}R avg" if avg_r is not None else ""
-        line += f"\n     \U0001f4ca Track: {w}W-{l}L ({wr:.0f}% WR{esc(r_part)})"
+        line += f"\n     \U0001f4ca Track: {w}W-{losses}L ({wr:.0f}% WR{esc(r_part)})"
 
     # Line 6: multi-timeframe scores (if available)
     swing = pick.get("swing_score")

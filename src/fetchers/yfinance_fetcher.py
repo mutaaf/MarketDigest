@@ -36,7 +36,7 @@ class YFinanceFetcher(BaseFetcher):
 
         def _fetch():
             t = yf.Ticker(ticker)
-            info = t.fast_info
+            t.fast_info  # Trigger metadata load
             hist = t.history(period="2d")
             if hist.empty:
                 return None

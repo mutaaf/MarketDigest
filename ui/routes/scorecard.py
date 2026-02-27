@@ -2,19 +2,19 @@
 
 import time
 
+import yfinance as yf
 from fastapi import APIRouter, HTTPException, Query
 
-import yfinance as yf
-
 from config.settings import get_all_yfinance_tickers
-from src.analysis.technicals import (
-    full_analysis, compute_weekly_pivots, compute_weekly_atr, compute_pivot_points,
-    weekly_full_analysis, monthly_full_analysis,
-)
 from src.analysis.daytrade_scorer import score_instrument, score_to_grade
-from src.analysis.multi_tf_scorer import score_instrument_swing, score_instrument_longterm
-from src.analysis.fundamentals import fetch_fundamentals, score_fundamentals, is_equity_symbol
+from src.analysis.fundamentals import fetch_fundamentals, is_equity_symbol, score_fundamentals
 from src.analysis.indicator_analysis import generate_indicator_analyses
+from src.analysis.multi_tf_scorer import score_instrument_longterm, score_instrument_swing
+from src.analysis.technicals import (
+    full_analysis,
+    monthly_full_analysis,
+    weekly_full_analysis,
+)
 from src.retrace.scoring_config import load_scoring_weights
 from src.retrace.snapshot import list_snapshots, load_snapshot
 
@@ -116,7 +116,6 @@ def _build_all_tf_targets(
     lt_scored: dict | None,
 ) -> dict:
     """Build daily + swing + longterm target sets with S/R zones."""
-    price = scored.get("price", scored["entry"])
     daily_sr = ta.get("support_resistance", {})
 
     daily = {

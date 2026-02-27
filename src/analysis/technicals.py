@@ -153,10 +153,10 @@ def compute_weekly_pivots(df: pd.DataFrame) -> dict | None:
             return None
         # Use the last *completed* week (iloc[-2]); iloc[-1] may be partial
         last_week = weekly.iloc[-2]
-        h, l, c = float(last_week["High"]), float(last_week["Low"]), float(last_week["Close"])
-        pivots = compute_pivot_points(h, l, c)
+        h, lo, c = float(last_week["High"]), float(last_week["Low"]), float(last_week["Close"])
+        pivots = compute_pivot_points(h, lo, c)
         pivots["week_high"] = round(h, 5)
-        pivots["week_low"] = round(l, 5)
+        pivots["week_low"] = round(lo, 5)
         pivots["week_close"] = round(c, 5)
         return pivots
     except Exception:
@@ -203,10 +203,10 @@ def compute_monthly_pivots(df: pd.DataFrame) -> dict | None:
         if len(monthly) < 2:
             return None
         last_month = monthly.iloc[-2]
-        h, l, c = float(last_month["High"]), float(last_month["Low"]), float(last_month["Close"])
-        pivots = compute_pivot_points(h, l, c)
+        h, lo, c = float(last_month["High"]), float(last_month["Low"]), float(last_month["Close"])
+        pivots = compute_pivot_points(h, lo, c)
         pivots["month_high"] = round(h, 5)
-        pivots["month_low"] = round(l, 5)
+        pivots["month_low"] = round(lo, 5)
         pivots["month_close"] = round(c, 5)
         return pivots
     except Exception:

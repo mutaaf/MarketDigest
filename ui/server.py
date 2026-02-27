@@ -7,11 +7,23 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from fastapi.staticfiles import StaticFiles  # noqa: E402
 
-from ui.routes import status, onboarding, settings, instruments, prompts, digests, sources, cache, history, retrace, scorecard
+from ui.routes import (  # noqa: E402
+    cache,
+    digests,
+    history,
+    instruments,
+    onboarding,
+    prompts,
+    retrace,
+    scorecard,
+    settings,
+    sources,
+    status,
+)
 
 app = FastAPI(title="Market Digest Command Center", version="1.0.0")
 

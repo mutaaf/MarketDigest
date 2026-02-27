@@ -192,8 +192,8 @@ def _format_movers(movers: dict) -> str:
     lines = []
     for g in movers.get("gainers", []):
         lines.append(f"GAINER: {g.get('name', '?')} ({_safe_num(g.get('change_pct'), 0):+.2f}%)")
-    for l in movers.get("losers", []):
-        lines.append(f"LOSER: {l.get('name', '?')} ({_safe_num(l.get('change_pct'), 0):+.2f}%)")
+    for loser in movers.get("losers", []):
+        lines.append(f"LOSER: {loser.get('name', '?')} ({_safe_num(loser.get('change_pct'), 0):+.2f}%)")
     return "\n".join(lines)
 
 

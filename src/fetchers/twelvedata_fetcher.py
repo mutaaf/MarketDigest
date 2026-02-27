@@ -107,14 +107,14 @@ class TwelveDataFetcher(BaseFetcher):
 
             prev = data[0]  # Most recent completed day
             h = float(prev["high"])
-            l = float(prev["low"])
+            lo = float(prev["low"])
             c = float(prev["close"])
 
-            pivot = (h + l + c) / 3
-            r1 = 2 * pivot - l
+            pivot = (h + lo + c) / 3
+            r1 = 2 * pivot - lo
             s1 = 2 * pivot - h
-            r2 = pivot + (h - l)
-            s2 = pivot - (h - l)
+            r2 = pivot + (h - lo)
+            s2 = pivot - (h - lo)
 
             return {
                 "pivot": round(pivot, 5),

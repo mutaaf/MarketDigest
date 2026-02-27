@@ -1,19 +1,31 @@
 """Weekly digest template (Friday ~5:30 PM CT)."""
 
-from src.digest.builder import DigestBuilder
-from src.digest.formatter import (
-    bold, code, esc, italic, section_header, price_line,
-    economic_event_line, sentiment_block, analysis_block, quick_take_block,
-    unavailable, comprehensive_event_line, earnings_line, forward_calendar_block,
-    custom_section_block,
-)
 from config.settings import get_enabled_sections
 from src.analysis.performance import (
-    change_indicator, rank_by_performance, sector_comparison, get_top_movers,
+    change_indicator,
+    get_top_movers,
+    rank_by_performance,
+    sector_comparison,
 )
-from src.analysis.technicals import get_rsi_label, get_trend_emoji
-from src.utils.timezone import now_ct, format_date, start_of_week_ct
+from src.analysis.technicals import get_rsi_label
+from src.digest.builder import DigestBuilder
+from src.digest.formatter import (
+    analysis_block,
+    bold,
+    code,
+    comprehensive_event_line,
+    custom_section_block,
+    earnings_line,
+    esc,
+    forward_calendar_block,
+    italic,
+    quick_take_block,
+    section_header,
+    sentiment_block,
+    unavailable,
+)
 from src.utils.logging_config import get_logger
+from src.utils.timezone import format_date, now_ct, start_of_week_ct
 
 logger = get_logger("weekly_digest")
 
@@ -86,7 +98,7 @@ def build_weekly_digest(builder: DigestBuilder, mode: str = "facts", out_data: d
                     g_names = ", ".join(g.get("name", "") for g in gainers[:3])
                     narrative_parts.append(f"Top performers: {esc(g_names)}")
                 if losers:
-                    l_names = ", ".join(l.get("name", "") for l in losers[:3])
+                    l_names = ", ".join(loser.get("name", "") for loser in losers[:3])
                     narrative_parts.append(f"Laggards: {esc(l_names)}")
 
                 vix = all_prices.get("VIX", {})
