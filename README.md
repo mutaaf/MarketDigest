@@ -276,7 +276,7 @@ Everything else is optional — add keys later to unlock more data:
 | Service | Do I Need It? | Cost | What It Adds | Sign Up |
 |---------|:---:|------|--------------|---------|
 | **yfinance** | Already included | Free | Stock prices, fundamentals — this is the engine | No signup needed |
-| **Telegram** | Only if you want phone delivery | Free | Get digests sent to your phone | [Create a bot](https://t.me/BotFather) (2 min) |
+| **Telegram** | Only if you want phone delivery | Free | Get digests sent to your phone | [See setup guide below](#setting-up-telegram--get-digests-on-your-phone) |
 | **TwelveData** | No | Free (800 calls/day) | Better real-time and intraday prices | [Sign up](https://twelvedata.com) |
 | **Finnhub** | No | Free (60 calls/min) | Earnings dates, economic events | [Sign up](https://finnhub.io) |
 | **FRED** | No | Free (unlimited) | Fed rate, GDP, inflation, unemployment | [Get key](https://fred.stlouisfed.org/docs/api/api_key.html) |
@@ -289,6 +289,150 @@ Everything else is optional — add keys later to unlock more data:
 
 ---
 
+## Setting Up Telegram — Get Digests on Your Phone
+
+Telegram is free and takes about 2 minutes to set up. Once connected, Market Digest will send formatted digests directly to your phone — no app to open, no website to check.
+
+### Step 1: Create a Telegram Bot
+
+1. **Open Telegram** on your phone or computer (download it from [telegram.org](https://telegram.org) if you don't have it — it's free)
+2. **Search for `@BotFather`** in Telegram and open a chat with it (BotFather is Telegram's official tool for creating bots)
+3. **Send the message:** `/newbot`
+4. **BotFather will ask you two things:**
+   - A **name** for your bot (this is a display name, e.g., `My Market Digest`)
+   - A **username** for your bot (must end in `bot`, e.g., `my_market_digest_bot`)
+5. **BotFather will reply with a token** — a long string that looks like `123456789:ABCdefGHIjklMNOpqrsTUVwxyz`. **Copy this token.** You'll need it in Step 3.
+
+### Step 2: Get Your Chat ID
+
+Your Chat ID tells Market Digest *where* to send messages (your personal chat).
+
+1. **Open a chat with your new bot** in Telegram — search for the username you just created
+2. **Send it any message** (just say "hello" — the bot won't reply yet, that's normal)
+3. **Open this URL in your browser** (replace `YOUR_TOKEN` with the token from Step 1):
+   ```
+   https://api.telegram.org/botYOUR_TOKEN/getUpdates
+   ```
+4. **Look for `"chat":{"id":` in the response** — the number after it is your Chat ID (e.g., `987654321`)
+
+> **Can't find your Chat ID?** An easier method: search for `@userinfobot` on Telegram, start a chat, and it'll tell you your ID.
+
+### Step 3: Add Your Credentials
+
+Open the `.env` file in the project folder and fill in these two lines:
+
+```env
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_CHAT_ID=987654321
+```
+
+Or re-run `./setup.sh` and enter them when prompted.
+
+### Step 4: Test It
+
+```bash
+.venv/bin/python scripts/test_telegram.py
+```
+
+> If it works, you'll get a test message on Telegram. If not, double-check that you messaged the bot first (Step 2) and that the token and chat ID are correct.
+
+**That's it — you're connected.** Now any digest you run (without `--dry-run`) will be delivered to your phone.
+
+> **Want to send to multiple people?** Add more chat IDs separated by commas in your `.env`:
+> ```env
+> TELEGRAM_CHAT_ID=987654321,111222333,444555666
+> ```
+> Each person needs to have opened a chat with your bot first.
+
+---
+
+## Bring Your Own Data Sources
+
+Market Digest comes with 6 built-in data sources, but you can **add your own** — any HTTP API, RSS feed, or CSV file — through the web UI or the API. No code required.
+
+### Adding a Custom Source via the Command Center
+
+1. Open the Command Center (`make ui`)
+2. Go to the **Data Sources** page
+3. Click **Add Custom Source**
+4. Fill in the details:
+   - **Name** — whatever you want to call it (e.g., "Alpha Vantage", "My RSS Feed")
+   - **Type** — `HTTP API`, `RSS Feed`, or `CSV File`
+   - **URL** — the endpoint or feed URL
+   - **Authentication** — API key, Bearer token, or custom header (if needed)
+5. Click **Test** to verify it connects
+6. Enable it — the data will now appear in your digests
+
+### Three Source Types
+
+<details>
+<summary><strong>HTTP API</strong> — connect to any JSON API</summary>
+<br>
+
+Point it at any REST API that returns JSON. Market Digest handles:
+- **URL templates** — use `{symbol}` and `{api_key}` placeholders (e.g., `https://api.example.com/quote/{symbol}?key={api_key}`)
+- **Authentication** — API key in URL, Bearer token, or custom header
+- **Response mapping** — tell it which fields in the API response map to `price`, `open`, `high`, `low`, etc.
+- **Per-symbol fetching** — specify a list of symbols and it'll call the API for each one
+
+</details>
+
+<details>
+<summary><strong>RSS Feed</strong> — pull in any news feed</summary>
+<br>
+
+Point it at any RSS or Atom feed URL (e.g., a financial news RSS feed, a subreddit feed, a blog). Market Digest will:
+- Parse the feed automatically
+- Pull title, summary, and link from each item
+- Include the latest items in your digest
+
+> Requires the `feedparser` package: `.venv/bin/pip install feedparser`
+
+</details>
+
+<details>
+<summary><strong>CSV File</strong> — use your own local data</summary>
+<br>
+
+Point it at a CSV file on your computer. Useful for:
+- Proprietary data you export from another tool
+- Watchlists from your broker
+- Custom research data
+
+Market Digest reads the CSV, maps columns to fields, and auto-converts numbers.
+
+</details>
+
+### Example: Adding an HTTP API Source
+
+Here's what it looks like to add Alpha Vantage as a custom source (via the API, if you prefer):
+
+```bash
+curl -X POST http://localhost:8550/api/sources/custom \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Alpha Vantage",
+    "type": "http",
+    "url": "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}",
+    "auth": {
+      "env_var": "ALPHA_VANTAGE_KEY"
+    },
+    "instruments": ["AAPL", "MSFT"],
+    "response_root": "Global Quote",
+    "response_mapping": {
+      "price": "05. price",
+      "open": "02. open",
+      "high": "03. high",
+      "low": "04. low",
+      "volume": "06. volume"
+    }
+  }'
+```
+
+> **Bottom line:** If it's on the internet and returns data, you can probably plug it in. No need to write code or modify source files — the web UI and API handle everything.
+
+---
+
 ## The Command Center — Your Control Panel
 
 Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your browser. Here's what you get:
@@ -298,6 +442,7 @@ Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your
 | **Dashboard** | See which data sources are connected, quick-launch digests |
 | **Digest** | Preview any digest (morning, afternoon, weekly, day trade) and send it |
 | **Instruments** | Turn instruments on/off, add new tickers, organize by category |
+| **Data Sources** | Manage built-in sources, add custom APIs/RSS/CSV feeds, test connections |
 | **ScoreCard** | See every instrument's grade (A+ to F) across all three timeframes |
 | **Weights** | Adjust how much each factor matters in the scoring (e.g., "care more about trends, less about volume") |
 | **Prompts** | Customize the AI prompts if you're using Claude/GPT/Gemini |
@@ -414,6 +559,35 @@ Yes — anywhere that runs Python 3.10+ and has internet access. A Raspberry Pi 
 <br>
 
 Yes, two ways: through the web UI (Instruments page → Add), or by editing `config/instruments.yaml`. Any ticker that works on [Yahoo Finance](https://finance.yahoo.com) works here.
+
+</details>
+
+<details>
+<summary><strong>My Telegram bot isn't sending messages</strong></summary>
+<br>
+
+The most common fixes:
+
+1. **Did you message the bot first?** Open Telegram, find your bot by its username, and send it any message (even just "hi"). The bot can't message you until you've started a conversation with it.
+2. **Is your token correct?** Copy it again from BotFather — make sure there are no extra spaces.
+3. **Is your Chat ID correct?** Try the `@userinfobot` method: search for `@userinfobot` on Telegram, send it a message, and it'll reply with your ID.
+4. **Run the test:** `.venv/bin/python scripts/test_telegram.py` — it'll tell you exactly what's wrong.
+
+</details>
+
+<details>
+<summary><strong>Can I use Discord / Email / Slack instead of Telegram?</strong></summary>
+<br>
+
+Not yet built in, but Telegram is free and takes 2 minutes to set up. Discord and email delivery are on the roadmap. If you're a developer, the delivery system in `src/delivery/` is modular — adding a new delivery method is a great first contribution.
+
+</details>
+
+<details>
+<summary><strong>Can I plug in my own data source?</strong></summary>
+<br>
+
+Yes — any HTTP API, RSS feed, or CSV file. No code needed. Use the Command Center's Data Sources page or the REST API. See the [Bring Your Own Data Sources](#bring-your-own-data-sources) section for details and examples.
 
 </details>
 
