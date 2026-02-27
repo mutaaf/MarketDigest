@@ -7,7 +7,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/mutaaf/market-digest?style=flat&color=yellow)](https://github.com/mutaaf/market-digest/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://python.org)
-[![CI](https://github.com/mutaafaziz/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaaf/market-digest/actions)
+[![CI](https://github.com/mutaaf/market-digest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaaf/market-digest/actions)
 
 **Tired of checking 6 different websites before the market opens?**<br>
 Market Digest does it for you. It grabs live prices, analyzes every instrument, gives each one a score from 0 to 100, and sends you a clean summary on Telegram.<br>
@@ -50,7 +50,7 @@ Then it tracks whether those picks actually worked — so your results improve o
 </table>
 
 > **New to trading terms?** Don't worry — this README explains everything in plain English.
-> If you see something you don't understand, [open a discussion](https://github.com/mutaafaziz/market-digest/discussions) and we'll help.
+> If you see something you don't understand, [open a discussion](https://github.com/mutaaf/market-digest/discussions) and we'll help.
 
 ---
 
@@ -109,7 +109,7 @@ You need two things installed: **[Python](https://python.org/downloads/)** (3.10
 **Open your terminal** (on Mac: search for "Terminal". On Windows: search for "PowerShell") and paste these commands one at a time:
 
 ```bash
-git clone https://github.com/mutaafaziz/market-digest.git
+git clone https://github.com/mutaaf/market-digest.git
 ```
 > ☝️ This downloads the project to your computer.
 
@@ -146,7 +146,7 @@ make digest-dry
 <br>
 
 ```bash
-git clone https://github.com/mutaafaziz/market-digest.git
+git clone https://github.com/mutaaf/market-digest.git
 cd market-digest
 cp .env.example .env    # Optional: edit .env with your API keys
 docker compose up --build
@@ -161,7 +161,7 @@ Open [localhost:8550](http://localhost:8550) in your browser. Done.
 <br>
 
 ```powershell
-git clone https://github.com/mutaafaziz/market-digest.git
+git clone https://github.com/mutaaf/market-digest.git
 cd market-digest
 .\setup.bat
 ```
@@ -181,7 +181,7 @@ Then start the web interface:
 <br>
 
 ```bash
-git clone https://github.com/mutaafaziz/market-digest.git
+git clone https://github.com/mutaaf/market-digest.git
 cd market-digest
 
 # Create an isolated Python environment (keeps your system clean)
@@ -550,7 +550,7 @@ Yes — anywhere that runs Python 3.10+ and has internet access. A Raspberry Pi 
 <summary><strong>What if something breaks?</strong></summary>
 <br>
 
-[Open an issue](https://github.com/mutaafaziz/market-digest/issues/new/choose) with what happened and we'll help. Include your operating system and Python version.
+[Open an issue](https://github.com/mutaaf/market-digest/issues/new/choose) with what happened and we'll help. Include your operating system and Python version.
 
 </details>
 
