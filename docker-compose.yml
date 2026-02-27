@@ -1,0 +1,22 @@
+# Market Digest — Docker Compose
+#
+# Quick start:
+#   1. Copy .env.example to .env and add your API keys
+#   2. Run: docker compose up --build
+#   3. Open http://localhost:8550
+#
+# Your config, logs, and cache are saved on your machine (not inside the container),
+# so nothing is lost if you rebuild or restart.
+
+services:
+  market-digest:
+    build: .
+    ports:
+      - "8550:8550"
+    env_file:
+      - .env
+    volumes:
+      - ./config:/app/config        # Your instrument/prompt/scoring config
+      - ./logs:/app/logs             # Digest history and retrace snapshots
+      - ./cache:/app/cache           # Cached API responses
+    restart: unless-stopped

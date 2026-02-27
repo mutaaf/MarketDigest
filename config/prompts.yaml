@@ -249,3 +249,25 @@ sections:
       '
     max_tokens: 500
     include_cross_context: false
+  multi_tf_outlook:
+    prompt: 'Based on the multi-timeframe technical data above (daily, weekly, monthly
+      indicators), provide a concise outlook per timeframe. Day Trade: intraday setup
+      and key levels. Swing (1-2 weeks): weekly trend direction and inflection points.
+      Long Term (1-3 months): monthly trend health and value. Connect the timeframes
+      — does weekly confirm or conflict with the daily? 2-3 sentences per timeframe,
+      reference specific levels.
+
+      '
+    max_tokens: 500
+    include_cross_context: false
+  fundamentals_analysis:
+    prompt: 'Based on the financial data above (income, balance sheet, cash flow,
+      ratios), provide a concise fundamental assessment. Cover: Valuation — cheap or
+      expensive vs earnings/assets? Quality — margins healthy and improving? Growth
+      — revenue/EPS trending up? Health — debt manageable, cash flow positive? End
+      with one sentence on whether fundamentals support the technical setup. Flowing
+      prose, no bullets. Reference specific numbers.
+
+      '
+    max_tokens: 500
+    include_cross_context: false

@@ -1,0 +1,19 @@
+# Market Digest — systemd service template
+#
+# See README.md in this directory for installation instructions.
+
+[Unit]
+Description=Market Digest Web UI
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i/market-digest
+ExecStart=/home/%i/market-digest/.venv/bin/python -m uvicorn ui.server:app --host 0.0.0.0 --port 8550
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONPATH=/home/%i/market-digest
+
+[Install]
+WantedBy=multi-user.target

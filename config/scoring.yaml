@@ -1,8 +1,9 @@
 weights:
-  rsi: 0.20
-  trend: 0.15
-  pivot: 0.20
-  atr: 0.20
-  volume: 0.15
-  gap: 0.10
-description: "Default daytrade scoring weights"
+  atr: 0.2689
+  gap: 0.0208
+  pivot: 0.3182
+  rsi: 0.3393
+  trend: 0.0208
+  volume: 0.032
+description: 'Auto-tuned (69 picks): atr +3%, gap -3%, pivot +5%, rsi +6%, trend -4%,
+  volume -6%'

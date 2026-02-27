@@ -1,0 +1,16 @@
+[project]
+name = "market-digest"
+version = "1.0.0"
+description = "Automated market analysis delivered to Telegram"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

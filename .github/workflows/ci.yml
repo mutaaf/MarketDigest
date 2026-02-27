@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt ruff pytest
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Check imports
+        run: python -c "from config.settings import Settings; print('Config OK')"
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: cd ui/frontend && npm ci
+
+      - name: Type check
+        run: cd ui/frontend && npx tsc --noEmit
+
+      - name: Build
+        run: cd ui/frontend && npm run build

@@ -57,6 +57,41 @@ def validate_weights(weights: dict[str, float]) -> tuple[bool, str]:
     return True, "OK"
 
 
+DEFAULT_SWING_WEIGHTS = {"rsi": 0.25, "trend": 0.30, "pivot": 0.25, "atr": 0.20}
+DEFAULT_LT_WEIGHTS_EQUITY = {"rsi": 0.10, "trend": 0.15, "pivot": 0.10, "atr": 0.05, "fundamentals": 0.60}
+DEFAULT_LT_WEIGHTS_NON_EQUITY = {"rsi": 0.25, "trend": 0.35, "pivot": 0.25, "atr": 0.15}
+
+
+def load_swing_weights() -> dict[str, float]:
+    """Read swing scoring weights from YAML, falling back to defaults."""
+    try:
+        if SCORING_YAML.exists():
+            with open(SCORING_YAML) as f:
+                data = yaml.safe_load(f) or {}
+            weights = data.get("swing_weights", {})
+            if weights and all(k in weights for k in DEFAULT_SWING_WEIGHTS):
+                return {k: float(weights[k]) for k in DEFAULT_SWING_WEIGHTS}
+    except Exception:
+        pass
+    return dict(DEFAULT_SWING_WEIGHTS)
+
+
+def load_longterm_weights(is_equity: bool = True) -> dict[str, float]:
+    """Read long-term scoring weights from YAML, falling back to defaults."""
+    key = "longterm_weights_equity" if is_equity else "longterm_weights_non_equity"
+    defaults = DEFAULT_LT_WEIGHTS_EQUITY if is_equity else DEFAULT_LT_WEIGHTS_NON_EQUITY
+    try:
+        if SCORING_YAML.exists():
+            with open(SCORING_YAML) as f:
+                data = yaml.safe_load(f) or {}
+            weights = data.get(key, {})
+            if weights and all(k in weights for k in defaults):
+                return {k: float(weights[k]) for k in defaults}
+    except Exception:
+        pass
+    return dict(defaults)
+
+
 def save_scoring_weights(weights: dict[str, float], description: str = "") -> None:
     """Validate and write scoring weights to YAML, then create a version."""
     ok, msg = validate_weights(weights)

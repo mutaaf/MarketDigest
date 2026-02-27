@@ -7,6 +7,10 @@ export interface ScoreCardSummary {
   trend_emoji: string
   rsi: number | null
   signals: string[]
+  swing_score?: number
+  swing_grade?: string
+  longterm_score?: number
+  longterm_grade?: string
 }
 
 export interface ScoreCardSetup {
@@ -60,9 +64,66 @@ export interface TimeframeTarget {
   stop_level: string
 }
 
+export interface TimeframeTargetExtended extends TimeframeTarget {
+  support_zones: number[]
+  resistance_zones: number[]
+}
+
 export interface MultiTfTargets {
-  daily: TimeframeTarget
-  weekly: TimeframeTarget | null
+  daily: TimeframeTargetExtended
+  swing: TimeframeTargetExtended | null
+  longterm: TimeframeTargetExtended | null
+}
+
+export interface TimeframeScore {
+  score: number
+  grade: string
+  signals: string[]
+  verdict: string
+}
+
+export interface MultiTfScores {
+  daytrade: TimeframeScore
+  swing: TimeframeScore | null
+  longterm: TimeframeScore | null
+}
+
+export interface FundamentalMetrics {
+  pe_ratio: number | null
+  forward_pe: number | null
+  pb_ratio: number | null
+  ev_ebitda: number | null
+  debt_equity: number | null
+  current_ratio: number | null
+  free_cash_flow: number | null
+  revenue_growth: number | null
+  eps_growth: number | null
+  gross_margin: number | null
+  operating_margin: number | null
+  net_margin: number | null
+  roe: number | null
+  roa: number | null
+}
+
+export interface FundamentalScores {
+  valuation: number | null
+  profitability: number | null
+  growth: number | null
+  health: number | null
+  composite: number
+}
+
+export interface Fundamentals {
+  metrics: FundamentalMetrics
+  scores: FundamentalScores
+  highlights: {
+    income: Record<string, number | null>
+    balance: Record<string, number | null>
+    cashflow: Record<string, number | null>
+  }
+  sector: string | null
+  industry: string | null
+  market_cap: number | null
 }
 
 export interface IndicatorAnalysis {
@@ -85,5 +146,7 @@ export interface ScoreCardFull extends ScoreCardSummary {
   technicals: ScoreCardTechnicals
   history: ScoreCardHistory
   multi_tf_targets?: MultiTfTargets
+  multi_tf_scores?: MultiTfScores
+  fundamentals?: Fundamentals | null
   indicator_analyses?: IndicatorAnalysis[]
 }

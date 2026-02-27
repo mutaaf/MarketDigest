@@ -7,8 +7,13 @@ from fastapi import APIRouter, HTTPException, Query
 import yfinance as yf
 
 from config.settings import get_all_yfinance_tickers
-from src.analysis.technicals import full_analysis, compute_weekly_pivots, compute_weekly_atr, compute_pivot_points
+from src.analysis.technicals import (
+    full_analysis, compute_weekly_pivots, compute_weekly_atr, compute_pivot_points,
+    weekly_full_analysis, monthly_full_analysis,
+)
 from src.analysis.daytrade_scorer import score_instrument, score_to_grade
+from src.analysis.multi_tf_scorer import score_instrument_swing, score_instrument_longterm
+from src.analysis.fundamentals import fetch_fundamentals, score_fundamentals, is_equity_symbol
 from src.analysis.indicator_analysis import generate_indicator_analyses
 from src.retrace.scoring_config import load_scoring_weights
 from src.retrace.snapshot import list_snapshots, load_snapshot
@@ -102,9 +107,17 @@ def _build_history(symbol: str) -> dict:
     }
 
 
-def _build_multi_tf_targets(scored: dict, weekly_pivots: dict | None, weekly_atr: float | None) -> dict:
-    """Build daily + weekly target sets from scored data and weekly computations."""
+def _build_all_tf_targets(
+    scored: dict,
+    ta: dict,
+    ta_weekly: dict | None,
+    ta_monthly: dict | None,
+    swing_scored: dict | None,
+    lt_scored: dict | None,
+) -> dict:
+    """Build daily + swing + longterm target sets with S/R zones."""
     price = scored.get("price", scored["entry"])
+    daily_sr = ta.get("support_resistance", {})
 
     daily = {
         "entry": scored["entry"],
@@ -113,41 +126,53 @@ def _build_multi_tf_targets(scored: dict, weekly_pivots: dict | None, weekly_atr
         "risk_reward": scored["risk_reward"],
         "target_level": scored.get("target_level", ""),
         "stop_level": scored.get("stop_level", ""),
+        "support_zones": daily_sr.get("support", []),
+        "resistance_zones": daily_sr.get("resistance", []),
     }
 
-    weekly = None
-    if weekly_pivots:
-        w_r1 = weekly_pivots.get("r1")
-        w_s1 = weekly_pivots.get("s1")
-        w_atr = weekly_atr or (price * 0.02)
-
-        w_target = max(w_r1, price + w_atr) if w_r1 else price + w_atr
-        w_stop = max(w_s1, price - 0.5 * w_atr) if w_s1 else price - 0.5 * w_atr
-
-        w_target_level = "Weekly R1" if w_r1 and w_target == w_r1 else "Weekly ATR"
-        w_stop_level = "Weekly S1" if w_s1 and w_stop == w_s1 else "Weekly ATR"
-
-        w_risk = price - w_stop
-        w_reward = w_target - price
-        w_rr = round(w_reward / w_risk, 2) if w_risk > 0 else 0.0
-
-        weekly = {
-            "entry": round(price, 2),
-            "target": round(w_target, 2),
-            "stop": round(w_stop, 2),
-            "risk_reward": w_rr,
-            "target_level": w_target_level,
-            "stop_level": w_stop_level,
+    swing = None
+    if swing_scored:
+        weekly_sr = ta_weekly.get("support_resistance", {}) if ta_weekly else {}
+        swing = {
+            "entry": swing_scored["entry"],
+            "target": swing_scored["target"],
+            "stop": swing_scored["stop"],
+            "risk_reward": swing_scored["risk_reward"],
+            "target_level": swing_scored.get("target_level", ""),
+            "stop_level": swing_scored.get("stop_level", ""),
+            "support_zones": weekly_sr.get("support", []),
+            "resistance_zones": weekly_sr.get("resistance", []),
         }
 
-    return {"daily": daily, "weekly": weekly}
+    longterm = None
+    if lt_scored:
+        monthly_sr = ta_monthly.get("support_resistance", {}) if ta_monthly else {}
+        longterm = {
+            "entry": lt_scored["entry"],
+            "target": lt_scored["target"],
+            "stop": lt_scored["stop"],
+            "risk_reward": lt_scored["risk_reward"],
+            "target_level": lt_scored.get("target_level", ""),
+            "stop_level": lt_scored.get("stop_level", ""),
+            "support_zones": monthly_sr.get("support", []),
+            "resistance_zones": monthly_sr.get("resistance", []),
+        }
+
+    return {"daily": daily, "swing": swing, "longterm": longterm}
 
 
-def _run_analysis(sym: str, weights: dict) -> dict | None:
-    """Fetch data and run TA + scoring for a single symbol."""
+def _run_analysis(sym: str, weights: dict, category: str = "us_stock", period: str = "6mo") -> dict | None:
+    """Fetch data and run TA + scoring for a single symbol.
+
+    Args:
+        sym: yfinance ticker symbol.
+        weights: Daytrade scoring weights.
+        category: Instrument category for equity detection.
+        period: yfinance history period ("6mo" for overview, "2y" for detail).
+    """
     try:
         ticker = yf.Ticker(sym)
-        df = ticker.history(period="6mo")
+        df = ticker.history(period=period)
         if df is None or df.empty or len(df) < 14:
             return None
 
@@ -169,20 +194,54 @@ def _run_analysis(sym: str, weights: dict) -> dict | None:
         if not scored:
             return None
 
-        # Weekly computations for multi-timeframe targets
-        weekly_pivots = compute_weekly_pivots(df)
-        weekly_atr = compute_weekly_atr(df)
-
         # Indicator analyses
         analyses = generate_indicator_analyses(ta, scored, price, sym)
 
-        return {
+        result = {
             "ta": ta,
             "scored": scored,
-            "weekly_pivots": weekly_pivots,
-            "weekly_atr": weekly_atr,
             "indicator_analyses": analyses,
+            "ta_weekly": None,
+            "ta_monthly": None,
+            "swing_scored": None,
+            "lt_scored": None,
+            "fundamentals": None,
+            "fundamentals_scores": None,
         }
+
+        # Weekly analysis (swing)
+        ta_weekly = weekly_full_analysis(df, ticker=sym)
+        result["ta_weekly"] = ta_weekly if not ta_weekly.get("error") else None
+
+        if result["ta_weekly"]:
+            swing = score_instrument_swing(ta_weekly, price_data)
+            result["swing_scored"] = swing
+
+        # Monthly analysis + fundamentals (only with enough data)
+        if period == "2y":
+            ta_monthly = monthly_full_analysis(df, ticker=sym)
+            result["ta_monthly"] = ta_monthly if not ta_monthly.get("error") else None
+
+            # Fundamentals for equities
+            equity = is_equity_symbol(category)
+            fund_data = None
+            fund_scores = None
+            if equity:
+                fund_data = fetch_fundamentals(sym, sym)
+                if fund_data:
+                    fund_scores = score_fundamentals(fund_data)
+                    result["fundamentals"] = fund_data
+                    result["fundamentals_scores"] = fund_scores
+
+            if result["ta_monthly"]:
+                lt = score_instrument_longterm(
+                    ta_monthly, price_data,
+                    fundamentals=fund_scores,
+                    is_equity=equity,
+                )
+                result["lt_scored"] = lt
+
+        return result
     except Exception:
         return None
 
@@ -208,14 +267,14 @@ def get_all_scorecards(refresh: bool = Query(False)):
         if not sym:
             continue
 
-        result = _run_analysis(sym, weights)
+        result = _run_analysis(sym, weights, category=t.get("category", "us_stock"), period="6mo")
         if not result:
             continue
 
         scored = result["scored"]
         grade = _score_to_grade(scored["score"])
 
-        cards.append({
+        card = {
             "symbol": scored["symbol"],
             "name": t.get("name", scored["name"]),
             "grade": grade,
@@ -224,7 +283,15 @@ def get_all_scorecards(refresh: bool = Query(False)):
             "trend_emoji": scored.get("trend_emoji", ""),
             "rsi": scored.get("rsi"),
             "signals": scored.get("signals", []),
-        })
+        }
+
+        # Add swing scores if available (6mo is enough for weekly)
+        swing = result.get("swing_scored")
+        if swing:
+            card["swing_score"] = swing["score"]
+            card["swing_grade"] = swing["grade"]
+
+        cards.append(card)
 
     # Sort by score descending
     cards.sort(key=lambda c: c["score"], reverse=True)
@@ -248,7 +315,8 @@ def get_scorecard_detail(symbol: str, refresh: bool = Query(False)):
         return cached["data"]
 
     weights = load_scoring_weights()
-    result = _run_analysis(sym_upper, weights)
+    # Detail uses 2y for monthly analysis
+    result = _run_analysis(sym_upper, weights, period="2y")
 
     if not result:
         raise HTTPException(404, f"No data available for {symbol}")
@@ -284,7 +352,51 @@ def get_scorecard_detail(symbol: str, refresh: bool = Query(False)):
     }
 
     # ── Multi-timeframe targets ──
-    multi_tf_targets = _build_multi_tf_targets(scored, result.get("weekly_pivots"), result.get("weekly_atr"))
+    multi_tf_targets = _build_all_tf_targets(
+        scored, ta,
+        result.get("ta_weekly"),
+        result.get("ta_monthly"),
+        result.get("swing_scored"),
+        result.get("lt_scored"),
+    )
+
+    # ── Multi-timeframe scores ──
+    swing_scored = result.get("swing_scored")
+    lt_scored = result.get("lt_scored")
+    multi_tf_scores = {
+        "daytrade": {
+            "score": scored["score"],
+            "grade": grade,
+            "signals": scored.get("signals", []),
+            "verdict": verdict,
+        },
+        "swing": {
+            "score": swing_scored["score"],
+            "grade": swing_scored["grade"],
+            "signals": swing_scored.get("signals", []),
+            "verdict": swing_scored.get("verdict", ""),
+        } if swing_scored else None,
+        "longterm": {
+            "score": lt_scored["score"],
+            "grade": lt_scored["grade"],
+            "signals": lt_scored.get("signals", []),
+            "verdict": lt_scored.get("verdict", ""),
+        } if lt_scored else None,
+    }
+
+    # ── Fundamentals ──
+    fund_data = result.get("fundamentals")
+    fund_scores = result.get("fundamentals_scores")
+    fundamentals_response = None
+    if fund_data:
+        fundamentals_response = {
+            "metrics": fund_data.get("metrics", {}),
+            "scores": fund_scores or {},
+            "highlights": fund_data.get("highlights", {}),
+            "sector": fund_data.get("sector"),
+            "industry": fund_data.get("industry"),
+            "market_cap": fund_data.get("market_cap"),
+        }
 
     response = {
         "symbol": scored["symbol"],
@@ -300,6 +412,8 @@ def get_scorecard_detail(symbol: str, refresh: bool = Query(False)):
         "technicals": technicals,
         "history": history,
         "multi_tf_targets": multi_tf_targets,
+        "multi_tf_scores": multi_tf_scores,
+        "fundamentals": fundamentals_response,
         "indicator_analyses": result.get("indicator_analyses", []),
     }
 

@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import getpass
 import os
 import signal
 import socket
@@ -32,7 +33,7 @@ CRASH_LOG = LOGS_DIR / "ui_server.log"
 
 PORT = 8550
 
-LAUNCHD_LABEL = "com.mutaafaziz.market-digest-ui"
+LAUNCHD_LABEL = f"com.{getpass.getuser()}.market-digest-ui"
 PLIST_SOURCE = PROJECT_ROOT / "launchd" / f"{LAUNCHD_LABEL}.plist"
 PLIST_DEST = Path.home() / "Library" / "LaunchAgents" / f"{LAUNCHD_LABEL}.plist"
 

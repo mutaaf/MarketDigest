@@ -56,6 +56,8 @@ _DEFAULT_PROMPTS = {
     "action_items_summary": "Based on all the market data above, write a 2-3 sentence executive summary highlighting the most important thing a general investor should know right now. Focus on the single biggest risk or opportunity, the key level to watch, and whether the overall setup is risk-on or risk-off. No bullet points, no headers, no emojis — just concise prose.",
     "daytrade_summary": "Based on the scored day trade picks and market conditions data above, write a 2-3 sentence pre-open thesis for today's day trading session. Identify the dominant theme (momentum, mean-reversion, sector rotation), highlight the best setup among the top picks with specific price levels, and note the key risk (VIX level, gap risk, low volume). Write concisely — no bullet points, no headers, no emojis.",
     "next_steps_daytrade": "Based on the day trade picks data above, provide 3-5 actionable trading items for TODAY's session. For each item: name the specific instrument, cite entry/target/stop levels, and describe the setup (e.g. 'NVDA breaking R1 at $125 with 1.8x volume — target $128, stop $123'). Focus on the highest-conviction setups from the scored picks. Number each item. Write concisely — one sentence per item, no preamble.",
+    "multi_tf_outlook": "Based on the multi-timeframe technical data above (daily, weekly, monthly indicators), provide a concise outlook per timeframe. Day Trade: intraday setup and key levels. Swing (1-2 weeks): weekly trend direction and inflection points. Long Term (1-3 months): monthly trend health and value. Connect the timeframes — does weekly confirm or conflict with the daily? 2-3 sentences per timeframe, reference specific levels.",
+    "fundamentals_analysis": "Based on the financial data above (income, balance sheet, cash flow, ratios), provide a concise fundamental assessment. Cover: Valuation — cheap or expensive vs earnings/assets? Quality — margins healthy and improving? Growth — revenue/EPS trending up? Health — debt manageable, cash flow positive? End with one sentence on whether fundamentals support the technical setup. Flowing prose, no bullets. Reference specific numbers.",
 }
 
 _DEFAULT_TOKEN_OVERRIDES = {
@@ -288,6 +290,110 @@ def _format_comprehensive_events(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _format_multi_tf_data(data: dict) -> str:
+    """Format multi-timeframe scores and targets for LLM context."""
+    lines = []
+
+    # Top picks with multi-TF scores
+    top_picks = data.get("top_picks", [])
+    if top_picks:
+        lines.append("MULTI-TIMEFRAME SCORES FOR TOP PICKS:")
+        for pick in top_picks:
+            sym = pick.get("symbol", "?")
+            dt_score = pick.get("score", 0)
+            dt_grade = pick.get("grade", "?")
+            line = f"  {sym}: DayTrade {dt_grade} ({dt_score:.0f}/100)"
+
+            swing = pick.get("swing_score")
+            if swing:
+                line += f" | Swing {swing.get('grade', '?')} ({swing.get('score', 0):.0f}/100)"
+
+            lt = pick.get("longterm_score")
+            if lt:
+                line += f" | LongTerm {lt.get('grade', '?')} ({lt.get('score', 0):.0f}/100)"
+
+            lines.append(line)
+
+            # Add signals per timeframe
+            if swing and swing.get("signals"):
+                lines.append(f"    Swing signals: {', '.join(swing['signals'])}")
+            if lt and lt.get("signals"):
+                lines.append(f"    LT signals: {', '.join(lt['signals'])}")
+
+    return "\n".join(lines)
+
+
+def _format_fundamentals_data(data: dict) -> str:
+    """Format fundamentals data for LLM context."""
+    lines = []
+    fundamentals = data.get("fundamentals_summary", {})
+
+    for sym, fund in fundamentals.items():
+        lines.append(f"\n{sym} FUNDAMENTALS:")
+        metrics = fund.get("metrics", {})
+        scores = fund.get("scores", {})
+
+        if scores:
+            lines.append(f"  Scores: Valuation={scores.get('valuation', 'N/A')} | "
+                         f"Profitability={scores.get('profitability', 'N/A')} | "
+                         f"Growth={scores.get('growth', 'N/A')} | "
+                         f"Health={scores.get('health', 'N/A')} | "
+                         f"Composite={scores.get('composite', 'N/A')}")
+
+        # Key ratios
+        ratio_parts = []
+        if metrics.get("pe_ratio") is not None:
+            ratio_parts.append(f"P/E={metrics['pe_ratio']:.1f}")
+        if metrics.get("pb_ratio") is not None:
+            ratio_parts.append(f"P/B={metrics['pb_ratio']:.1f}")
+        if metrics.get("ev_ebitda") is not None:
+            ratio_parts.append(f"EV/EBITDA={metrics['ev_ebitda']:.1f}")
+        if metrics.get("debt_equity") is not None:
+            ratio_parts.append(f"D/E={metrics['debt_equity']:.2f}")
+        if ratio_parts:
+            lines.append(f"  Ratios: {' | '.join(ratio_parts)}")
+
+        # Margins
+        margin_parts = []
+        if metrics.get("gross_margin") is not None:
+            margin_parts.append(f"Gross={metrics['gross_margin']:.1f}%")
+        if metrics.get("operating_margin") is not None:
+            margin_parts.append(f"Op={metrics['operating_margin']:.1f}%")
+        if metrics.get("net_margin") is not None:
+            margin_parts.append(f"Net={metrics['net_margin']:.1f}%")
+        if margin_parts:
+            lines.append(f"  Margins: {' | '.join(margin_parts)}")
+
+        # Growth
+        growth_parts = []
+        if metrics.get("revenue_growth") is not None:
+            growth_parts.append(f"Rev={metrics['revenue_growth']:.1f}%")
+        if metrics.get("eps_growth") is not None:
+            growth_parts.append(f"EPS={metrics['eps_growth']:.1f}%")
+        if metrics.get("roe") is not None:
+            growth_parts.append(f"ROE={metrics['roe']:.1f}%")
+        if growth_parts:
+            lines.append(f"  Growth/Returns: {' | '.join(growth_parts)}")
+
+        # Highlights
+        highlights = fund.get("highlights", {})
+        income = highlights.get("income", {})
+        if income.get("revenue"):
+            lines.append(f"  Revenue: ${income['revenue']:,.0f}")
+        if income.get("eps"):
+            lines.append(f"  EPS: ${income['eps']:.2f}")
+
+        balance = highlights.get("balance", {})
+        if balance.get("total_debt") and balance.get("cash"):
+            lines.append(f"  Debt: ${balance['total_debt']:,.0f} | Cash: ${balance['cash']:,.0f}")
+
+        cashflow = highlights.get("cashflow", {})
+        if cashflow.get("fcf"):
+            lines.append(f"  Free Cash Flow: ${cashflow['fcf']:,.0f}")
+
+    return "\n".join(lines)
+
+
 def _format_daytrade_picks(data: dict) -> str:
     lines = []
     # Market conditions
@@ -409,6 +515,8 @@ _DATA_HEADERS = {
     "action_items_summary": lambda data, ctx: f"=== ALL MARKET DATA FOR ACTION ITEMS ===\n{_format_digest_summary(data)}",
     "daytrade_summary": lambda data, ctx: f"=== DAY TRADE PICKS DATA ===\n{_format_daytrade_picks(data)}",
     "next_steps_daytrade": lambda data, ctx: f"=== DAY TRADE PICKS DATA ===\n{_format_daytrade_picks(data)}",
+    "multi_tf_outlook": lambda data, ctx: f"=== MULTI-TIMEFRAME OUTLOOK ===\n{_format_multi_tf_data(data)}",
+    "fundamentals_analysis": lambda data, ctx: f"=== FUNDAMENTALS DATA ===\n{_format_fundamentals_data(data)}",
 }
 
 

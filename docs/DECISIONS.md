@@ -253,3 +253,73 @@ Use macOS native launchd with plist files.
 - Positive: Zero dependencies, reliable, handles sleep/wake
 - Negative: macOS only — not portable to Linux/Windows
 - Mitigation: CLI entry point (`run_digest.py`) works on any platform; only scheduling is macOS-specific
+
+---
+
+## ADR-009: Multi-Timeframe Scoring with Separate Weight Sets
+
+### Status
+Accepted
+
+### Context
+The original scorecard system only produced a single daytrade score (0-100) based on daily technicals. Users needed swing (1-2 week) and long-term (1-3 month) outlook alongside intraday setups, with equity fundamentals factored into long-term scores.
+
+### Decision
+Add two new scorers (swing, long-term) with separate configurable weight sets in `config/scoring.yaml`. Equity long-term scoring weights fundamentals at 60%, while non-equity instruments use 100% technical weights. Weekly analysis requires ~70 daily bars; monthly requires ~300 (2 years). The overview endpoint (`/all`) computes daytrade + swing only (6mo data), while the detail endpoint fetches 2y for full monthly + fundamentals analysis.
+
+### Rationale
+1. Three timeframes cover day trading, swing trading, and position investing audiences
+2. Separate weight configs allow independent tuning per timeframe
+3. Fundamentals are only meaningful for equities — forex/commodities/crypto degrade gracefully to `null`
+4. `/all` stays fast by skipping monthly (needs 2y data) — it only adds swing scores
+5. Reuses `score_to_grade()` and pivot/ATR target logic from the daytrade scorer
+
+### Implementation
+- `src/analysis/technicals.py` — `weekly_full_analysis()`, `monthly_full_analysis()`, `compute_monthly_pivots()`, `compute_monthly_atr()`
+- `src/analysis/multi_tf_scorer.py` — `score_instrument_swing()`, `score_instrument_longterm()`
+- `src/analysis/fundamentals.py` — `fetch_fundamentals()` (yfinance + Finnhub fallback, 6h cache), `score_fundamentals()` (4 sub-scores: valuation, profitability, growth, health)
+- `config/scoring.yaml` — `swing_weights`, `longterm_weights_equity`, `longterm_weights_non_equity`
+- `src/retrace/scoring_config.py` — `load_swing_weights()`, `load_longterm_weights(is_equity)`
+- `ui/routes/scorecard.py` — `_run_analysis()` accepts `category` + `period` params
+- `ui/frontend/src/components/common/ScoreCardDetail.tsx` — timeframe tab selector, fundamentals card, S/R zones
+- `src/digest/daytrade.py` — computes swing/LT for top 10 picks, adds LLM multi-TF + fundamentals sections
+- `src/digest/formatter.py` — multi-TF grade line on each pick
+
+### Consequences
+- Positive: Three perspectives per instrument, fundamentals-aware long-term scoring
+- Positive: Backward-compatible — existing daytrade scoring unchanged
+- Positive: Non-equity graceful degradation (fundamentals=null, tech-only LT weights)
+- Negative: Detail endpoint is slower (2y fetch + fundamentals API call)
+- Negative: Monthly analysis requires 14+ monthly bars — insufficient for recently listed stocks
+- Mitigation: Monthly/fundamentals return null when data is insufficient; UI shows "unavailable"
+
+---
+
+## ADR-010: Server Auto-Restart with Exponential Backoff
+
+### Status
+Accepted
+
+### Context
+The `start.command` launcher ran uvicorn as a single process. If the server crashed (unhandled exception, SIGTERM from macOS memory pressure), the UI became unreachable with no recovery.
+
+### Decision
+Wrap the uvicorn process in a bash restart loop with exponential backoff (2s, 4s, 8s, ... capped at 60s). Reset backoff to 2s after 30+ seconds of healthy uptime. Ctrl+C (SIGINT/SIGTERM) exits cleanly without restart.
+
+### Rationale
+1. Crashes should not require manual intervention to restore the UI
+2. Exponential backoff prevents tight restart loops on persistent errors
+3. Backoff reset after healthy uptime ensures fast recovery from transient issues
+4. Clean exit on Ctrl+C preserves intentional shutdown behavior
+
+### Implementation
+- `start.command` — `trap 'STOPPED_BY_USER=1' INT TERM` captures user stop intent
+- `while true` loop launches uvicorn, `wait`s for exit, checks `STOPPED_BY_USER` flag
+- Uptime tracked via `$SECONDS`-style arithmetic; >30s resets backoff to 2s
+- Backoff doubles each iteration: `BACKOFF=$((BACKOFF * 2))`, capped at `MAX_BACKOFF=60`
+
+### Consequences
+- Positive: Automatic recovery from crashes, no manual restart needed
+- Positive: Clean Ctrl+C exit preserved
+- Negative: Persistent startup errors will retry indefinitely (until user closes window)
+- Mitigation: Backoff caps at 60s, and error message is printed each cycle

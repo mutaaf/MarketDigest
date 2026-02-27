@@ -6,8 +6,10 @@ from src.digest.formatter import (
     enhanced_pick_line, custom_section_block,
 )
 from config.settings import get_enabled_sections
-from src.analysis.technicals import full_analysis, get_trend_emoji
+from src.analysis.technicals import full_analysis, get_trend_emoji, weekly_full_analysis, monthly_full_analysis
 from src.analysis.daytrade_scorer import score_instrument, rank_daytrade_picks, get_condensed_track_record
+from src.analysis.multi_tf_scorer import score_instrument_swing, score_instrument_longterm
+from src.analysis.fundamentals import fetch_fundamentals, score_fundamentals, is_equity_symbol
 from src.analysis.performance import change_indicator
 from src.utils.timezone import now_ct, format_date, format_time_ct
 from src.utils.logging_config import get_logger
@@ -140,9 +142,59 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
     honorable = scored_instruments[10:15]
     avoid_list = sorted(scored_instruments, key=lambda x: x["score"])[:5]
 
+    # ── Multi-TF scoring for top picks ──────────────────────────
+    logger.info("Computing multi-timeframe scores for top picks...")
+    fundamentals_summary = {}
+    for pick in top_picks:
+        sym = pick["symbol"]
+        try:
+            # Find the matching ticker config for category
+            cat = "us_stock"
+            yf_sym = sym
+            for t in all_tickers:
+                if t.get("symbol") == sym or t.get("yfinance") == sym:
+                    cat = t.get("category", "us_stock")
+                    yf_sym = t.get("yfinance", sym)
+                    break
+
+            hist_2y = builder.yf.get_history(yf_sym, period="2y", interval="1d")
+            if hist_2y is None or hist_2y.empty:
+                continue
+
+            # Swing (weekly)
+            ta_w = weekly_full_analysis(hist_2y, ticker=sym)
+            if not ta_w.get("error"):
+                swing = score_instrument_swing(ta_w, prices[sym])
+                if swing:
+                    pick["swing_score"] = swing
+
+            # Long-term (monthly)
+            ta_m = monthly_full_analysis(hist_2y, ticker=sym)
+            equity = is_equity_symbol(cat)
+            fund_scores = None
+            if equity:
+                fund_data = fetch_fundamentals(sym, yf_sym)
+                if fund_data:
+                    fund_scores = score_fundamentals(fund_data)
+                    fundamentals_summary[sym] = {
+                        "metrics": fund_data.get("metrics", {}),
+                        "scores": fund_scores,
+                        "highlights": fund_data.get("highlights", {}),
+                    }
+
+            if not ta_m.get("error"):
+                lt = score_instrument_longterm(ta_m, prices[sym], fundamentals=fund_scores, is_equity=equity)
+                if lt:
+                    pick["longterm_score"] = lt
+        except Exception as e:
+            logger.debug(f"Multi-TF scoring failed for {sym}: {e}")
+            continue
+
     digest_data["top_picks"] = top_picks
     digest_data["honorable_mentions"] = honorable
     digest_data["avoid_list"] = avoid_list
+    if fundamentals_summary:
+        digest_data["fundamentals_summary"] = fundamentals_summary
 
     # ── Save retrace snapshot ────────────────────────────────────
     try:
@@ -174,6 +226,30 @@ def build_daytrade_digest(builder: DigestBuilder, mode: str = "facts", out_data:
             except Exception:
                 pass
             parts.append(enhanced_pick_line(i, pick, track))
+
+    # ── Multi-Timeframe Outlook (full mode) ─────────────────────
+    if analyzer and digest_data.get("top_picks"):
+        try:
+            parts.append(section_header("\U0001f4d0 MULTI-TIMEFRAME OUTLOOK"))
+            analysis = analyzer.analyze_section("multi_tf_outlook", digest_data, context=digest_data)
+            if analysis:
+                parts.append(analysis_block(analysis))
+            else:
+                parts.append(unavailable("Multi-timeframe outlook"))
+        except Exception as e:
+            logger.warning(f"Multi-TF outlook LLM failed: {e}")
+
+    # ── Fundamentals Snapshot (full mode, equities only) ──────
+    if analyzer and digest_data.get("fundamentals_summary"):
+        try:
+            parts.append(section_header("\U0001f4ca FUNDAMENTALS SNAPSHOT"))
+            analysis = analyzer.analyze_section("fundamentals_analysis", digest_data, context=digest_data)
+            if analysis:
+                parts.append(analysis_block(analysis))
+            else:
+                parts.append(unavailable("Fundamentals snapshot"))
+        except Exception as e:
+            logger.warning(f"Fundamentals LLM failed: {e}")
 
     # ── Honorable Mentions ──────────────────────────────────────
     if "honorable_mentions" in enabled and honorable:

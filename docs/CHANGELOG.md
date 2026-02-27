@@ -5,6 +5,14 @@ All notable changes to Market Digest.
 ## [Unreleased]
 
 ### Added
+- **Multi-timeframe scoring**: Day Trade (daily), Swing (weekly), Long Term (monthly) — each with separate configurable weights in `config/scoring.yaml`
+- **Equity fundamentals analysis**: Fetches financial data (yfinance + Finnhub fallback, 6h cache), scores valuation/profitability/growth/health (0-100 each)
+- **Weekly/monthly technical analysis**: `weekly_full_analysis()`, `monthly_full_analysis()`, `compute_monthly_pivots()`, `compute_monthly_atr()` in `src/analysis/technicals.py`
+- **Multi-TF scorecard UI**: Timeframe tab selector (DT/Swing/LT), per-timeframe targets + S/R zones, fundamentals card with sub-score bars + collapsible highlights
+- **Multi-TF digest integration**: Top 10 picks show Swing/LT grades inline; full mode adds LLM multi-TF outlook + fundamentals snapshot sections
+- **Overview grade pills**: ScoreCard grid shows DT/SW/LT mini-badges per card
+- **Server auto-restart**: `start.command` wraps uvicorn in restart loop with exponential backoff (2s→60s cap), resets after 30s healthy uptime, clean exit on Ctrl+C
+- **New LLM sections**: `multi_tf_outlook` and `fundamentals_analysis` prompts in `config/prompts.yaml`
 - Comprehensive project documentation (CLAUDE.md, KNOWLEDGE_BASE.md, docs/)
 
 ---
@@ -39,7 +47,7 @@ All notable changes to Market Digest.
 - Composite sentiment scoring (VIX + DXY + Fear&Greed + news)
 
 #### LLM Analysis
-- 18 section prompt types with per-section customization
+- 25 section prompt types with per-section customization
 - 3-provider fallback: Claude Haiku 4.5 -> GPT-4o-mini -> Gemini 2.0 Flash
 - 2-hour response caching
 - Configurable provider priority and model selection

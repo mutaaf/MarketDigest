@@ -10,12 +10,13 @@
 ## Project Overview
 
 ### What This Is
-A full-stack market digest automation system that fetches real-time data from 6+ sources (yfinance, TwelveData, Finnhub, FRED, NewsAPI, Fear&Greed), runs technical analysis (RSI, pivots, trend detection, sentiment scoring), and delivers formatted digests to Telegram. Includes a React web UI ("Command Center") for configuration, digest preview, and day trade performance tracking via the Retrace system.
+A full-stack market digest automation system that fetches real-time data from 6+ sources (yfinance, TwelveData, Finnhub, FRED, NewsAPI, Fear&Greed), runs multi-timeframe technical analysis (daily/weekly/monthly RSI, pivots, trend detection, sentiment scoring), fetches equity fundamentals, and delivers formatted digests to Telegram. Includes a React web UI ("Command Center") for configuration, digest preview, multi-timeframe scorecards, and day trade performance tracking via the Retrace system.
 
 ### Why It Exists
 - Consolidate pre-market and post-market analysis into a single automated workflow
 - Eliminate manual data gathering across multiple financial platforms
-- Provide scored day trade picks with entry/target/stop levels
+- Provide scored day trade picks with entry/target/stop levels across three timeframes
+- Analyze equity fundamentals (valuation, profitability, growth, financial health)
 - Track pick performance over time to tune scoring weights and prompts
 
 ### Who It's For
@@ -46,6 +47,9 @@ Active traders who want automated daily market briefs delivered to Telegram, wit
 4. **YAML-backed config** — instruments, prompts, digests, scoring weights all editable via UI with write-back.
 5. **Telegram delivery** — auto-splits at 4096 chars, HTML formatted, multi-recipient.
 6. **Retrace system** — snapshots every daytrade digest, grades picks against actual next-day prices.
+7. **Multi-timeframe scoring** — Day Trade (daily), Swing (weekly), Long Term (monthly) with separate weight configs.
+8. **Equity fundamentals** — valuation/profitability/growth/health scoring via yfinance + Finnhub fallback, cached 6h.
+9. **Auto-restart server** — `start.command` restarts uvicorn on crash with exponential backoff (2s→60s cap).
 
 ---
 
@@ -55,12 +59,12 @@ Active traders who want automated daily market briefs delivered to Telegram, wit
 market-digest/
 ├── config/
 │   ├── settings.py          # Dataclass config loader (reads .env + YAML)
-│   ├── instruments.yaml     # 46+ instruments (forex, indices, commodities, crypto, FRED)
-│   ├── prompts.yaml         # LLM prompts + provider config
+│   ├── instruments.yaml     # 84 instruments (forex, indices, commodities, crypto, stocks, FRED)
+│   ├── prompts.yaml         # 25 LLM prompt sections + provider config
 │   ├── digests.yaml         # Digest sections, modes, schedules
-│   └── scoring.yaml         # Day trade scoring weights
+│   └── scoring.yaml         # Scoring weights: daytrade, swing, longterm (equity + non-equity)
 ├── src/
-│   ├── analysis/            # Technicals, sentiment, LLM, daytrade scoring, events
+│   ├── analysis/            # Technicals, sentiment, LLM, scoring (daytrade/swing/longterm), fundamentals
 │   ├── cache/manager.py     # Dual-tier cache (memory + file JSON)
 │   ├── delivery/            # Telegram bot delivery
 │   ├── digest/              # Morning, afternoon, weekly, daytrade builders + formatter
@@ -68,10 +72,10 @@ market-digest/
 │   ├── retrace/             # Snapshot, grading, scoring config, versioning
 │   └── utils/               # Logging, rate limiting, timezone
 ├── ui/
-│   ├── server.py            # FastAPI app (10 route groups, 47 endpoints)
+│   ├── server.py            # FastAPI app (11 route groups, 60 endpoints)
 │   ├── models.py            # Pydantic models
 │   ├── routes/              # 11 route files
-│   └── frontend/            # React + Vite + Tailwind (9 pages)
+│   └── frontend/            # React + Vite + Tailwind (10 pages)
 ├── scripts/
 │   ├── run_digest.py        # CLI entry point
 │   ├── start_ui.py          # One-command UI launcher
@@ -94,16 +98,22 @@ Singleton dataclass that reads `.env` (API keys, timezone, log level) and `instr
 Orchestrator that initializes all fetchers, fetches prices/forex/commodities/crypto/news, runs analysis, and provides data dicts to digest templates. Each digest type calls `builder.fetch_*()` then formats output.
 
 ### LLM Analyzer (`src/analysis/llm_analyzer.py`)
-Loads prompts from `config/prompts.yaml` (hardcoded fallbacks for 18 sections). Builds context per section, calls LLM via `llm_providers.py` with 3-provider fallback chain. Responses cached for 2 hours.
+Loads prompts from `config/prompts.yaml` (hardcoded fallbacks for 25 sections including `multi_tf_outlook` and `fundamentals_analysis`). Builds context per section, calls LLM via `llm_providers.py` with 3-provider fallback chain. Responses cached for 2 hours.
 
 ### Daytrade Scorer (`src/analysis/daytrade_scorer.py`)
 Scores instruments 0-100 by weighted composite: RSI zone (20%), trend alignment (15%), pivot proximity (20%), ATR volatility (20%), volume ratio (15%), gap analysis (10%). Weights loaded from `config/scoring.yaml`.
+
+### Multi-Timeframe Scorer (`src/analysis/multi_tf_scorer.py`)
+Swing scorer (weekly technicals: RSI 25%, trend 30%, pivot 25%, ATR 20%) and long-term scorer (monthly technicals + fundamentals for equities at 60% weight). Both reuse `score_to_grade()` from daytrade_scorer. Non-equity instruments get 100% technical weights for long-term.
+
+### Fundamentals Analyzer (`src/analysis/fundamentals.py`)
+Fetches financial statement data (yfinance primary, Finnhub fallback) cached 6h. Scores across 4 dimensions (valuation, profitability, growth, health) each 0-100. Composite = equal-weight average. Equity-only — returns `None` for forex/commodities/crypto.
 
 ### Retrace Snapshot (`src/retrace/snapshot.py`)
 Saves full daytrade digest data (picks, prices, weights, sentiment) to `logs/retrace/YYYY-MM-DD.json` after every run. Used by the grader to compare picks against actual next-day prices.
 
 ### FastAPI Server (`ui/server.py`)
-Registers 10 route groups. Frontend served as static files from `ui/frontend/dist/`. Runs on port 8550.
+Registers 11 route groups (60 endpoints). Frontend served as static files from `ui/frontend/dist/`. Runs on port 8550.
 
 ---
 
@@ -159,16 +169,20 @@ Creates launchd plists for: morning (6:30 AM CT), afternoon (4:30 PM CT), weekly
 6. **Cache files accumulate in `cache/`** — can be cleared via UI (Cache page) or manually
 7. **Config changes via UI are immediate** — YAML files are written directly, `reload_settings()` refreshes in-memory state
 8. **Retrace grading requires next trading day** — grading a same-day snapshot will return "pending"
-9. **Scoring weights must sum to 1.0** — validated on save, UI shows real-time sum
+9. **Scoring weights must sum to 1.0** — validated on save, UI shows real-time sum. Three weight sets: daytrade (6 keys), swing (4 keys), longterm_equity (5 keys with 60% fundamentals), longterm_non_equity (4 keys).
 10. **No database** — all state is in YAML configs, JSON logs, and file cache. Portable but not concurrent-safe.
+11. **Detail scorecard uses 2y history** — `/api/scorecard/{symbol}` fetches 2 years for monthly analysis. `/api/scorecard/all` uses 6mo (enough for swing, skips long-term) to stay fast.
+12. **Fundamentals are equity-only** — forex, commodities, and crypto get `fundamentals: null`. Long-term scoring for non-equities uses 100% technical weights.
+13. **Server auto-restarts** — `start.command` wraps uvicorn in a restart loop with exponential backoff (2s→60s). Ctrl+C exits cleanly.
 
 ---
 
 ## Deployment
 
 - **Local only** — runs on macOS with launchd scheduling
-- **UI**: `python scripts/start_ui.py` (builds frontend, starts FastAPI on port 8550)
-- **CLI**: `python scripts/run_digest.py` with flags
+- **UI (dev)**: `.venv/bin/python scripts/start_ui.py` (builds frontend, starts FastAPI on port 8550)
+- **UI (double-click)**: `start.command` — one-click launcher with auto-restart on crash
+- **CLI**: `.venv/bin/python scripts/run_digest.py` with flags
 - **Scheduled**: macOS launchd plists in `launchd/` directory
 - **No Docker, no cloud deployment** — designed for single-user local operation
 

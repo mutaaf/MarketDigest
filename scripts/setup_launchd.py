@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate & install launchd plists for macOS scheduling."""
 
+import getpass
 import os
 import re
 import shutil
@@ -12,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 PROJECT_ROOT = Path(__file__).parent.parent
 LAUNCH_AGENTS = Path.home() / "Library" / "LaunchAgents"
+_USERNAME = getpass.getuser()
 
 # Hardcoded defaults if digests.yaml is missing or incomplete
 DEFAULT_SCHEDULES = {
@@ -151,7 +153,7 @@ def install():
     schedule_summary = []
 
     for dtype in DIGEST_TYPES:
-        label = f"com.mutaafaziz.market-digest-{dtype}"
+        label = f"com.{_USERNAME}.market-digest-{dtype}"
         plist_name = f"{label}.plist"
         dst = LAUNCH_AGENTS / plist_name
 
@@ -197,14 +199,14 @@ def install():
         print(line)
     print("\nManagement commands:")
     print("  launchctl list | grep market-digest   # Check status")
-    print("  launchctl start com.mutaafaziz.market-digest-morning  # Run now")
-    print("  launchctl unload ~/Library/LaunchAgents/com.mutaafaziz.market-digest-morning.plist  # Disable")
+    print(f"  launchctl start com.{_USERNAME}.market-digest-morning  # Run now")
+    print(f"  launchctl unload ~/Library/LaunchAgents/com.{_USERNAME}.market-digest-morning.plist  # Disable")
 
 
 def uninstall():
     print("Uninstalling market-digest launchd jobs...")
     for dtype in DIGEST_TYPES:
-        plist_name = f"com.mutaafaziz.market-digest-{dtype}.plist"
+        plist_name = f"com.{_USERNAME}.market-digest-{dtype}.plist"
         dst = LAUNCH_AGENTS / plist_name
         if dst.exists():
             subprocess.run(["launchctl", "unload", str(dst)], capture_output=True)

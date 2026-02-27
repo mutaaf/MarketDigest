@@ -88,13 +88,19 @@ cd ui/frontend && npm run dev
 | 11 | Performance Rankings | Active | `src/analysis/performance.py` |
 | 12 | Telegram Delivery (multi-recipient) | Active | `src/delivery/telegram_bot.py` |
 | 13 | Dual-tier Caching (memory + file) | Active | `src/cache/manager.py` |
-| 14 | Web UI — Command Center (9 pages) | Active | `ui/server.py`, `ui/frontend/src/` |
+| 14 | Web UI — Command Center (10 pages) | Active | `ui/server.py`, `ui/frontend/src/` |
 | 15 | Config Management (YAML + .env) | Active | `config/settings.py`, `ui/routes/settings.py` |
 | 16 | Retrace — Snapshot + Grading | Active | `src/retrace/snapshot.py`, `src/retrace/grader.py` |
 | 17 | Retrace — Scoring Config | Active | `src/retrace/scoring_config.py`, `config/scoring.yaml` |
 | 18 | Retrace — Config Versioning + Rollback | Active | `src/retrace/versioning.py` |
 | 19 | macOS launchd Scheduling | Active | `scripts/setup_launchd.py`, `launchd/` |
 | 20 | Config Export/Import (ZIP) | Active | `ui/routes/settings.py` |
+| 21 | Multi-Timeframe Scoring (Swing + LT) | Active | `src/analysis/multi_tf_scorer.py`, `config/scoring.yaml` |
+| 22 | Equity Fundamentals Analysis | Active | `src/analysis/fundamentals.py` |
+| 23 | Weekly/Monthly Technical Analysis | Active | `src/analysis/technicals.py` (weekly/monthly_full_analysis) |
+| 24 | Multi-TF Scorecard UI (tabs, S/R zones) | Active | `ui/frontend/src/components/common/ScoreCardDetail.tsx` |
+| 25 | Fundamentals Scorecard UI | Active | `ui/frontend/src/components/common/ScoreCardDetail.tsx` |
+| 26 | Server Auto-Restart | Active | `start.command` (exponential backoff loop) |
 
 ---
 
@@ -185,6 +191,43 @@ llm_providers.py: LLMProviderChain
             └── All failed → return None (section shows "unavailable")
 ```
 
+### Multi-Timeframe Scoring Architecture
+
+```
+                        ┌─────────────────┐
+                        │  Daily OHLCV    │
+                        │  (yfinance)     │
+                        └────────┬────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │                  │                   │
+              ▼                  ▼                   ▼
+    full_analysis(df)   weekly_full_analysis(df)  monthly_full_analysis(df)
+    (daily bars)        (weekly resample)         (monthly resample, needs 2y)
+              │                  │                   │
+              ▼                  ▼                   ▼
+    score_instrument()  score_instrument_swing()  score_instrument_longterm()
+    6 factors:          4 factors:               4-5 factors:
+    RSI 20%             RSI 25%                  Equity: RSI 10%, Trend 15%,
+    Trend 15%           Trend 30%                  Pivot 10%, ATR 5%,
+    Pivot 20%           Pivot 25%                  Fundamentals 60%
+    ATR 20%             ATR 20%                  Non-equity: RSI 25%,
+    Volume 15%                                     Trend 35%, Pivot 25%,
+    Gap 10%                                        ATR 15%
+              │                  │                   │
+              ▼                  ▼                   ▼
+    Grade A+ to F       Grade A+ to F            Grade A+ to F
+    Entry/Target/Stop   Entry/Target/Stop        Entry/Target/Stop
+    (daily pivots/ATR)  (weekly pivots/ATR)      (monthly pivots/ATR)
+```
+
+**Fundamentals scoring** (equities only, 6h cache):
+- Valuation: P/E, P/B, EV/EBITDA thresholds
+- Profitability: gross/operating/net margins, ROE, ROA
+- Growth: revenue growth, EPS growth
+- Health: D/E ratio, current ratio, free cash flow
+- Composite: equal-weight average of 4 sub-scores
+
 ### Retrace System
 
 ```
@@ -229,20 +272,34 @@ config/
 ├── settings.py          # Dataclass: Settings(telegram, api keys, timezone, log_level)
 │                        #   get_settings(), reload_settings(), update_env_var()
 │                        #   save_instruments(), get_all_yfinance_tickers()
-├── instruments.yaml     # 46+ instruments: symbol, yfinance, twelvedata, name, category, enabled
-├── prompts.yaml         # system_prompt, sections: {name: {prompt, max_tokens}}, provider_priority
+├── instruments.yaml     # 84 instruments: symbol, yfinance, twelvedata, name, category, enabled
+├── prompts.yaml         # system_prompt, 25 sections: {name: {prompt, max_tokens}}, provider_priority
 ├── digests.yaml         # morning/afternoon/weekly/daytrade: sections, default_mode, schedule
-└── scoring.yaml         # weights: {rsi, trend, pivot, atr, volume, gap} (must sum to 1.0)
+└── scoring.yaml         # weights: daytrade (6 keys), swing_weights (4),
+                         #   longterm_weights_equity (5 incl. fundamentals=0.60),
+                         #   longterm_weights_non_equity (4). Each set sums to 1.0.
 ```
 
 ### `src/analysis/` — Analysis Engine
 ```
 analysis/
-├── technicals.py        # full_analysis(hist) → {rsi, sma20, sma50, ema9, pivots, trend, atr, ...}
+├── technicals.py        # full_analysis(hist) → {rsi, sma20, sma50, pivots, trend, atr, ...}
+│                        #   weekly_full_analysis(df) → weekly RSI, trend (SMA10w/20w), weekly S/R
+│                        #   monthly_full_analysis(df) → monthly RSI, trend (SMA6m/12m), monthly S/R
+│                        #   compute_monthly_pivots(df), compute_monthly_atr(df)
 ├── daytrade_scorer.py   # score_instrument(ta, price) → {symbol, score, entry, target, stop, signals}
+├── multi_tf_scorer.py   # score_instrument_swing(ta_weekly, price) → swing score (4 factors)
+│                        #   score_instrument_longterm(ta_monthly, price, fundamentals) → LT score
+│                        #   Equity: 60% fundamentals + 40% technicals. Non-equity: 100% technicals.
+├── fundamentals.py      # fetch_fundamentals(symbol, yf_symbol) → metrics + highlights (6h cache)
+│                        #   score_fundamentals(data) → {valuation, profitability, growth, health, composite}
+│                        #   is_equity_symbol(category) → True for "us_stock" only
+├── indicator_analysis.py# generate_indicator_analyses(ta, scored, price, sym) → human-readable analysis
 ├── sentiment.py         # compute_composite_sentiment() → {composite_score, classification, components}
 ├── performance.py       # compute_performance(), rank_instruments(), sector_comparison()
 ├── llm_analyzer.py      # MarketAnalyzer: analyze_section(name, data, context) → str
+│                        #   25 sections incl. multi_tf_outlook, fundamentals_analysis
+│                        #   _format_multi_tf_data(), _format_fundamentals_data() formatters
 ├── llm_providers.py     # LLMProviderChain: call(system, user, max_tokens) → str
 ├── session_tracker.py   # get_session_performance(hist, session) → {open, high, low, close, change}
 └── events.py            # FOMC_DATES, BELLWETHER_TICKERS, get_event_context()
@@ -278,6 +335,9 @@ retrace/
 ├── snapshot.py          # save_snapshot(), load_snapshot(), list_snapshots()
 ├── grader.py            # grade_snapshot(), grade_single_pick(), aggregate_performance()
 ├── scoring_config.py    # load_scoring_weights(), save_scoring_weights(), validate_weights()
+│                        #   load_swing_weights(), load_longterm_weights(is_equity)
+├── optimizer.py         # Optimizes scoring weights based on historical performance
+├── backfill.py          # Historical snapshot backfilling
 └── versioning.py        # save_version(), list_versions(), diff_versions(), rollback()
 ```
 
@@ -293,7 +353,8 @@ routes/
 ├── sources.py           # GET /api/sources, POST test, POST toggle
 ├── cache.py             # GET /api/cache/stats, POST /api/cache/clear
 ├── history.py           # GET /api/history
-└── retrace.py           # 12 endpoints: snapshots, grading, scoring, versions, diff, rollback
+├── scorecard.py         # GET /all (multi-TF overview) + GET /{symbol} (detail: 2y data, fundamentals)
+└── retrace.py           # 16 endpoints: snapshots, grading, scoring, versions, diff, rollback
 ```
 
 ### `ui/frontend/src/pages/` — React Pages
@@ -306,6 +367,7 @@ pages/
 ├── DataSources.tsx      # Data source toggles + test buttons
 ├── DigestConfig.tsx     # Digest section config, mode, schedule
 ├── RunPreview.tsx       # Run digest, preview (HTML/raw), send to Telegram
+├── ScoreCard.tsx        # Multi-TF scorecard grid with DT/SW/LT grade pills + ticker search
 ├── Settings.tsx         # Timezone, log level, recipients, export/import
 └── Retrace.tsx          # 4 tabs: Performance, Scoring, Versions, Audit Trail
 ```
@@ -462,7 +524,9 @@ Instruments are defined in `config/instruments.yaml` with these fields:
   enabled: true          # Toggle visibility
 ```
 
-Categories: `forex` (12), `us_index` (4), `futures` (4), `commodities` (8), `crypto` (4), `stocks` (14+), `fred_series` (8)
+Categories: `forex` (7), `us_index` (4), `futures` (3), `commodities` (14), `crypto` (5), `us_stock` (46), `fred_series` (8), `session` (4)
+
+Total: 84 instruments (78 enabled)
 
 ---
 
@@ -477,5 +541,5 @@ Categories: `forex` (12), `us_index` (4), `futures` (4), `commodities` (8), `cry
 
 ---
 
-*Last updated: 2026-02-11*
+*Last updated: 2026-02-14*
 *Maintained by: Development Team & AI Agents*

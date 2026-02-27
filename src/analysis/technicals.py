@@ -188,6 +188,149 @@ def compute_weekly_atr(df: pd.DataFrame, period: int = 14) -> float | None:
         return None
 
 
+def compute_monthly_pivots(df: pd.DataFrame) -> dict | None:
+    """Classic pivot points from the last *completed* monthly bar.
+
+    Resamples daily OHLCV to monthly, uses iloc[-2] (the last fully closed month)
+    to avoid partial-month distortion.
+    """
+    if df is None or len(df) < 30:
+        return None
+    try:
+        monthly = df.resample("ME").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(monthly) < 2:
+            return None
+        last_month = monthly.iloc[-2]
+        h, l, c = float(last_month["High"]), float(last_month["Low"]), float(last_month["Close"])
+        pivots = compute_pivot_points(h, l, c)
+        pivots["month_high"] = round(h, 5)
+        pivots["month_low"] = round(l, 5)
+        pivots["month_close"] = round(c, 5)
+        return pivots
+    except Exception:
+        return None
+
+
+def compute_monthly_atr(df: pd.DataFrame, period: int = 6) -> float | None:
+    """ATR on monthly-resampled bars. Shorter period since monthly bars are sparse."""
+    if df is None or len(df) < (period + 1) * 20:
+        return None
+    try:
+        monthly = df.resample("ME").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(monthly) < period + 1:
+            return None
+        high = monthly["High"]
+        low = monthly["Low"]
+        close = monthly["Close"]
+        prev_close = close.shift(1)
+        tr = pd.concat([
+            high - low,
+            (high - prev_close).abs(),
+            (low - prev_close).abs(),
+        ], axis=1).max(axis=1)
+        atr = tr.ewm(span=period, adjust=False).mean().iloc[-1]
+        return round(float(atr), 5) if not np.isnan(atr) else None
+    except Exception:
+        return None
+
+
+def weekly_full_analysis(df: pd.DataFrame, ticker: str = "") -> dict:
+    """Full analysis on weekly-resampled data.
+
+    Weekly RSI, weekly trend (SMA10w vs SMA20w), weekly pivots,
+    weekly S/R, weekly ATR.
+    """
+    if df is None or df.empty or len(df) < 70:
+        return {"error": "insufficient_data", "ticker": ticker}
+
+    try:
+        weekly = df.resample("W").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(weekly) < 14:
+            return {"error": "insufficient_data", "ticker": ticker}
+
+        close = weekly["Close"]
+        rsi_series = compute_rsi(close)
+        rsi_val = float(rsi_series.iloc[-1]) if not rsi_series.empty else 50.0
+
+        sma_10 = float(compute_sma(close, 10).iloc[-1]) if len(close) >= 10 else None
+        sma_20 = float(compute_sma(close, 20).iloc[-1]) if len(close) >= 20 else None
+
+        trend = detect_trend(close, short_period=10, long_period=20)
+        sr = find_support_resistance(weekly, window=3) if len(weekly) >= 10 else {"support": [], "resistance": []}
+
+        pivots = compute_weekly_pivots(df)
+        atr = compute_weekly_atr(df)
+
+        return {
+            "ticker": ticker,
+            "rsi": round(rsi_val, 1),
+            "rsi_label": get_rsi_label(rsi_val),
+            "sma_short": round(sma_10, 4) if sma_10 else None,
+            "sma_long": round(sma_20, 4) if sma_20 else None,
+            "trend": trend,
+            "trend_emoji": get_trend_emoji(trend),
+            "pivots": pivots or {},
+            "support_resistance": sr,
+            "atr": atr,
+        }
+    except Exception as e:
+        logger.debug(f"weekly_full_analysis failed for {ticker}: {e}")
+        return {"error": "analysis_failed", "ticker": ticker}
+
+
+def monthly_full_analysis(df: pd.DataFrame, ticker: str = "") -> dict:
+    """Full analysis on monthly-resampled data.
+
+    Monthly RSI, monthly trend (SMA6m vs SMA12m), monthly pivots,
+    monthly S/R, monthly ATR.
+    Returns {"error": "insufficient_data"} if < 14 monthly bars.
+    """
+    if df is None or df.empty or len(df) < 300:
+        return {"error": "insufficient_data", "ticker": ticker}
+
+    try:
+        monthly = df.resample("ME").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        }).dropna()
+        if len(monthly) < 14:
+            return {"error": "insufficient_data", "ticker": ticker}
+
+        close = monthly["Close"]
+        rsi_series = compute_rsi(close)
+        rsi_val = float(rsi_series.iloc[-1]) if not rsi_series.empty else 50.0
+
+        sma_6 = float(compute_sma(close, 6).iloc[-1]) if len(close) >= 6 else None
+        sma_12 = float(compute_sma(close, 12).iloc[-1]) if len(close) >= 12 else None
+
+        trend = detect_trend(close, short_period=6, long_period=12)
+        sr = find_support_resistance(monthly, window=2) if len(monthly) >= 8 else {"support": [], "resistance": []}
+
+        pivots = compute_monthly_pivots(df)
+        atr = compute_monthly_atr(df)
+
+        return {
+            "ticker": ticker,
+            "rsi": round(rsi_val, 1),
+            "rsi_label": get_rsi_label(rsi_val),
+            "sma_short": round(sma_6, 4) if sma_6 else None,
+            "sma_long": round(sma_12, 4) if sma_12 else None,
+            "trend": trend,
+            "trend_emoji": get_trend_emoji(trend),
+            "pivots": pivots or {},
+            "support_resistance": sr,
+            "atr": atr,
+        }
+    except Exception as e:
+        logger.debug(f"monthly_full_analysis failed for {ticker}: {e}")
+        return {"error": "analysis_failed", "ticker": ticker}
+
+
 def compute_gap_pct(df: pd.DataFrame) -> float | None:
     """Today's open vs yesterday's close as a percentage."""
     if df is None or len(df) < 2:

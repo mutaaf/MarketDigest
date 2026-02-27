@@ -155,7 +155,23 @@ export default function ScoreCard() {
                         <span className="text-xs text-apple-gray-400">RSI {card.rsi.toFixed(0)}</span>
                       )}
                     </div>
-                    {card.signals.length > 0 && (
+                    {/* Multi-TF grade pills */}
+                    {card.swing_grade && (
+                      <div className="flex gap-1 mt-1.5">
+                        <span className="text-[9px] px-1 py-0.5 bg-apple-gray-100 text-apple-gray-600 rounded font-medium">
+                          DT: {card.grade}
+                        </span>
+                        <span className="text-[9px] px-1 py-0.5 bg-blue-50 text-blue-600 rounded font-medium">
+                          SW: {card.swing_grade}
+                        </span>
+                        {card.longterm_grade && (
+                          <span className="text-[9px] px-1 py-0.5 bg-purple-50 text-purple-600 rounded font-medium">
+                            LT: {card.longterm_grade}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {card.signals.length > 0 && !card.swing_grade && (
                       <p className="text-[10px] text-apple-blue mt-1 truncate">{card.signals[0]}</p>
                     )}
                   </button>

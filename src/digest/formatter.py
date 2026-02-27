@@ -365,6 +365,17 @@ def enhanced_pick_line(rank: int, pick: dict, track: dict | None = None) -> str:
         r_part = f", {avg_r}R avg" if avg_r is not None else ""
         line += f"\n     \U0001f4ca Track: {w}W-{l}L ({wr:.0f}% WR{esc(r_part)})"
 
+    # Line 6: multi-timeframe scores (if available)
+    swing = pick.get("swing_score")
+    lt = pick.get("longterm_score")
+    if swing or lt:
+        tf_parts = []
+        if swing:
+            tf_parts.append(f"Swing: {esc(swing.get('grade', '?'))} ({swing.get('score', 0):.0f})")
+        if lt:
+            tf_parts.append(f"Long Term: {esc(lt.get('grade', '?'))} ({lt.get('score', 0):.0f})")
+        line += f"\n     \U0001f4d0 {' | '.join(tf_parts)}"
+
     return line
 
 
