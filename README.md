@@ -14,7 +14,7 @@ Market Digest does it for you. It grabs live prices, analyzes every instrument, 
 Then it tracks whether those picks actually worked — so your results improve over time.
 
 <!-- TODO: Add demo GIF here. See assets/screenshots/README.md for recording instructions. -->
-<!-- ![Market Digest Demo](assets/screenshots/demo.gif) -->
+![Market Digest Demo](assets/screenshots/demo.gif)
 
 </div>
 
@@ -61,7 +61,7 @@ Then it tracks whether those picks actually worked — so your results improve o
 <br>
 
 <!-- TODO: Screenshot of the Command Center home page showing API health indicators -->
-<!-- ![Dashboard](assets/screenshots/dashboard.png) -->
+![Dashboard](assets/screenshots/dashboard.png)
 
 *The home page shows you which data sources are connected (green = good), quick buttons to run digests, and a snapshot of your setup.*
 
@@ -72,7 +72,7 @@ Then it tracks whether those picks actually worked — so your results improve o
 <br>
 
 <!-- TODO: Screenshot of a ScoreCard detail panel -->
-<!-- ![ScoreCard](assets/screenshots/scorecard.png) -->
+![ScoreCard](assets/screenshots/scorecard.png)
 
 *Every instrument gets three grades: one for day trading (daily analysis), one for swing trading (weekly), and one for long-term (monthly). Click any instrument to see exactly why it scored the way it did — RSI, trend direction, how close it is to key price levels, and more.*
 
@@ -83,7 +83,7 @@ Then it tracks whether those picks actually worked — so your results improve o
 <br>
 
 <!-- TODO: Screenshot of a Telegram message on your phone -->
-<!-- ![Telegram](assets/screenshots/telegram.png) -->
+![Telegram](assets/screenshots/telegram.png)
 
 *A clean, formatted message on your phone with your top picks, scores, entry/target/stop levels, and market context. Ready to read in under a minute.*
 
@@ -94,7 +94,7 @@ Then it tracks whether those picks actually worked — so your results improve o
 <br>
 
 <!-- TODO: Screenshot of the Retrace tracking page -->
-<!-- ![Retrace](assets/screenshots/retrace.png) -->
+![Retrace](assets/screenshots/retrace.png)
 
 *After a few days of running, you'll see your actual hit rate: how often picks reached their target, how often they hit the stop, and how the scoring is performing. Use this to fine-tune your settings.*
 
