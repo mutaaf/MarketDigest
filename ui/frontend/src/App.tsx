@@ -10,6 +10,7 @@ import RunPreview from './pages/RunPreview'
 import Settings from './pages/Settings'
 import Retrace from './pages/Retrace'
 import ScoreCard from './pages/ScoreCard'
+import OptionsFlow from './pages/OptionsFlow'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/run" element={<RunPreview />} />
         <Route path="/retrace" element={<Retrace />} />
         <Route path="/scorecard" element={<ScoreCard />} />
+        <Route path="/options" element={<OptionsFlow />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

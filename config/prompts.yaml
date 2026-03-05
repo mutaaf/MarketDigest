@@ -271,3 +271,82 @@ sections:
       '
     max_tokens: 500
     include_cross_context: false
+  options_flow_summary:
+    prompt: 'Based on the options flow data, write a plain-English summary of what
+      the overall flow is saying about trader sentiment. Describe whether the flow
+      is bullish, bearish, or mixed and why. Reference the C/P ratio, total premium,
+      conviction score, and arc status. Keep it accessible for beginners. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_premium_analysis:
+    prompt: 'Based on the call/put premium data, explain what the premium split tells
+      us about directional bets. Is money flowing into calls or puts? What does the
+      premium volume suggest about conviction? Reference specific dollar amounts and
+      the C/P ratio. 2-3 sentences, prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_greeks_analysis:
+    prompt: 'Based on the Greeks data (max pain, put wall, call wall, net delta, gamma),
+      explain what the positioning tells us. Where is the gravitational pull (max pain)?
+      Where are the support/resistance walls from options? Is delta positioning suggesting
+      bullish or bearish exposure? Reference specific price levels. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 350
+    include_cross_context: false
+  options_expiry_analysis:
+    prompt: 'Based on the expiry distribution data, explain what the time structure
+      of options tells us. Are traders betting on near-term moves or positioning for
+      longer-term? What does the premium concentration across expiries suggest about
+      urgency and conviction? Reference specific expiry dates and their premium share.
+      2-3 sentences, prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_strike_analysis:
+    prompt: 'Based on the strike heatmap data showing premium by strike, explain what
+      the strike concentration reveals about expected price targets. Which strikes
+      have the most action and what does that imply? Are there clusters suggesting
+      a target zone? Reference the top 3 strikes and their net premium. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_news_correlation:
+    prompt: 'Based on the options flow data and recent news headlines, explain how
+      the news connects to the observed flow patterns. Are options traders positioning
+      ahead of or reacting to news events? Do the flow patterns validate or contradict
+      the news sentiment? Reference specific headlines and flow metrics. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 350
+    include_cross_context: false
+  options_action_items:
+    prompt: 'Based on all the options flow data (premium, Greeks, strikes, expiry,
+      news), provide exactly 3 numbered actionable items. Each should specify: the
+      direction (bullish/bearish/neutral), the reasoning, and a specific level or condition
+      to watch. Keep each item to 1-2 sentences. No preamble.
+
+      '
+    max_tokens: 400
+    include_cross_context: false
+  options_arc_reading:
+    prompt: 'Based on the options flow data (call/put premiums, C/P ratio trend, strike
+      concentration, expiry distribution, OI walls, max pain), provide a conviction
+      arc reading. Describe whether flow suggests building directional bets, hedging,
+      or distribution. Reference specific C/P ratios, dominant strikes, and how flow
+      evolved across sessions. Note if the arc is Building, Steady, or Fading. End
+      with what to watch for confirmation/invalidation. 3-5 sentences, prose, no bullets.
+
+      '
+    max_tokens: 400
+    include_cross_context: false

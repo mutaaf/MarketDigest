@@ -30,7 +30,7 @@ def fetch_fundamentals(symbol: str, yf_symbol: str) -> dict | None:
         data = _fetch_finnhub(symbol)
 
     if data is not None:
-        _cache.set(cache_key, data, ttl_seconds=_CACHE_TTL)
+        _cache.set(cache_key, data)
 
     return data
 

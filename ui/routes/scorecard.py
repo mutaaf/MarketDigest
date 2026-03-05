@@ -170,8 +170,23 @@ def _run_analysis(sym: str, weights: dict, category: str = "us_stock", period: s
         period: yfinance history period ("6mo" for overview, "2y" for detail).
     """
     try:
+        # Try multiple periods as fallback for tickers with limited history
+        periods_to_try = [period]
+        if period == "2y":
+            periods_to_try = ["2y", "1y", "6mo"]
+
+        df = None
+        actual_period = period
         ticker = yf.Ticker(sym)
-        df = ticker.history(period=period)
+        for p in periods_to_try:
+            try:
+                df = ticker.history(period=p)
+                if df is not None and not df.empty and len(df) >= 14:
+                    actual_period = p
+                    break
+            except Exception:
+                continue
+
         if df is None or df.empty or len(df) < 14:
             return None
 
@@ -217,7 +232,7 @@ def _run_analysis(sym: str, weights: dict, category: str = "us_stock", period: s
             result["swing_scored"] = swing
 
         # Monthly analysis + fundamentals (only with enough data)
-        if period == "2y":
+        if actual_period == "2y":
             ta_monthly = monthly_full_analysis(df, ticker=sym)
             result["ta_monthly"] = ta_monthly if not ta_monthly.get("error") else None
 

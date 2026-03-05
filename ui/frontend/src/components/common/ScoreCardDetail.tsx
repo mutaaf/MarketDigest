@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import type { ScoreCardFull, IndicatorAnalysis, TimeframeTargetExtended, Fundamentals } from '../../api/scorecard-types'
 
 const gradeColors: Record<string, string> = {
@@ -40,8 +41,10 @@ const TF_LABELS: Record<TimeframeKey, string> = {
 }
 
 export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
+  const navigate = useNavigate()
   const hasMultiTf = !!card.multi_tf_scores
   const [selectedTf, setSelectedTf] = useState<TimeframeKey>('daytrade')
+  const isEquity = !!card.fundamentals || !card.symbol.includes('=')
 
   const currentTfScore = hasMultiTf
     ? card.multi_tf_scores![selectedTf]
@@ -110,6 +113,16 @@ export default function ScoreCardDetail({ card }: { card: ScoreCardFull }) {
             <p className="text-xs text-apple-gray-400">/ 100</p>
           </div>
         </div>
+
+        {/* Options Flow link */}
+        {isEquity && (
+          <button
+            onClick={() => navigate(`/options?symbol=${card.symbol}`)}
+            className="text-[11px] text-apple-blue hover:underline font-medium mb-3"
+          >
+            View Options Flow &rarr;
+          </button>
+        )}
 
         {/* Score bar */}
         <div className="w-full h-2 bg-apple-gray-100 rounded-full overflow-hidden mb-4">

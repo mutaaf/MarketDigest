@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, List, MessageSquare, Database,
-  Sliders, Play, Settings, Target, Award,
+  Sliders, Play, Settings, Target, Award, Activity,
 } from 'lucide-react'
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { to: '/run', icon: Play, label: 'Run & Preview' },
   { to: '/retrace', icon: Target, label: 'Retrace' },
   { to: '/scorecard', icon: Award, label: 'Score Cards' },
+  { to: '/options', icon: Activity, label: 'Options Flow' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 

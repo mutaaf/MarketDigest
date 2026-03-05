@@ -17,6 +17,7 @@ from ui.routes import (  # noqa: E402
     history,
     instruments,
     onboarding,
+    options,
     prompts,
     retrace,
     scorecard,
@@ -48,6 +49,7 @@ app.include_router(cache.router)
 app.include_router(history.router)
 app.include_router(retrace.router)
 app.include_router(scorecard.router)
+app.include_router(options.router)
 
 # Serve built React frontend as static files
 FRONTEND_DIST = Path(__file__).parent / "frontend" / "dist"
