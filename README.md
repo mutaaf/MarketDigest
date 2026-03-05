@@ -102,96 +102,161 @@ Then it tracks whether those picks actually worked — so your results improve o
 
 ---
 
-## Get Running in 60 Seconds
+## What You Need Before Starting
 
-You need two things installed: **[Python](https://python.org/downloads/)** (3.10 or newer) and **[Git](https://git-scm.com/downloads)**. If you're not sure, open a terminal and type `python3 --version` — if you see a number, you're good.
+Just two things:
 
-**Open your terminal** (on Mac: search for "Terminal". On Windows: search for "PowerShell") and paste these commands one at a time:
+1. **A computer** — Mac, Windows, or Linux all work
+2. **Python** — this is a free programming tool that runs Market Digest behind the scenes. You don't need to learn it — you just need it installed.
 
+**How to check if you already have Python:**
+- On **Mac**: open the **Terminal** app (press `Cmd + Space`, type `Terminal`, hit Enter), then type `python3 --version` and press Enter. If you see a number like `Python 3.12.0`, you're good.
+- On **Windows**: open **PowerShell** (click the Start menu, type `PowerShell`, hit Enter), then type `python --version` and press Enter. If you see a number, you're good.
+
+**Don't have Python?** Download it free from [python.org/downloads](https://www.python.org/downloads/) — click the big yellow button, run the installer, and accept the defaults. **Windows users:** make sure to check the box that says "Add Python to PATH" during installation.
+
+That's all you need. No other software required.
+
+---
+
+## How to Install
+
+### Step 1: Download Market Digest
+
+**Easiest way — download as a ZIP file (no extra software needed):**
+
+1. Click this link: [**Download Market Digest ZIP**](https://github.com/mutaaf/market-digest/archive/refs/heads/main.zip)
+2. Your browser will download a `.zip` file
+3. Find the downloaded file and **unzip it** (double-click it on Mac, or right-click → "Extract All" on Windows)
+4. You'll get a folder called `market-digest-main` — move it somewhere easy to find, like your Desktop
+
+### Step 2: Run the Setup
+
+Now you need to open a **Terminal** (Mac/Linux) or **PowerShell** (Windows). This is just a text-based way to talk to your computer — you'll copy and paste a few commands.
+
+**How to open it:**
+- **Mac**: Press `Cmd + Space` to open Spotlight, type `Terminal`, press Enter
+- **Windows**: Click the Start menu, type `PowerShell`, press Enter
+- **Linux**: Press `Ctrl + Alt + T`
+
+Once it's open, type these commands one at a time, pressing **Enter** after each one:
+
+**First, navigate to the folder you just unzipped:**
+
+On Mac/Linux (if you put it on your Desktop):
 ```bash
-git clone https://github.com/mutaaf/market-digest.git
+cd ~/Desktop/market-digest-main
 ```
-> ☝️ This downloads the project to your computer.
 
-```bash
-cd market-digest
+On Windows (if you put it on your Desktop):
+```powershell
+cd ~\Desktop\market-digest-main
 ```
-> ☝️ This moves you into the project folder.
 
+> **What this does:** tells your computer to look inside the Market Digest folder.
+
+**Next, run the setup:**
+
+On Mac/Linux:
 ```bash
+chmod +x setup.sh
 ./setup.sh
 ```
-> ☝️ This does all the heavy lifting — creates an isolated Python environment, installs everything, and asks you about API keys (you can skip all of them for now).
 
-```bash
-make ui
+On Windows:
+```powershell
+.\setup.bat
 ```
-> ☝️ This starts the web interface. Your browser will open to [localhost:8550](http://localhost:8550) — that's the **Command Center**.
 
-**That's it. You're running.**
+> **What this does:** installs everything Market Digest needs. It will ask you about some optional account passwords (called "API keys") — **you can skip all of them for now** by pressing Enter. You can always add them later.
+>
+> **What you should see:** text scrolling by as it installs. This takes 1-2 minutes. When it's done, you'll see a success message.
+
+### Step 3: Start Market Digest
+
+On Mac:
+```bash
+./start.command
+```
+> You can also just **double-click** the `start.command` file in the folder — it does the same thing.
+
+On Windows:
+```powershell
+.venv\Scripts\python scripts\start_ui.py
+```
+
+On Linux:
+```bash
+.venv/bin/python scripts/start_ui.py
+```
+
+> **What happens:** a page will open in your browser automatically — that's the **Command Center**, your control panel for everything. If it doesn't open automatically, go to [localhost:8550](http://localhost:8550) in your browser.
+
+**That's it — you're running!** 🎉
 
 ---
 
-**Want to see a sample digest right now?** No accounts or API keys needed:
+### See a Sample Digest Right Now
 
+No accounts or extra setup needed. In the same Terminal/PowerShell window, run:
+
+On Mac/Linux:
 ```bash
-make digest-dry
+.venv/bin/python scripts/run_digest.py --type daytrade --mode facts --dry-run
 ```
-> This pulls free stock data and shows you a scored day trade digest right in your terminal. It's a preview — to get digests on your phone, you'll set up Telegram (free, takes 2 minutes — see the [API Keys section](#api-keys--whats-free-whats-optional) below).
+
+On Windows:
+```powershell
+.venv\Scripts\python scripts\run_digest.py --type daytrade --mode facts --dry-run
+```
+
+> **What this does:** pulls free stock data and shows you a scored day trade digest right in your Terminal. It's a preview — to get digests on your phone, set up Telegram below (free, takes 2 minutes).
 
 ---
+
+### Stuck? Common Issues
+
+| Problem | Fix |
+|---------|-----|
+| **"permission denied"** when running `setup.sh` | Run `chmod +x setup.sh` first, then try again |
+| **"python3 not found"** or **"python not found"** | Python isn't installed yet — [download it here](https://www.python.org/downloads/) |
+| **Windows: "running scripts is disabled"** | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` in PowerShell, then try again |
+| **The browser page didn't open** | Open your browser and go to [localhost:8550](http://localhost:8550) |
+| **Something else went wrong** | [Open an issue](https://github.com/mutaaf/market-digest/issues/new/choose) — tell us what happened and what system you're on, and we'll help |
 
 <details>
-<summary>🐳 <strong>Prefer Docker?</strong> (If you know what Docker is, this is the easiest path)</summary>
+<summary>🛠️ <strong>For techies: Git clone, Docker, and manual setup</strong></summary>
 <br>
 
+**Git clone (instead of ZIP download):**
+```bash
+git clone https://github.com/mutaaf/market-digest.git
+cd market-digest
+./setup.sh
+```
+
+**Docker:**
 ```bash
 git clone https://github.com/mutaaf/market-digest.git
 cd market-digest
 cp .env.example .env    # Optional: edit .env with your API keys
 docker compose up --build
 ```
-
 Open [localhost:8550](http://localhost:8550) in your browser. Done.
 
-</details>
-
-<details>
-<summary>🪟 <strong>On Windows?</strong></summary>
-<br>
-
-```powershell
-git clone https://github.com/mutaaf/market-digest.git
-cd market-digest
-.\setup.bat
-```
-
-Then start the web interface:
-
-```powershell
-.venv\Scripts\python scripts\start_ui.py
-```
-
-> **Tip:** If you get a "running scripts is disabled" error, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` first, then try again.
-
-</details>
-
-<details>
-<summary>🛠️ <strong>Want to do it manually?</strong> (step by step, full control)</summary>
-<br>
-
+**Full manual setup:**
 ```bash
 git clone https://github.com/mutaaf/market-digest.git
 cd market-digest
 
-# Create an isolated Python environment (keeps your system clean)
+# Create an isolated Python environment
 python3 -m venv .venv
 source .venv/bin/activate          # On Windows: .venv\Scripts\activate
 
-# Install all the Python packages Market Digest needs
+# Install Python packages
 pip install -r requirements.txt
 
-# Create your config file (you'll edit this later with API keys)
+# Create your config file
 cp .env.example .env
 
 # Build the web interface (needs Node.js — https://nodejs.org)
@@ -199,6 +264,18 @@ cd ui/frontend && npm install && npm run build && cd ../..
 
 # Start everything
 python scripts/start_ui.py
+```
+
+**Makefile shortcuts** (requires `make`, which is pre-installed on Mac/Linux):
+```bash
+make setup          # Full setup (venv + deps + frontend build)
+make ui             # Start the web UI
+make dev            # Start with hot-reload (development)
+make digest-dry     # Quick dry-run daytrade digest
+make test           # Run tests
+make lint           # Run linter
+make clean          # Remove build artifacts and cache
+make help           # Show all available targets
 ```
 
 </details>
@@ -271,7 +348,7 @@ Think of Market Digest as a robot assistant that does your pre-market homework:
 
 **Market Digest works right away with zero API keys and zero signups.** The core data source (yfinance) is completely free and built in.
 
-Everything else is optional — add keys later to unlock more data:
+Everything else is optional — add keys later to unlock more data. (API keys are like free account passwords that let Market Digest connect to extra data services.)
 
 | Service | Do I Need It? | Cost | What It Adds | Sign Up |
 |---------|:---:|------|--------------|---------|
@@ -283,9 +360,9 @@ Everything else is optional — add keys later to unlock more data:
 | **NewsAPI** | No | Free (100 calls/day) | Financial news headlines | [Sign up](https://newsapi.org) |
 | **Claude / ChatGPT / Gemini** | No | Varies (has free tiers) | AI-written commentary on digests | [Anthropic](https://console.anthropic.com) / [OpenAI](https://platform.openai.com) / [Google](https://aistudio.google.com) |
 
-> **How to add keys:** Edit the `.env` file in the project folder, or re-run `./setup.sh` — it'll walk you through each one interactively.
+> **How to add keys:** Open the Command Center (Settings page) to enter them through the web interface. Or edit the `.env` file in the project folder. Or re-run `./setup.sh` and enter them when prompted.
 >
-> **Our recommendation:** Start with zero keys. Play with `make digest-dry`. Then add Telegram when you're ready for phone delivery. Add the rest whenever you feel like it.
+> **Our recommendation:** Start with zero keys. Run a sample digest to see how it works. Then add Telegram when you're ready for phone delivery. Add the rest whenever you feel like it.
 
 ---
 
@@ -319,26 +396,32 @@ Your Chat ID tells Market Digest *where* to send messages (your personal chat).
 
 ### Step 3: Add Your Credentials
 
-Open the `.env` file in the project folder and fill in these two lines:
+Open the **Command Center** (Settings page) and enter your Bot Token and Chat ID there. Or, if you prefer, edit the `.env` file in the project folder:
 
 ```env
 TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
 TELEGRAM_CHAT_ID=987654321
 ```
 
-Or re-run `./setup.sh` and enter them when prompted.
-
 ### Step 4: Test It
 
+In your Terminal/PowerShell, run:
+
+On Mac/Linux:
 ```bash
 .venv/bin/python scripts/test_telegram.py
 ```
 
+On Windows:
+```powershell
+.venv\Scripts\python scripts\test_telegram.py
+```
+
 > If it works, you'll get a test message on Telegram. If not, double-check that you messaged the bot first (Step 2) and that the token and chat ID are correct.
 
-**That's it — you're connected.** Now any digest you run (without `--dry-run`) will be delivered to your phone.
+**That's it — you're connected.** Now any digest you run will be delivered to your phone.
 
-> **Want to send to multiple people?** Add more chat IDs separated by commas in your `.env`:
+> **Want to send to multiple people?** Add more chat IDs separated by commas:
 > ```env
 > TELEGRAM_CHAT_ID=987654321,111222333,444555666
 > ```
@@ -348,11 +431,11 @@ Or re-run `./setup.sh` and enter them when prompted.
 
 ## Bring Your Own Data Sources
 
-Market Digest comes with 6 built-in data sources, but you can **add your own** — any HTTP API, RSS feed, or CSV file — through the web UI or the API. No code required.
+Market Digest comes with 6 built-in data sources, but you can **add your own** — any HTTP API, RSS feed, or CSV file — through the Command Center or the API. No code required.
 
 ### Adding a Custom Source via the Command Center
 
-1. Open the Command Center (`make ui`)
+1. Open the Command Center (double-click `start.command` on Mac, or run `start_ui.py` — see [How to Install](#how-to-install))
 2. Go to the **Data Sources** page
 3. Click **Add Custom Source**
 4. Fill in the details:
@@ -386,8 +469,6 @@ Point it at any RSS or Atom feed URL (e.g., a financial news RSS feed, a subredd
 - Pull title, summary, and link from each item
 - Include the latest items in your digest
 
-> Requires the `feedparser` package: `.venv/bin/pip install feedparser`
-
 </details>
 
 <details>
@@ -403,9 +484,11 @@ Market Digest reads the CSV, maps columns to fields, and auto-converts numbers.
 
 </details>
 
-### Example: Adding an HTTP API Source
+<details>
+<summary><strong>Example: Adding an HTTP API Source via the API</strong></summary>
+<br>
 
-Here's what it looks like to add Alpha Vantage as a custom source (via the API, if you prefer):
+Here's what it looks like to add Alpha Vantage as a custom source programmatically:
 
 ```bash
 curl -X POST http://localhost:8550/api/sources/custom \
@@ -429,13 +512,15 @@ curl -X POST http://localhost:8550/api/sources/custom \
   }'
 ```
 
-> **Bottom line:** If it's on the internet and returns data, you can probably plug it in. No need to write code or modify source files — the web UI and API handle everything.
+</details>
+
+> **Bottom line:** If it's on the internet and returns data, you can probably plug it in. No need to write code or modify source files — the Command Center handles everything.
 
 ---
 
 ## The Command Center — Your Control Panel
 
-Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your browser. Here's what you get:
+Start it by double-clicking `start.command` (Mac) or running the start command from [How to Install](#how-to-install). A page will open in your browser — that's the Command Center.
 
 | Page | What You'll Do There |
 |------|---------------------|
@@ -447,11 +532,11 @@ Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your
 | **Weights** | Adjust how much each factor matters in the scoring (e.g., "care more about trends, less about volume") |
 | **Prompts** | Customize the AI prompts if you're using Claude/GPT/Gemini |
 | **Retrace** | See your pick accuracy — which calls hit, which missed |
-| **Settings** | Change your timezone, delivery preferences, and more |
+| **Settings** | Change your timezone, delivery preferences, enter API keys, and more |
 | **Cache** | See what data is cached and clear it if needed |
 | **Logs** | Browse past digests and system logs |
 
-> **Access from your phone or tablet:** If your computer and phone are on the same Wi-Fi, open `http://<your-computer's-IP>:8550` on your phone's browser. (Find your IP: on Mac run `ipconfig getifaddr en0`, on Windows run `ipconfig`.)
+> **Access from your phone or tablet:** If your computer and phone are on the same Wi-Fi, you can open the Command Center on your phone's browser too. On your computer, find your IP address (Mac: open Terminal and run `ipconfig getifaddr en0` / Windows: open PowerShell and run `ipconfig`), then on your phone go to `http://YOUR_IP:8550`.
 
 ---
 
@@ -460,11 +545,12 @@ Start it with `make ui` and open [localhost:8550](http://localhost:8550) in your
 The real power is automation. Set up a schedule and digests arrive on your phone without you lifting a finger.
 
 <details>
-<summary><strong>macOS</strong></summary>
+<summary><strong>Mac</strong></summary>
 <br>
 
+In Terminal, navigate to your Market Digest folder and run:
 ```bash
-make schedule-install
+.venv/bin/python scripts/setup_launchd.py
 ```
 
 This sets up automatic runs:
@@ -474,6 +560,8 @@ This sets up automatic runs:
 | Day trade picks | 8:15 AM CT |
 | Afternoon recap | 4:30 PM CT |
 | Weekly summary | Friday 5:30 PM CT |
+
+Your computer needs to be awake at those times for the digests to run.
 
 </details>
 
@@ -486,10 +574,10 @@ See [`systemd/README.md`](systemd/README.md) for service files and timer setup.
 </details>
 
 <details>
-<summary><strong>Any system (the manual way)</strong></summary>
+<summary><strong>Windows / Any system</strong></summary>
 <br>
 
-You can run any digest from the command line:
+You can run any digest from PowerShell or Terminal:
 
 ```bash
 .venv/bin/python scripts/run_digest.py --type daytrade --mode facts
@@ -498,7 +586,7 @@ You can run any digest from the command line:
 **Digest types:** `morning`, `afternoon`, `weekly`, `daytrade`
 **Modes:** `facts` (data only), `full` (data + AI commentary), `both` (sends both separately)
 
-Point your system's scheduler (cron on Linux/Mac, Task Scheduler on Windows) at any of these commands to run them automatically.
+Use Windows Task Scheduler (or cron on Mac/Linux) to run these commands automatically at whatever times you choose.
 
 </details>
 
@@ -510,7 +598,7 @@ Point your system's scheduler (cron on Linux/Mac, Task Scheduler on Windows) at 
 <summary><strong>Do I need to know how to code?</strong></summary>
 <br>
 
-Nope. If you can copy-paste 4 commands into a terminal, you can run Market Digest. The setup script handles everything. The web UI handles all configuration — no code editing required.
+Nope. If you can copy-paste a few commands, you can run Market Digest. The setup script handles everything. The Command Center (web interface) handles all configuration — no code editing required.
 
 </details>
 
@@ -534,7 +622,7 @@ No. Market Digest is a data analysis tool. It scores instruments based on techni
 <summary><strong>What's "self-hosted" mean?</strong></summary>
 <br>
 
-It means the software runs on your own computer, not on someone else's server. Your data stays with you. There's no company collecting your information or charging you monthly. The downside: you have to run the setup yourself (but it only takes 60 seconds).
+It means the software runs on your own computer, not on someone else's server. Your data stays with you. There's no company collecting your information or charging you monthly. The downside: you have to run the setup yourself (but it's a one-time thing).
 
 </details>
 
@@ -558,7 +646,7 @@ Yes — anywhere that runs Python 3.10+ and has internet access. A Raspberry Pi 
 <summary><strong>Can I add my own stocks/instruments?</strong></summary>
 <br>
 
-Yes, two ways: through the web UI (Instruments page → Add), or by editing `config/instruments.yaml`. Any ticker that works on [Yahoo Finance](https://finance.yahoo.com) works here.
+Yes, two ways: through the Command Center (Instruments page → Add), or by editing `config/instruments.yaml`. Any ticker that works on [Yahoo Finance](https://finance.yahoo.com) works here.
 
 </details>
 
@@ -571,7 +659,7 @@ The most common fixes:
 1. **Did you message the bot first?** Open Telegram, find your bot by its username, and send it any message (even just "hi"). The bot can't message you until you've started a conversation with it.
 2. **Is your token correct?** Copy it again from BotFather — make sure there are no extra spaces.
 3. **Is your Chat ID correct?** Try the `@userinfobot` method: search for `@userinfobot` on Telegram, send it a message, and it'll reply with your ID.
-4. **Run the test:** `.venv/bin/python scripts/test_telegram.py` — it'll tell you exactly what's wrong.
+4. **Run the test:** In Terminal/PowerShell, run `.venv/bin/python scripts/test_telegram.py` (on Windows: `.venv\Scripts\python scripts\test_telegram.py`) — it'll tell you exactly what's wrong.
 
 </details>
 
@@ -660,23 +748,6 @@ market-digest/
 ├── tests/               # Test suite
 ├── logs/                # Runtime logs & retrace snapshots
 └── cache/               # File-backed JSON cache
-```
-
-</details>
-
-<details>
-<summary><strong>Makefile Shortcuts</strong></summary>
-<br>
-
-```bash
-make setup          # Full setup (venv + deps + frontend build)
-make ui             # Start the web UI
-make dev            # Start with hot-reload (development)
-make digest-dry     # Quick dry-run daytrade digest
-make test           # Run tests
-make lint           # Run linter
-make clean          # Remove build artifacts and cache
-make help           # Show all available targets
 ```
 
 </details>
