@@ -9,8 +9,9 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab.svg)](https://python.org)
 [![CI](https://github.com/mutaaf/MarketDigest/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaaf/MarketDigest/actions)
 
-**Tired of checking 6 different websites before the market opens?**<br>
+**Tired of checking a dozen different websites before the market opens?**<br>
 Market Digest does it for you. It grabs live prices, analyzes every instrument, gives each one a score from 0 to 100, and sends you a clean summary on Telegram.<br>
+It also reads options flow — sweep orders, dark pool activity, institutional trades — and turns it into a plain-English conviction signal.<br>
 Then it tracks whether those picks actually worked — so your results improve over time.
 
 <!-- TODO: Add demo GIF here. See assets/screenshots/README.md for recording instructions. -->
@@ -34,6 +35,10 @@ Then it tracks whether those picks actually worked — so your results improve o
 <tr>
 <td>📊</td>
 <td><strong>See which picks actually worked</strong><br>The <strong>Retrace</strong> system saves every pick you get, then checks the next day — did it hit the target? Did it hit the stop? You'll see your actual win rate.</td>
+</tr>
+<tr>
+<td>📈</td>
+<td><strong>Options flow intelligence</strong><br>See where the big money is moving. Market Digest reads sweep orders, dark pool prints, and institutional block trades, then boils it all down to one conviction signal — bullish, bearish, or neutral — with a plain-English explanation.</td>
 </tr>
 <tr>
 <td>🧠</td>
@@ -86,6 +91,17 @@ Then it tracks whether those picks actually worked — so your results improve o
 ![Telegram](assets/screenshots/telegram.png)
 
 *A clean, formatted message on your phone with your top picks, scores, entry/target/stop levels, and market context. Ready to read in under a minute.*
+
+</details>
+
+<details>
+<summary>📈 <strong>Options Flow — Conviction Signals</strong> — click to expand</summary>
+<br>
+
+<!-- TODO: Screenshot of the Options Flow page -->
+![Options Flow](assets/screenshots/options-flow.png)
+
+*Pick any stock and instantly see where the smart money is moving — sweep orders, dark pool activity, institutional blocks, and a conviction meter that reads "Strong Bull" or "Strong Bear" with a plain-English breakdown of why.*
 
 </details>
 
@@ -299,7 +315,7 @@ Think of Market Digest as a robot assistant that does your pre-market homework:
 
 **Here's what happens under the hood:**
 
-1. **Grabs data from 6 free sources** — live prices (yfinance), intraday data (TwelveData), earnings info (Finnhub), economic indicators like interest rates and GDP (FRED), financial news (NewsAPI), and market fear/greed levels.
+1. **Grabs data from 8+ free sources** — live prices (yfinance), intraday data (TwelveData), earnings info (Finnhub), economic indicators like interest rates and GDP (FRED), financial news (NewsAPI), market fear/greed levels, options chain data (Alpha Vantage), and institutional flow data (Unusual Whales).
 
 2. **Analyzes everything across 3 timeframes:**
    - **Daily** — for day trades (buying and selling the same day)
@@ -320,9 +336,11 @@ Think of Market Digest as a robot assistant that does your pre-market homework:
    - Is it growing? (growth)
    - Is it financially healthy? (debt, cash flow)
 
-5. **Sends you a formatted summary** on Telegram with the top picks, their scores, and exact entry/target/stop price levels.
+5. **Reads the options flow** (for stocks) — scans sweep orders, dark pool prints, and institutional block trades. Combines 7 conviction factors (call/put ratio, sweep ratio, dark pool signal, institutional alignment, IV skew, flow momentum, open interest changes) into a single directional signal: bullish, bearish, or neutral.
 
-6. **Tracks accuracy** — the Retrace system records every pick and checks the next day: did the price hit the target? Over time, you'll see which types of picks work best and can adjust the scoring weights.
+6. **Sends you a formatted summary** on Telegram with the top picks, their scores, and exact entry/target/stop price levels.
+
+7. **Tracks accuracy** — the Retrace system records every pick and checks the next day: did the price hit the target? Over time, you'll see which types of picks work best and can adjust the scoring weights.
 
 ---
 
@@ -352,12 +370,14 @@ Everything else is optional — add keys later to unlock more data. (API keys ar
 
 | Service | Do I Need It? | Cost | What It Adds | Sign Up |
 |---------|:---:|------|--------------|---------|
-| **yfinance** | Already included | Free | Stock prices, fundamentals — this is the engine | No signup needed |
+| **yfinance** | Already included | Free | Stock prices, fundamentals, options chains — this is the engine | No signup needed |
 | **Telegram** | Only if you want phone delivery | Free | Get digests sent to your phone | [See setup guide below](#setting-up-telegram--get-digests-on-your-phone) |
 | **TwelveData** | No | Free (800 calls/day) | Better real-time and intraday prices | [Sign up](https://twelvedata.com) |
 | **Finnhub** | No | Free (60 calls/min) | Earnings dates, economic events | [Sign up](https://finnhub.io) |
 | **FRED** | No | Free (unlimited) | Fed rate, GDP, inflation, unemployment | [Get key](https://fred.stlouisfed.org/docs/api/api_key.html) |
 | **NewsAPI** | No | Free (100 calls/day) | Financial news headlines | [Sign up](https://newsapi.org) |
+| **Alpha Vantage** | No | Free (25 calls/day) | Historical options data, IV surface | [Sign up](https://www.alphavantage.co/support/#api-key) |
+| **Unusual Whales** | No | Paid | Institutional flow, dark pool, sweep alerts | [Sign up](https://unusualwhales.com) |
 | **Claude / ChatGPT / Gemini** | No | Varies (has free tiers) | AI-written commentary on digests | [Anthropic](https://console.anthropic.com) / [OpenAI](https://platform.openai.com) / [Google](https://aistudio.google.com) |
 
 > **How to add keys:** Open the Command Center (Settings page) to enter them through the web interface. Or edit the `.env` file in the project folder. Or re-run `./setup.sh` and enter them when prompted.
@@ -431,7 +451,7 @@ On Windows:
 
 ## Bring Your Own Data Sources
 
-Market Digest comes with 6 built-in data sources, but you can **add your own** — any HTTP API, RSS feed, or CSV file — through the Command Center or the API. No code required.
+Market Digest comes with 8 built-in data sources, but you can **add your own** — any HTTP API, RSS feed, or CSV file — through the Command Center or the API. No code required.
 
 ### Adding a Custom Source via the Command Center
 
@@ -529,6 +549,7 @@ Start it by double-clicking `start.command` (Mac) or running the start command f
 | **Instruments** | Turn instruments on/off, add new tickers, organize by category |
 | **Data Sources** | Manage built-in sources, add custom APIs/RSS/CSV feeds, test connections |
 | **ScoreCard** | See every instrument's grade (A+ to F) across all three timeframes |
+| **Options Flow** | View options activity for any stock — sweep orders, dark pool prints, institutional trades, and a conviction signal that tells you where the big money is leaning |
 | **Weights** | Adjust how much each factor matters in the scoring (e.g., "care more about trends, less about volume") |
 | **Prompts** | Customize the AI prompts if you're using Claude/GPT/Gemini |
 | **Retrace** | See your pick accuracy — which calls hit, which missed |
@@ -695,6 +716,7 @@ All config is in YAML files under `config/`. Edit by hand or through the web UI 
 | `config/scoring.yaml` | Scoring weights for day trade, swing, and long-term timeframes |
 | `config/prompts.yaml` | LLM prompt templates and AI provider settings |
 | `config/digests.yaml` | Digest sections, modes, and delivery schedules |
+| `config/options.yaml` | Options flow providers, cache TTLs, and conviction weights |
 
 </details>
 
@@ -707,21 +729,23 @@ All config is in YAML files under `config/`. Edit by hand or through the web UI 
 │                    Web UI (React + Vite)                     │
 │              localhost:8550 — Command Center                 │
 ├─────────────────────────────────────────────────────────────┤
-│                  FastAPI Server (60 endpoints)               │
+│                  FastAPI Server (70 endpoints)               │
 ├──────────┬──────────┬───────────┬───────────┬───────────────┤
 │ Fetchers │ Analysis │  Digest   │  Retrace  │    Config     │
 │ yfinance │ RSI/MACD │ Morning   │ Snapshot  │ instruments   │
 │ 12Data   │ Pivots   │ Afternoon │ Grading   │ prompts       │
 │ Finnhub  │ Trend    │ Weekly    │ Scoring   │ digests       │
 │ FRED     │ Scoring  │ Daytrade  │ Tracking  │ scoring wts   │
-│ NewsAPI  │ LLM      │ Formatter │           │               │
-│ F&G      │ Fundmtls │           │           │               │
+│ NewsAPI  │ LLM      │ Options   │           │ options       │
+│ F&G      │ Fundmtls │ Formatter │           │               │
+│ AlphaV   │ Options  │           │           │               │
+│ UW Flow  │ Flow     │           │           │               │
 ├──────────┴──────────┴───────────┴───────────┴───────────────┤
 │          Cache (memory + JSON)  │  Telegram Delivery         │
 └─────────────────────────────────┴───────────────────────────┘
 ```
 
-**Tech stack:** Python 3.12 + FastAPI (60 endpoints), React 18 + TypeScript + Vite + Tailwind (web UI), yfinance + TwelveData + Finnhub + FRED + NewsAPI (data), dual-tier cache (memory + JSON files), Telegram for delivery. No database — all persistence is YAML configs and JSON files.
+**Tech stack:** Python 3.12 + FastAPI (70 endpoints), React 18 + TypeScript + Vite + Tailwind (web UI), yfinance + TwelveData + Finnhub + FRED + NewsAPI + Alpha Vantage + Unusual Whales (data), dual-tier cache (memory + JSON files), Telegram for delivery. No database — all persistence is YAML configs and JSON files.
 
 </details>
 
@@ -731,22 +755,22 @@ All config is in YAML files under `config/`. Edit by hand or through the web UI 
 
 ```
 market-digest/
-├── config/              # YAML configs (instruments, prompts, scoring weights)
+├── config/              # YAML configs (instruments, prompts, scoring weights, options)
 ├── src/
-│   ├── analysis/        # Technical analysis, scoring, LLM, fundamentals
+│   ├── analysis/        # Technical analysis, scoring, LLM, fundamentals, options flow
 │   ├── cache/           # Dual-tier cache (memory + JSON files)
 │   ├── delivery/        # Telegram delivery
-│   ├── digest/          # Digest builders (morning, afternoon, weekly, daytrade)
-│   ├── fetchers/        # Data fetchers (yfinance, TwelveData, Finnhub, etc.)
+│   ├── digest/          # Digest builders (morning, afternoon, weekly, daytrade, options)
+│   ├── fetchers/        # Data fetchers (yfinance, TwelveData, Finnhub, Alpha Vantage, UW, etc.)
 │   ├── retrace/         # Pick snapshot & grading system
 │   └── utils/           # Logging, rate limiting, timezone helpers
 ├── ui/
-│   ├── server.py        # FastAPI app (11 route groups)
+│   ├── server.py        # FastAPI app (13 route groups)
 │   ├── routes/          # API route handlers
-│   └── frontend/        # React + TypeScript + Tailwind
+│   └── frontend/        # React + TypeScript + Tailwind (11 pages)
 ├── scripts/             # CLI tools (run_digest, start_ui, setup_launchd, etc.)
 ├── tests/               # Test suite
-├── logs/                # Runtime logs & retrace snapshots
+├── logs/                # Runtime logs, retrace snapshots & options flow history
 └── cache/               # File-backed JSON cache
 ```
 
