@@ -339,6 +339,54 @@ sections:
       '
     max_tokens: 400
     include_cross_context: false
+  options_sweep_analysis:
+    prompt: 'Based on the unusual sweep and block activity data, interpret what the
+      flow tells us about institutional conviction. Reference sweep counts, golden sweeps,
+      dominant side, and total sweep premium. What are the largest trades signaling?
+      Are institutions building positions or hedging? 2-3 sentences, prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_smart_money:
+    prompt: 'Based on the smart money vs retail flow classification, analyze the divergence
+      between institutional and retail positioning. What does the split tell us about
+      informed vs uninformed sentiment? Is there a meaningful divergence signal that
+      historically precedes directional moves? Reference specific percentages and sentiment
+      labels. 2-3 sentences, prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_gex_analysis:
+    prompt: 'Based on the gamma exposure (GEX) data, explain the implications for near-term
+      price action. Is the market in a positive GEX regime (mean-reversion, dealers dampen
+      moves) or negative GEX (momentum, dealers amplify moves)? Where is the GEX flip
+      level and what happens if price crosses it? Reference specific numbers. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_dark_pool_analysis:
+    prompt: 'Based on the dark pool prints data, analyze what institutional hidden activity
+      reveals about directional bias. Are dark pool prints occurring above or below spot
+      price? What does the total notional volume suggest about institutional conviction?
+      How does DP activity correlate with the options flow? 2-3 sentences, prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
+  options_iv_analysis:
+    prompt: 'Based on the implied volatility data (IV percentile, skew, term structure),
+      explain what the volatility environment means for options traders. Is IV cheap or
+      expensive historically? Does the skew favor calls or puts? Is the term structure
+      normal or inverted, and what does that signal? Flag any crush risk. 2-3 sentences,
+      prose, no bullets.
+
+      '
+    max_tokens: 300
+    include_cross_context: false
   options_arc_reading:
     prompt: 'Based on the options flow data (call/put premiums, C/P ratio trend, strike
       concentration, expiry distribution, OI walls, max pain), provide a conviction
@@ -346,6 +394,24 @@ sections:
       or distribution. Reference specific C/P ratios, dominant strikes, and how flow
       evolved across sessions. Note if the arc is Building, Steady, or Fading. End
       with what to watch for confirmation/invalidation. 3-5 sentences, prose, no bullets.
+
+      '
+    max_tokens: 400
+    include_cross_context: false
+  options_summary:
+    prompt: 'Provide a concise overview of options flow across the top 3 equities.
+      Compare their conviction levels, highlight where smart money appears to be positioning,
+      and note any divergences between call/put flow. Mention key strikes and max pain
+      levels that could act as magnets. 3-5 sentences, prose, no bullets.
+
+      '
+    max_tokens: 400
+    include_cross_context: false
+  next_steps_options:
+    prompt: 'Based on the options flow data for the top equities, provide 3-5 actionable
+      next steps. What levels to watch, what flow changes would confirm or invalidate
+      the current thesis, and what events could shift conviction. Be specific with
+      strike prices and dates. Numbered list format.
 
       '
     max_tokens: 400

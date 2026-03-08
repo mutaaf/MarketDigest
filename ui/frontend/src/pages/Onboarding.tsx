@@ -15,6 +15,8 @@ const API_KEYS = [
   { key: 'anthropic', label: 'Anthropic API Key (LLM)', required: false },
   { key: 'openai', label: 'OpenAI API Key (LLM)', required: false },
   { key: 'gemini', label: 'Gemini API Key (LLM)', required: false },
+  { key: 'unusual_whales', label: 'Unusual Whales API Key (Options)', required: false },
+  { key: 'alpha_vantage', label: 'Alpha Vantage API Key (Options)', required: false },
 ]
 
 const STEPS = ['Welcome', 'API Keys', 'Test Telegram', 'Done']

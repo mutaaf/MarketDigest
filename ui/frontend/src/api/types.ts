@@ -1,3 +1,30 @@
+export interface MarketIndex {
+  price: number
+  change_pct: number
+}
+
+export interface MarketSnapshot {
+  spy?: MarketIndex
+  qqq?: MarketIndex
+  vix?: MarketIndex
+  fetched_at?: string
+}
+
+export interface OptionsConvictionEntry {
+  symbol: string
+  conviction: string
+  conviction_score: number
+  cp_ratio: number
+  stock_price: number
+}
+
+export interface RetraceSummary {
+  total_graded: number
+  win_rate: number
+  avg_r: number | null
+  days_tracked: number
+}
+
 export interface ApiStatus {
   apis: Record<string, { configured: boolean; name: string }>
   cache: { file_count: number; total_size_bytes: number }
@@ -6,6 +33,9 @@ export interface ApiStatus {
   timezone: string
   log_level: string
   has_llm_key: boolean
+  market_snapshot?: MarketSnapshot | null
+  options_conviction?: OptionsConvictionEntry[]
+  retrace_summary?: RetraceSummary | null
 }
 
 export interface HistoryEntry {

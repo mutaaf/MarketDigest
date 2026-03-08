@@ -1,0 +1,783 @@
+{
+  "symbol": "AVGO",
+  "stock_price": 330.48,
+  "fetched_at": "2026-03-07T05:50:50.145628",
+  "total_call_premium": 79218835.5,
+  "total_put_premium": 138835200.0,
+  "total_premium": 218054035.5,
+  "cp_ratio": 0.57,
+  "conviction": "Bear",
+  "conviction_score": 35,
+  "top_call_strike": 340.0,
+  "top_put_strike": 420.0,
+  "expiry_distribution": [
+    {
+      "expiry": "2026-03-20",
+      "days_to_expiry": 12,
+      "call_premium": 30514627.0,
+      "put_premium": 62462801.0,
+      "total_premium": 92977428.0,
+      "top_strike": 300.0,
+      "cp_ratio": 0.49,
+      "pct_of_total": 42.6
+    },
+    {
+      "expiry": "2026-03-13",
+      "days_to_expiry": 5,
+      "call_premium": 26430348.5,
+      "put_premium": 54253787.5,
+      "total_premium": 80684136.0,
+      "top_strike": 325.0,
+      "cp_ratio": 0.49,
+      "pct_of_total": 37.0
+    },
+    {
+      "expiry": "2026-03-09",
+      "days_to_expiry": 1,
+      "call_premium": 10800595.0,
+      "put_premium": 13004157.0,
+      "total_premium": 23804752.0,
+      "top_strike": 350.0,
+      "cp_ratio": 0.83,
+      "pct_of_total": 10.9
+    },
+    {
+      "expiry": "2026-03-27",
+      "days_to_expiry": 19,
+      "call_premium": 4146590.0,
+      "put_premium": 4304980.0,
+      "total_premium": 8451570.0,
+      "top_strike": 280.0,
+      "cp_ratio": 0.96,
+      "pct_of_total": 3.9
+    },
+    {
+      "expiry": "2026-03-11",
+      "days_to_expiry": 3,
+      "call_premium": 3691853.0,
+      "put_premium": 3544010.0,
+      "total_premium": 7235863.0,
+      "top_strike": 350.0,
+      "cp_ratio": 1.04,
+      "pct_of_total": 3.3
+    },
+    {
+      "expiry": "2026-04-02",
+      "days_to_expiry": 25,
+      "call_premium": 3634822.0,
+      "put_premium": 1265464.5,
+      "total_premium": 4900286.5,
+      "top_strike": 350.0,
+      "cp_ratio": 2.87,
+      "pct_of_total": 2.2
+    }
+  ],
+  "strike_heatmap": [
+    {
+      "strike": 420.0,
+      "call_premium": 22049.5,
+      "put_premium": 27493055.0,
+      "call_oi": 17916,
+      "put_oi": 10,
+      "net_premium": -27471005.5
+    },
+    {
+      "strike": 325.0,
+      "call_premium": 2942872.5,
+      "put_premium": 23591177.5,
+      "call_oi": 3285,
+      "put_oi": 2681,
+      "net_premium": -20648305.0
+    },
+    {
+      "strike": 340.0,
+      "call_premium": 12889562.5,
+      "put_premium": 6614647.5,
+      "call_oi": 16381,
+      "put_oi": 7312,
+      "net_premium": 6274915.0
+    },
+    {
+      "strike": 330.0,
+      "call_premium": 6458465.0,
+      "put_premium": 7605982.5,
+      "call_oi": 14957,
+      "put_oi": 9531,
+      "net_premium": -1147517.5
+    },
+    {
+      "strike": 320.0,
+      "call_premium": 4026755.0,
+      "put_premium": 6303697.5,
+      "call_oi": 8291,
+      "put_oi": 13444,
+      "net_premium": -2276942.5
+    },
+    {
+      "strike": 335.0,
+      "call_premium": 4989182.5,
+      "put_premium": 5208180.0,
+      "call_oi": 7549,
+      "put_oi": 1661,
+      "net_premium": -218997.5
+    },
+    {
+      "strike": 300.0,
+      "call_premium": 2129300.0,
+      "put_premium": 5657562.5,
+      "call_oi": 4196,
+      "put_oi": 23922,
+      "net_premium": -3528262.5
+    },
+    {
+      "strike": 337.5,
+      "call_premium": 2192431.0,
+      "put_premium": 5446487.5,
+      "call_oi": 2125,
+      "put_oi": 138,
+      "net_premium": -3254056.5
+    },
+    {
+      "strike": 350.0,
+      "call_premium": 5943791.5,
+      "put_premium": 1220567.5,
+      "call_oi": 20497,
+      "put_oi": 8265,
+      "net_premium": 4723224.0
+    },
+    {
+      "strike": 307.5,
+      "call_premium": 109960.0,
+      "put_premium": 6717528.0,
+      "call_oi": 177,
+      "put_oi": 466,
+      "net_premium": -6607568.0
+    },
+    {
+      "strike": 310.0,
+      "call_premium": 2748670.0,
+      "put_premium": 2659889.0,
+      "call_oi": 4852,
+      "put_oi": 12665,
+      "net_premium": 88781.0
+    },
+    {
+      "strike": 332.5,
+      "call_premium": 3186355.0,
+      "put_premium": 2013075.0,
+      "call_oi": 2716,
+      "put_oi": 1763,
+      "net_premium": 1173280.0
+    },
+    {
+      "strike": 315.0,
+      "call_premium": 1943142.5,
+      "put_premium": 3093010.0,
+      "call_oi": 2600,
+      "put_oi": 8971,
+      "net_premium": -1149867.5
+    },
+    {
+      "strike": 345.0,
+      "call_premium": 3210007.0,
+      "put_premium": 1343040.0,
+      "call_oi": 8683,
+      "put_oi": 352,
+      "net_premium": 1866967.0
+    },
+    {
+      "strike": 327.5,
+      "call_premium": 2151570.0,
+      "put_premium": 1665127.5,
+      "call_oi": 917,
+      "put_oi": 1185,
+      "net_premium": 486442.5
+    },
+    {
+      "strike": 305.0,
+      "call_premium": 421990.0,
+      "put_premium": 3008996.5,
+      "call_oi": 678,
+      "put_oi": 2364,
+      "net_premium": -2587006.5
+    },
+    {
+      "strike": 342.5,
+      "call_premium": 967544.5,
+      "put_premium": 2108945.0,
+      "call_oi": 1018,
+      "put_oi": 23,
+      "net_premium": -1141400.5
+    },
+    {
+      "strike": 405.0,
+      "call_premium": 8318.0,
+      "put_premium": 2997000.0,
+      "call_oi": 664,
+      "put_oi": 57,
+      "net_premium": -2988682.0
+    },
+    {
+      "strike": 415.0,
+      "call_premium": 10411.5,
+      "put_premium": 2850210.0,
+      "call_oi": 529,
+      "put_oi": 6,
+      "net_premium": -2839798.5
+    },
+    {
+      "strike": 530.0,
+      "call_premium": 180.0,
+      "put_premium": 2587650.0,
+      "call_oi": 639,
+      "put_oi": 0,
+      "net_premium": -2587470.0
+    }
+  ],
+  "greeks_summary": {
+    "net_delta": 4509318.0,
+    "total_gamma": 351116.0,
+    "put_wall": 297.5,
+    "call_wall": 400.0,
+    "max_pain": 315.0
+  },
+  "oi_analysis": {
+    "total_call_oi": 311695,
+    "total_put_oi": 318288,
+    "pcr_oi": 1.02,
+    "put_wall": 297.5,
+    "call_wall": 400.0
+  },
+  "_history": [
+    {
+      "symbol": "AVGO",
+      "stock_price": 330.48,
+      "fetched_at": "2026-03-07T01:22:10.794561",
+      "total_call_premium": 79218835.5,
+      "total_put_premium": 138835200.0,
+      "total_premium": 218054035.5,
+      "cp_ratio": 0.57,
+      "conviction": "Bear",
+      "conviction_score": 35,
+      "top_call_strike": 340.0,
+      "top_put_strike": 420.0,
+      "expiry_distribution": [
+        {
+          "expiry": "2026-03-20",
+          "days_to_expiry": 12,
+          "call_premium": 30514627.0,
+          "put_premium": 62462801.0,
+          "total_premium": 92977428.0,
+          "top_strike": 300.0,
+          "cp_ratio": 0.49,
+          "pct_of_total": 42.6
+        },
+        {
+          "expiry": "2026-03-13",
+          "days_to_expiry": 5,
+          "call_premium": 26430348.5,
+          "put_premium": 54253787.5,
+          "total_premium": 80684136.0,
+          "top_strike": 325.0,
+          "cp_ratio": 0.49,
+          "pct_of_total": 37.0
+        },
+        {
+          "expiry": "2026-03-09",
+          "days_to_expiry": 1,
+          "call_premium": 10800595.0,
+          "put_premium": 13004157.0,
+          "total_premium": 23804752.0,
+          "top_strike": 350.0,
+          "cp_ratio": 0.83,
+          "pct_of_total": 10.9
+        },
+        {
+          "expiry": "2026-03-27",
+          "days_to_expiry": 19,
+          "call_premium": 4146590.0,
+          "put_premium": 4304980.0,
+          "total_premium": 8451570.0,
+          "top_strike": 280.0,
+          "cp_ratio": 0.96,
+          "pct_of_total": 3.9
+        },
+        {
+          "expiry": "2026-03-11",
+          "days_to_expiry": 3,
+          "call_premium": 3691853.0,
+          "put_premium": 3544010.0,
+          "total_premium": 7235863.0,
+          "top_strike": 350.0,
+          "cp_ratio": 1.04,
+          "pct_of_total": 3.3
+        },
+        {
+          "expiry": "2026-04-02",
+          "days_to_expiry": 25,
+          "call_premium": 3634822.0,
+          "put_premium": 1265464.5,
+          "total_premium": 4900286.5,
+          "top_strike": 350.0,
+          "cp_ratio": 2.87,
+          "pct_of_total": 2.2
+        }
+      ],
+      "strike_heatmap": [
+        {
+          "strike": 420.0,
+          "call_premium": 22049.5,
+          "put_premium": 27493055.0,
+          "call_oi": 17916,
+          "put_oi": 10,
+          "net_premium": -27471005.5
+        },
+        {
+          "strike": 325.0,
+          "call_premium": 2942872.5,
+          "put_premium": 23591177.5,
+          "call_oi": 3285,
+          "put_oi": 2681,
+          "net_premium": -20648305.0
+        },
+        {
+          "strike": 340.0,
+          "call_premium": 12889562.5,
+          "put_premium": 6614647.5,
+          "call_oi": 16381,
+          "put_oi": 7312,
+          "net_premium": 6274915.0
+        },
+        {
+          "strike": 330.0,
+          "call_premium": 6458465.0,
+          "put_premium": 7605982.5,
+          "call_oi": 14957,
+          "put_oi": 9531,
+          "net_premium": -1147517.5
+        },
+        {
+          "strike": 320.0,
+          "call_premium": 4026755.0,
+          "put_premium": 6303697.5,
+          "call_oi": 8291,
+          "put_oi": 13444,
+          "net_premium": -2276942.5
+        },
+        {
+          "strike": 335.0,
+          "call_premium": 4989182.5,
+          "put_premium": 5208180.0,
+          "call_oi": 7549,
+          "put_oi": 1661,
+          "net_premium": -218997.5
+        },
+        {
+          "strike": 300.0,
+          "call_premium": 2129300.0,
+          "put_premium": 5657562.5,
+          "call_oi": 4196,
+          "put_oi": 23922,
+          "net_premium": -3528262.5
+        },
+        {
+          "strike": 337.5,
+          "call_premium": 2192431.0,
+          "put_premium": 5446487.5,
+          "call_oi": 2125,
+          "put_oi": 138,
+          "net_premium": -3254056.5
+        },
+        {
+          "strike": 350.0,
+          "call_premium": 5943791.5,
+          "put_premium": 1220567.5,
+          "call_oi": 20497,
+          "put_oi": 8265,
+          "net_premium": 4723224.0
+        },
+        {
+          "strike": 307.5,
+          "call_premium": 109960.0,
+          "put_premium": 6717528.0,
+          "call_oi": 177,
+          "put_oi": 466,
+          "net_premium": -6607568.0
+        },
+        {
+          "strike": 310.0,
+          "call_premium": 2748670.0,
+          "put_premium": 2659889.0,
+          "call_oi": 4852,
+          "put_oi": 12665,
+          "net_premium": 88781.0
+        },
+        {
+          "strike": 332.5,
+          "call_premium": 3186355.0,
+          "put_premium": 2013075.0,
+          "call_oi": 2716,
+          "put_oi": 1763,
+          "net_premium": 1173280.0
+        },
+        {
+          "strike": 315.0,
+          "call_premium": 1943142.5,
+          "put_premium": 3093010.0,
+          "call_oi": 2600,
+          "put_oi": 8971,
+          "net_premium": -1149867.5
+        },
+        {
+          "strike": 345.0,
+          "call_premium": 3210007.0,
+          "put_premium": 1343040.0,
+          "call_oi": 8683,
+          "put_oi": 352,
+          "net_premium": 1866967.0
+        },
+        {
+          "strike": 327.5,
+          "call_premium": 2151570.0,
+          "put_premium": 1665127.5,
+          "call_oi": 917,
+          "put_oi": 1185,
+          "net_premium": 486442.5
+        },
+        {
+          "strike": 305.0,
+          "call_premium": 421990.0,
+          "put_premium": 3008996.5,
+          "call_oi": 678,
+          "put_oi": 2364,
+          "net_premium": -2587006.5
+        },
+        {
+          "strike": 342.5,
+          "call_premium": 967544.5,
+          "put_premium": 2108945.0,
+          "call_oi": 1018,
+          "put_oi": 23,
+          "net_premium": -1141400.5
+        },
+        {
+          "strike": 405.0,
+          "call_premium": 8318.0,
+          "put_premium": 2997000.0,
+          "call_oi": 664,
+          "put_oi": 57,
+          "net_premium": -2988682.0
+        },
+        {
+          "strike": 415.0,
+          "call_premium": 10411.5,
+          "put_premium": 2850210.0,
+          "call_oi": 529,
+          "put_oi": 6,
+          "net_premium": -2839798.5
+        },
+        {
+          "strike": 530.0,
+          "call_premium": 180.0,
+          "put_premium": 2587650.0,
+          "call_oi": 639,
+          "put_oi": 0,
+          "net_premium": -2587470.0
+        }
+      ],
+      "greeks_summary": {
+        "net_delta": 4509318.0,
+        "total_gamma": 351116.0,
+        "put_wall": 297.5,
+        "call_wall": 400.0,
+        "max_pain": 315.0
+      },
+      "oi_analysis": {
+        "total_call_oi": 311695,
+        "total_put_oi": 318288,
+        "pcr_oi": 1.02,
+        "put_wall": 297.5,
+        "call_wall": 400.0
+      },
+      "_history": [
+        {
+          "symbol": "AVGO",
+          "stock_price": 330.48,
+          "fetched_at": "2026-03-07T01:14:31.410768",
+          "total_call_premium": 79218835.5,
+          "total_put_premium": 138835200.0,
+          "total_premium": 218054035.5,
+          "cp_ratio": 0.57,
+          "conviction": "Bear",
+          "conviction_score": 35,
+          "top_call_strike": 340.0,
+          "top_put_strike": 420.0,
+          "expiry_distribution": [
+            {
+              "expiry": "2026-03-20",
+              "days_to_expiry": 12,
+              "call_premium": 30514627.0,
+              "put_premium": 62462801.0,
+              "total_premium": 92977428.0,
+              "top_strike": 300.0,
+              "cp_ratio": 0.49,
+              "pct_of_total": 42.6
+            },
+            {
+              "expiry": "2026-03-13",
+              "days_to_expiry": 5,
+              "call_premium": 26430348.5,
+              "put_premium": 54253787.5,
+              "total_premium": 80684136.0,
+              "top_strike": 325.0,
+              "cp_ratio": 0.49,
+              "pct_of_total": 37.0
+            },
+            {
+              "expiry": "2026-03-09",
+              "days_to_expiry": 1,
+              "call_premium": 10800595.0,
+              "put_premium": 13004157.0,
+              "total_premium": 23804752.0,
+              "top_strike": 350.0,
+              "cp_ratio": 0.83,
+              "pct_of_total": 10.9
+            },
+            {
+              "expiry": "2026-03-27",
+              "days_to_expiry": 19,
+              "call_premium": 4146590.0,
+              "put_premium": 4304980.0,
+              "total_premium": 8451570.0,
+              "top_strike": 280.0,
+              "cp_ratio": 0.96,
+              "pct_of_total": 3.9
+            },
+            {
+              "expiry": "2026-03-11",
+              "days_to_expiry": 3,
+              "call_premium": 3691853.0,
+              "put_premium": 3544010.0,
+              "total_premium": 7235863.0,
+              "top_strike": 350.0,
+              "cp_ratio": 1.04,
+              "pct_of_total": 3.3
+            },
+            {
+              "expiry": "2026-04-02",
+              "days_to_expiry": 25,
+              "call_premium": 3634822.0,
+              "put_premium": 1265464.5,
+              "total_premium": 4900286.5,
+              "top_strike": 350.0,
+              "cp_ratio": 2.87,
+              "pct_of_total": 2.2
+            }
+          ],
+          "strike_heatmap": [
+            {
+              "strike": 420.0,
+              "call_premium": 22049.5,
+              "put_premium": 27493055.0,
+              "call_oi": 17916,
+              "put_oi": 10,
+              "net_premium": -27471005.5
+            },
+            {
+              "strike": 325.0,
+              "call_premium": 2942872.5,
+              "put_premium": 23591177.5,
+              "call_oi": 3285,
+              "put_oi": 2681,
+              "net_premium": -20648305.0
+            },
+            {
+              "strike": 340.0,
+              "call_premium": 12889562.5,
+              "put_premium": 6614647.5,
+              "call_oi": 16381,
+              "put_oi": 7312,
+              "net_premium": 6274915.0
+            },
+            {
+              "strike": 330.0,
+              "call_premium": 6458465.0,
+              "put_premium": 7605982.5,
+              "call_oi": 14957,
+              "put_oi": 9531,
+              "net_premium": -1147517.5
+            },
+            {
+              "strike": 320.0,
+              "call_premium": 4026755.0,
+              "put_premium": 6303697.5,
+              "call_oi": 8291,
+              "put_oi": 13444,
+              "net_premium": -2276942.5
+            },
+            {
+              "strike": 335.0,
+              "call_premium": 4989182.5,
+              "put_premium": 5208180.0,
+              "call_oi": 7549,
+              "put_oi": 1661,
+              "net_premium": -218997.5
+            },
+            {
+              "strike": 300.0,
+              "call_premium": 2129300.0,
+              "put_premium": 5657562.5,
+              "call_oi": 4196,
+              "put_oi": 23922,
+              "net_premium": -3528262.5
+            },
+            {
+              "strike": 337.5,
+              "call_premium": 2192431.0,
+              "put_premium": 5446487.5,
+              "call_oi": 2125,
+              "put_oi": 138,
+              "net_premium": -3254056.5
+            },
+            {
+              "strike": 350.0,
+              "call_premium": 5943791.5,
+              "put_premium": 1220567.5,
+              "call_oi": 20497,
+              "put_oi": 8265,
+              "net_premium": 4723224.0
+            },
+            {
+              "strike": 307.5,
+              "call_premium": 109960.0,
+              "put_premium": 6717528.0,
+              "call_oi": 177,
+              "put_oi": 466,
+              "net_premium": -6607568.0
+            },
+            {
+              "strike": 310.0,
+              "call_premium": 2748670.0,
+              "put_premium": 2659889.0,
+              "call_oi": 4852,
+              "put_oi": 12665,
+              "net_premium": 88781.0
+            },
+            {
+              "strike": 332.5,
+              "call_premium": 3186355.0,
+              "put_premium": 2013075.0,
+              "call_oi": 2716,
+              "put_oi": 1763,
+              "net_premium": 1173280.0
+            },
+            {
+              "strike": 315.0,
+              "call_premium": 1943142.5,
+              "put_premium": 3093010.0,
+              "call_oi": 2600,
+              "put_oi": 8971,
+              "net_premium": -1149867.5
+            },
+            {
+              "strike": 345.0,
+              "call_premium": 3210007.0,
+              "put_premium": 1343040.0,
+              "call_oi": 8683,
+              "put_oi": 352,
+              "net_premium": 1866967.0
+            },
+            {
+              "strike": 327.5,
+              "call_premium": 2151570.0,
+              "put_premium": 1665127.5,
+              "call_oi": 917,
+              "put_oi": 1185,
+              "net_premium": 486442.5
+            },
+            {
+              "strike": 305.0,
+              "call_premium": 421990.0,
+              "put_premium": 3008996.5,
+              "call_oi": 678,
+              "put_oi": 2364,
+              "net_premium": -2587006.5
+            },
+            {
+              "strike": 342.5,
+              "call_premium": 967544.5,
+              "put_premium": 2108945.0,
+              "call_oi": 1018,
+              "put_oi": 23,
+              "net_premium": -1141400.5
+            },
+            {
+              "strike": 405.0,
+              "call_premium": 8318.0,
+              "put_premium": 2997000.0,
+              "call_oi": 664,
+              "put_oi": 57,
+              "net_premium": -2988682.0
+            },
+            {
+              "strike": 415.0,
+              "call_premium": 10411.5,
+              "put_premium": 2850210.0,
+              "call_oi": 529,
+              "put_oi": 6,
+              "net_premium": -2839798.5
+            },
+            {
+              "strike": 530.0,
+              "call_premium": 180.0,
+              "put_premium": 2587650.0,
+              "call_oi": 639,
+              "put_oi": 0,
+              "net_premium": -2587470.0
+            }
+          ],
+          "greeks_summary": {
+            "net_delta": 4509318.0,
+            "total_gamma": 351116.0,
+            "put_wall": 297.5,
+            "call_wall": 400.0,
+            "max_pain": 315.0
+          },
+          "oi_analysis": {
+            "total_call_oi": 311695,
+            "total_put_oi": 318288,
+            "pcr_oi": 1.02,
+            "put_wall": 297.5,
+            "call_wall": 400.0
+          },
+          "_history": [],
+          "_breakdown": [],
+          "_date": "2026-03-07"
+        }
+      ],
+      "_breakdown": [
+        {
+          "day": "Sat",
+          "date": "2026-03-07",
+          "total_call_premium": 79218835.5,
+          "total_put_premium": 138835200.0,
+          "total_premium": 218054035.5,
+          "cp_ratio": 0.57,
+          "sentiment": "Bearish"
+        }
+      ],
+      "_date": "2026-03-07"
+    }
+  ],
+  "_breakdown": [
+    {
+      "day": "Sat",
+      "date": "2026-03-07",
+      "total_call_premium": 79218835.5,
+      "total_put_premium": 138835200.0,
+      "total_premium": 218054035.5,
+      "cp_ratio": 0.57,
+      "sentiment": "Bearish"
+    }
+  ]
+}

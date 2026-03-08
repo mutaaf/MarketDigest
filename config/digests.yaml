@@ -47,3 +47,12 @@ daytrade:
   - next_steps
   default_mode: facts
   schedule: 08:15
+options:
+  sections:
+  - market_snapshot
+  - top_convictions
+  - greeks_overview
+  - arc_outlook
+  - next_steps
+  default_mode: facts
+  schedule: 09:00

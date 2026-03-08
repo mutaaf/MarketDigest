@@ -7,10 +7,25 @@ import zipfile
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from config.settings import PROJECT_ROOT, add_chat_id, get_settings, reload_settings, remove_chat_id, update_env_var
-from ui.models import RecipientAdd, SettingsUpdate
+from config.settings import PROJECT_ROOT, add_chat_id, get_env_var, get_settings, reload_settings, remove_chat_id, update_env_var
+from ui.models import ApiKeyUpdate, RecipientAdd, SettingsUpdate
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
+
+# API key definitions: (ui_key, env_var, display_name, category)
+_API_KEY_DEFS = [
+    ("telegram_bot_token", "TELEGRAM_BOT_TOKEN", "Telegram Bot Token", "telegram"),
+    ("telegram_chat_id", "TELEGRAM_CHAT_ID", "Telegram Chat ID", "telegram"),
+    ("twelvedata", "TWELVEDATA_API_KEY", "Twelve Data", "data"),
+    ("finnhub", "FINNHUB_API_KEY", "Finnhub", "data"),
+    ("fred", "FRED_API_KEY", "FRED", "data"),
+    ("newsapi", "NEWSAPI_KEY", "NewsAPI", "data"),
+    ("anthropic", "ANTHROPIC_API_KEY", "Anthropic (Claude)", "llm"),
+    ("openai", "OPENAI_API_KEY", "OpenAI", "llm"),
+    ("gemini", "GEMINI_API_KEY", "Google Gemini", "llm"),
+    ("unusual_whales", "UNUSUAL_WHALES_API_KEY", "Unusual Whales", "options"),
+    ("alpha_vantage", "ALPHA_VANTAGE_API_KEY", "Alpha Vantage", "options"),
+]
 
 CONFIG_FILES = [
     "config/instruments.yaml",
@@ -117,3 +132,58 @@ def test_recipient(chat_id: str):
         return {"success": False, "message": "Failed to send test message"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── API Keys Management ──────────────────────────────────────
+
+
+@router.get("/api-keys")
+def get_api_keys_status():
+    """Return all API keys with configured status (values masked)."""
+    settings = get_settings()
+    result = []
+    for ui_key, env_var, label, category in _API_KEY_DEFS:
+        raw = get_env_var(env_var)
+        has_value = bool(raw and raw not in ("", "your_" + ui_key + "_here"))
+        masked = ""
+        if raw and has_value:
+            masked = raw[:4] + "..." + raw[-4:] if len(raw) > 12 else "****"
+        result.append({
+            "key": ui_key,
+            "env_var": env_var,
+            "label": label,
+            "category": category,
+            "configured": has_value,
+            "masked_value": masked,
+        })
+    return result
+
+
+@router.post("/api-keys")
+def set_api_key(update: ApiKeyUpdate):
+    """Set an API key in .env and reload settings."""
+    env_var = None
+    for ui_key, ev, _label, _cat in _API_KEY_DEFS:
+        if ui_key == update.key:
+            env_var = ev
+            break
+    if not env_var:
+        raise HTTPException(status_code=400, detail=f"Unknown key: {update.key}")
+    update_env_var(env_var, update.value)
+    reload_settings()
+    return {"success": True, "key": update.key}
+
+
+@router.delete("/api-keys/{key_name}")
+def remove_api_key(key_name: str):
+    """Remove an API key from .env."""
+    env_var = None
+    for ui_key, ev, _label, _cat in _API_KEY_DEFS:
+        if ui_key == key_name:
+            env_var = ev
+            break
+    if not env_var:
+        raise HTTPException(status_code=400, detail=f"Unknown key: {key_name}")
+    update_env_var(env_var, "")
+    reload_settings()
+    return {"success": True, "key": key_name}

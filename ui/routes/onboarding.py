@@ -20,6 +20,8 @@ _KEY_MAP = {
     "anthropic": "ANTHROPIC_API_KEY",
     "openai": "OPENAI_API_KEY",
     "gemini": "GEMINI_API_KEY",
+    "unusual_whales": "UNUSUAL_WHALES_API_KEY",
+    "alpha_vantage": "ALPHA_VANTAGE_API_KEY",
 }
 
 
@@ -160,6 +162,32 @@ def test_api(api_name: str):
             model = genai.GenerativeModel("gemini-2.0-flash")
             model.generate_content("Say OK")
             return {"success": True, "message": "Connected to Gemini"}
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+
+    elif api_name == "unusual_whales":
+        if not settings.api_keys.unusual_whales:
+            return {"success": False, "message": "No API key configured"}
+        try:
+            from src.fetchers.uw_fetcher import UnusualWhalesFetcher
+            fetcher = UnusualWhalesFetcher()
+            if fetcher.available:
+                alerts = fetcher.get_flow_alerts("AAPL", limit=3)
+                return {"success": True, "message": f"OK — {len(alerts)} flow alerts"}
+            return {"success": False, "message": "Client failed to initialize"}
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+
+    elif api_name == "alpha_vantage":
+        if not settings.api_keys.alpha_vantage:
+            return {"success": False, "message": "No API key configured"}
+        try:
+            from src.fetchers.av_options_fetcher import AlphaVantageOptionsFetcher
+            fetcher = AlphaVantageOptionsFetcher()
+            if fetcher.available:
+                data = fetcher.get_historical_iv("AAPL", days=30)
+                return {"success": True, "message": f"OK — {len(data)} IV data points"}
+            return {"success": False, "message": "Client not available"}
         except Exception as e:
             return {"success": False, "message": str(e)}
 

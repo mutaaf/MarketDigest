@@ -1,0 +1,24 @@
+providers:
+  chain_priority: [yfinance, alpha_vantage]
+  flow_provider: unusual_whales
+  historical_provider: alpha_vantage
+
+cache_ttl:
+  chain: 300
+  flow_alerts: 120
+  dark_pool: 180
+  historical_iv: 3600
+
+analysis:
+  sweep_min_premium: 50000
+  block_min_size: 100
+  dark_pool_correlation_window: 60
+
+conviction_v2_weights:
+  cp_ratio: 0.15
+  sweep_ratio: 0.20
+  dark_pool_signal: 0.15
+  institutional_alignment: 0.10
+  iv_skew: 0.10
+  flow_momentum: 0.15
+  oi_changes: 0.15

@@ -16,6 +16,7 @@ from src.digest.afternoon import build_afternoon_digest
 from src.digest.builder import DigestBuilder
 from src.digest.daytrade import build_daytrade_digest
 from src.digest.morning import build_morning_digest
+from src.digest.options import build_options_digest
 from src.digest.weekly import build_weekly_digest
 from src.utils.logging_config import setup_logging
 
@@ -26,6 +27,7 @@ DIGEST_BUILDERS = {
     "afternoon": build_afternoon_digest,
     "weekly": build_weekly_digest,
     "daytrade": build_daytrade_digest,
+    "options": build_options_digest,
 }
 
 HISTORY_FILE = Path(__file__).parent.parent / "logs" / "digest_history.json"
@@ -85,7 +87,7 @@ def main():
     parser = argparse.ArgumentParser(description="Financial Market Digest")
     parser.add_argument(
         "--type",
-        choices=["morning", "afternoon", "weekly", "daytrade"],
+        choices=["morning", "afternoon", "weekly", "daytrade", "options"],
         required=True,
         help="Type of digest to generate",
     )

@@ -36,7 +36,7 @@ def get_digest_config():
 @router.put("/config/{digest_type}")
 def update_digest_config(digest_type: str, body: DigestConfigUpdate):
     """Update a specific digest type's configuration."""
-    if digest_type not in ("morning", "afternoon", "weekly", "daytrade"):
+    if digest_type not in ("morning", "afternoon", "weekly", "daytrade", "options"):
         raise HTTPException(status_code=400, detail=f"Invalid digest type: {digest_type}")
 
     config = _load_digests_yaml()
@@ -57,7 +57,7 @@ def update_digest_config(digest_type: str, body: DigestConfigUpdate):
 @router.post("/run")
 def run_digest(body: DigestRunRequest):
     """Run a digest and return the HTML content."""
-    if body.digest_type not in ("morning", "afternoon", "weekly", "daytrade"):
+    if body.digest_type not in ("morning", "afternoon", "weekly", "daytrade", "options"):
         raise HTTPException(status_code=400, detail=f"Invalid digest type: {body.digest_type}")
     if body.mode not in ("facts", "full", "both"):
         raise HTTPException(status_code=400, detail=f"Invalid mode: {body.mode}")
@@ -71,6 +71,7 @@ def run_digest(body: DigestRunRequest):
         from src.digest.builder import DigestBuilder
         from src.digest.daytrade import build_daytrade_digest
         from src.digest.morning import build_morning_digest
+        from src.digest.options import build_options_digest
         from src.digest.weekly import build_weekly_digest
 
         builders = {
@@ -78,6 +79,7 @@ def run_digest(body: DigestRunRequest):
             "afternoon": build_afternoon_digest,
             "weekly": build_weekly_digest,
             "daytrade": build_daytrade_digest,
+            "options": build_options_digest,
         }
 
         builder = DigestBuilder()

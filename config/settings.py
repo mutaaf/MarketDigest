@@ -38,6 +38,8 @@ class APIKeys:
     finnhub: str = ""
     fred: str = ""
     newsapi: str = ""
+    unusual_whales: str = ""
+    alpha_vantage: str = ""
 
 
 @dataclass
@@ -119,6 +121,8 @@ def _load_settings() -> Settings:
             finnhub=os.getenv("FINNHUB_API_KEY", ""),
             fred=os.getenv("FRED_API_KEY", ""),
             newsapi=os.getenv("NEWSAPI_KEY", ""),
+            unusual_whales=os.getenv("UNUSUAL_WHALES_API_KEY", ""),
+            alpha_vantage=os.getenv("ALPHA_VANTAGE_API_KEY", ""),
         ),
         llm_keys=LLMKeys(
             anthropic=os.getenv("ANTHROPIC_API_KEY", ""),
