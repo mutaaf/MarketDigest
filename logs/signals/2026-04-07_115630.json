@@ -1,0 +1,256 @@
+{
+  "timestamp": "2026-04-07T11:56:30.829458",
+  "count": 5,
+  "signals": [
+    {
+      "id": "522119a5",
+      "timestamp": "2026-04-07T11:56:30.829353",
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 219.22,
+      "stop_loss": 226.80228,
+      "target_1": 204.94,
+      "target_2": 197.62189,
+      "risk_reward": 1.88,
+      "indicators": {
+        "bb": {
+          "upper": 221.66868,
+          "middle": 204.94,
+          "lower": 188.21132,
+          "pct_b": 0.927,
+          "bandwidth": 16.33,
+          "squeeze": false
+        },
+        "rsi": 58.23239034688162,
+        "stoch": {
+          "k": 82.4,
+          "d": 73.8
+        },
+        "atr": 10.2672
+      },
+      "explanation": "BB Mean Reversion strategy: SELL . Conditions met: Price near upper BB (%B=0.93), RSI leaning overbought (58), Stochastic overbought (K=82), BB width sufficient (16.3%).",
+      "pine_strategy": null,
+      "strategy_name": "BB Mean Reversion",
+      "regime": "ranging",
+      "conditions_met": [
+        "Price near upper BB (%B=0.93)",
+        "RSI leaning overbought (58)",
+        "Stochastic overbought (K=82)",
+        "BB width sufficient (16.3%)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 75.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 219.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "386955d0",
+      "timestamp": "2026-04-07T11:56:29.144571",
+      "symbol": "SPY",
+      "name": "SPDR S&P 500 ETF",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 656.15002,
+      "stop_loss": 667.49746,
+      "target_1": 502.6973,
+      "target_2": 569.0763,
+      "risk_reward": 13.52,
+      "indicators": {
+        "ema_fast": 653.2833985444125,
+        "ema_slow": 657.9938746526198,
+        "ema_trend": 667.4974567940208,
+        "rsi": 46.74231368964327,
+        "atr": 10.07906
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (657.9939), RSI in pullback zone (47). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (657.9939)",
+        "RSI in pullback zone (47)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 540.8,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 656.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "b7b299ed",
+      "timestamp": "2026-04-07T11:56:29.342792",
+      "symbol": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 584.84003,
+      "stop_loss": 596.79387,
+      "target_1": 425.8686,
+      "target_2": 503.1446,
+      "risk_reward": 13.3,
+      "indicators": {
+        "ema_fast": 582.4229674213532,
+        "ema_slow": 587.2363208775816,
+        "ema_trend": 596.7938655604867,
+        "rsi": 46.91663378944853,
+        "atr": 11.21385
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (587.2363), RSI in pullback zone (47). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (587.2363)",
+        "RSI in pullback zone (47)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 532.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 585.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "cf77bb8d",
+      "timestamp": "2026-04-07T11:56:29.877534",
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 175.73,
+      "stop_loss": 180.30059,
+      "target_1": 95.0176,
+      "target_2": 129.1296,
+      "risk_reward": 17.66,
+      "indicators": {
+        "ema_fast": 175.26264179585007,
+        "ema_slow": 177.04571508372752,
+        "ema_trend": 180.30059197784752,
+        "rsi": 47.18235906229241,
+        "atr": 4.95639
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (177.0457), RSI in pullback zone (47). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (177.0457)",
+        "RSI in pullback zone (47)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 706.4,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 176.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "a66b64c7",
+      "timestamp": "2026-04-07T11:56:30.675108",
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 302.48999,
+      "stop_loss": 303.26953,
+      "target_1": 145.5951,
+      "target_2": 147.3291,
+      "risk_reward": 201.27,
+      "indicators": {
+        "ema_fast": 294.7416569904701,
+        "ema_slow": 297.207216860874,
+        "ema_trend": 303.2695326719307,
+        "rsi": 52.85112929902124,
+        "atr": 8.16039
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (297.2072), RSI in pullback zone (53). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (297.2072)",
+        "RSI in pullback zone (53)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 8050.8,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 302.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    }
+  ]
+}

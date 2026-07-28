@@ -2,10 +2,20 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, List, MessageSquare, Database,
   Sliders, Play, Settings, Target, Award, Activity,
+  Zap, Shield, FileText, BarChart3, Code, Brain,
 } from 'lucide-react'
 
+const tradingItems = [
+  { to: '/', icon: Zap, label: 'Signal Terminal' },
+  { to: '/innovation', icon: Brain, label: 'Innovation Agent' },
+  { to: '/risk', icon: Shield, label: 'Risk Dashboard' },
+  { to: '/paper', icon: FileText, label: 'Paper Trading' },
+  { to: '/backtest', icon: BarChart3, label: 'Backtesting' },
+  { to: '/pine', icon: Code, label: 'Pine Scripts' },
+]
+
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/instruments', icon: List, label: 'Instruments' },
   { to: '/prompts', icon: MessageSquare, label: 'Prompts' },
   { to: '/sources', icon: Database, label: 'Data Sources' },
@@ -26,7 +36,29 @@ export default function Sidebar() {
         </h1>
         <p className="text-xs text-apple-gray-400 mt-0.5">Command Center</p>
       </div>
-      <nav className="flex-1 p-3 space-y-0.5">
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+        <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-apple-gray-400">
+          Signal Forge
+        </div>
+        {tradingItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-apple-blue text-white'
+                  : 'text-apple-gray-600 hover:bg-apple-gray-100'
+              }`
+            }
+          >
+            <Icon size={18} />
+            {label}
+          </NavLink>
+        ))}
+        <div className="px-3 py-1.5 mt-3 text-[10px] font-bold uppercase tracking-widest text-apple-gray-400">
+          Market Digest
+        </div>
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}

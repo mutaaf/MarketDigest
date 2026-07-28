@@ -3,22 +3,28 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, List, Play, Database, Settings,
   MoreHorizontal, MessageSquare, Sliders, X, Target, Award, Activity,
+  Zap, Shield, FileText, BarChart3, Code,
 } from 'lucide-react'
 
 const mainTabs = [
-  { to: '/', icon: LayoutDashboard, label: 'Home' },
-  { to: '/instruments', icon: List, label: 'Instruments' },
-  { to: '/run', icon: Play, label: 'Run' },
-  { to: '/sources', icon: Database, label: 'Sources' },
+  { to: '/', icon: Zap, label: 'Signals' },
+  { to: '/risk', icon: Shield, label: 'Risk' },
+  { to: '/paper', icon: FileText, label: 'Paper' },
+  { to: '/backtest', icon: BarChart3, label: 'Backtest' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 const moreTabs = [
-  { to: '/prompts', icon: MessageSquare, label: 'Prompts' },
-  { to: '/digests', icon: Sliders, label: 'Digest Config' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/pine', icon: Code, label: 'Pine Scripts' },
+  { to: '/instruments', icon: List, label: 'Instruments' },
+  { to: '/run', icon: Play, label: 'Run & Preview' },
   { to: '/retrace', icon: Target, label: 'Retrace' },
   { to: '/scorecard', icon: Award, label: 'Score Cards' },
   { to: '/options', icon: Activity, label: 'Options Flow' },
+  { to: '/prompts', icon: MessageSquare, label: 'Prompts' },
+  { to: '/digests', icon: Sliders, label: 'Digest Config' },
+  { to: '/sources', icon: Database, label: 'Data Sources' },
 ]
 
 export default function BottomNav() {

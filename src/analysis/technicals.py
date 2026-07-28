@@ -331,6 +331,218 @@ def monthly_full_analysis(df: pd.DataFrame, ticker: str = "") -> dict:
         return {"error": "analysis_failed", "ticker": ticker}
 
 
+def compute_stochastic(df: pd.DataFrame, k_period: int = 14, d_period: int = 3,
+                       smooth: int = 3) -> dict[str, float] | None:
+    """Stochastic Oscillator (%K and %D)."""
+    if df is None or len(df) < k_period + d_period:
+        return None
+    high = df["High"]
+    low = df["Low"]
+    close = df["Close"]
+
+    lowest_low = low.rolling(window=k_period).min()
+    highest_high = high.rolling(window=k_period).max()
+
+    denom = highest_high - lowest_low
+    denom = denom.replace(0, np.nan)
+    fast_k = 100 * (close - lowest_low) / denom
+    k = fast_k.rolling(window=smooth).mean()
+    d = k.rolling(window=d_period).mean()
+
+    k_val = float(k.iloc[-1]) if not np.isnan(k.iloc[-1]) else None
+    d_val = float(d.iloc[-1]) if not np.isnan(d.iloc[-1]) else None
+    if k_val is None:
+        return None
+    return {"k": round(k_val, 1), "d": round(d_val, 1) if d_val else None}
+
+
+def compute_macd(series: pd.Series, fast: int = 12, slow: int = 26,
+                 signal: int = 9) -> dict[str, float] | None:
+    """MACD line, signal line, and histogram."""
+    if len(series) < slow + signal:
+        return None
+    ema_fast = compute_ema(series, fast)
+    ema_slow = compute_ema(series, slow)
+    macd_line = ema_fast - ema_slow
+    signal_line = compute_ema(macd_line, signal)
+    histogram = macd_line - signal_line
+
+    m = float(macd_line.iloc[-1])
+    s = float(signal_line.iloc[-1])
+    h = float(histogram.iloc[-1])
+    if np.isnan(m):
+        return None
+    return {
+        "macd": round(m, 5),
+        "signal": round(s, 5),
+        "histogram": round(h, 5),
+        "crossover": h > 0 and float(histogram.iloc[-2]) <= 0 if len(histogram) > 1 else False,
+        "crossunder": h < 0 and float(histogram.iloc[-2]) >= 0 if len(histogram) > 1 else False,
+    }
+
+
+def compute_bollinger_bands(series: pd.Series, period: int = 20,
+                            std_dev: float = 2.0) -> dict[str, float] | None:
+    """Bollinger Bands — upper, middle, lower, %B, bandwidth."""
+    if len(series) < period:
+        return None
+    middle = compute_sma(series, period)
+    rolling_std = series.rolling(window=period).std()
+    upper = middle + std_dev * rolling_std
+    lower = middle - std_dev * rolling_std
+
+    mid = float(middle.iloc[-1])
+    up = float(upper.iloc[-1])
+    lo = float(lower.iloc[-1])
+    price = float(series.iloc[-1])
+
+    if np.isnan(mid) or up == lo:
+        return None
+
+    pct_b = (price - lo) / (up - lo)  # 0 = lower band, 1 = upper band
+    bandwidth = (up - lo) / mid * 100
+
+    return {
+        "upper": round(up, 5),
+        "middle": round(mid, 5),
+        "lower": round(lo, 5),
+        "pct_b": round(pct_b, 3),
+        "bandwidth": round(bandwidth, 2),
+        "squeeze": bandwidth < 4.0,  # low volatility squeeze
+    }
+
+
+def detect_ema_crossover(series: pd.Series, fast: int = 9, slow: int = 21) -> dict:
+    """Detect EMA crossover/crossunder events."""
+    if len(series) < slow + 2:
+        return {"signal": "none", "fast_ema": None, "slow_ema": None}
+    ema_f = compute_ema(series, fast)
+    ema_s = compute_ema(series, slow)
+
+    curr_diff = float(ema_f.iloc[-1] - ema_s.iloc[-1])
+    prev_diff = float(ema_f.iloc[-2] - ema_s.iloc[-2])
+
+    signal = "none"
+    if curr_diff > 0 and prev_diff <= 0:
+        signal = "bullish_cross"
+    elif curr_diff < 0 and prev_diff >= 0:
+        signal = "bearish_cross"
+    elif curr_diff > 0:
+        signal = "bullish"
+    elif curr_diff < 0:
+        signal = "bearish"
+
+    return {
+        "signal": signal,
+        "fast_ema": round(float(ema_f.iloc[-1]), 5),
+        "slow_ema": round(float(ema_s.iloc[-1]), 5),
+    }
+
+
+def compute_adx(df: pd.DataFrame, period: int = 14) -> float | None:
+    """Average Directional Index — measures trend strength (0-100).
+    ADX > 25 = trending, ADX < 20 = ranging.
+    """
+    if df is None or len(df) < period * 2:
+        return None
+    high = df["High"]
+    low = df["Low"]
+    close = df["Close"]
+
+    plus_dm = high.diff().copy()
+    minus_dm = -low.diff().copy()
+
+    # Only keep positive directional movement
+    plus_dm[(plus_dm < 0) | (plus_dm < minus_dm)] = 0
+    minus_dm[(minus_dm < 0) | (minus_dm < plus_dm)] = 0
+
+    # True Range
+    prev_close = close.shift(1)
+    tr = pd.concat([
+        high - low,
+        (high - prev_close).abs(),
+        (low - prev_close).abs(),
+    ], axis=1).max(axis=1)
+
+    atr = tr.ewm(span=period, adjust=False).mean()
+    plus_di = 100 * plus_dm.ewm(span=period, adjust=False).mean() / atr
+    minus_di = 100 * minus_dm.ewm(span=period, adjust=False).mean() / atr
+
+    di_sum = plus_di + minus_di
+    di_sum = di_sum.replace(0, np.nan)
+    dx = (plus_di - minus_di).abs() / di_sum * 100
+    adx = dx.ewm(span=period, adjust=False).mean()
+
+    val = float(adx.iloc[-1])
+    return round(val, 1) if not np.isnan(val) else None
+
+
+def compute_donchian(df: pd.DataFrame, period: int = 20) -> dict | None:
+    """Donchian Channel — highest high and lowest low of N periods."""
+    if df is None or len(df) < period:
+        return None
+    upper = float(df["High"].rolling(period).max().iloc[-1])
+    lower = float(df["Low"].rolling(period).min().iloc[-1])
+    mid = (upper + lower) / 2
+    return {"upper": round(upper, 5), "lower": round(lower, 5), "middle": round(mid, 5)}
+
+
+def compute_donchian_exit(df: pd.DataFrame, period: int = 10) -> dict | None:
+    """Shorter Donchian for trailing stop (Turtle exit)."""
+    return compute_donchian(df, period)
+
+
+def detect_reversal_candle(df: pd.DataFrame) -> dict:
+    """Detect bullish/bearish reversal candles on the latest bar."""
+    if df is None or len(df) < 2:
+        return {"bullish": False, "bearish": False}
+
+    o = float(df["Open"].iloc[-1])
+    h = float(df["High"].iloc[-1])
+    lo = float(df["Low"].iloc[-1])
+    c = float(df["Close"].iloc[-1])
+    bar_range = h - lo
+
+    if bar_range == 0:
+        return {"bullish": False, "bearish": False}
+
+    body_pct = abs(c - o) / bar_range
+    close_position = (c - lo) / bar_range  # 0 = closed at low, 1 = closed at high
+
+    # Bullish: close > open AND close in upper 60% of range
+    bullish = c > o and close_position >= 0.6
+    # Bearish: close < open AND close in lower 40% of range
+    bearish = c < o and close_position <= 0.4
+
+    # Hammer (long lower wick, small body at top)
+    lower_wick = (min(o, c) - lo) / bar_range
+    hammer = lower_wick >= 0.6 and close_position >= 0.6
+
+    # Shooting star (long upper wick, small body at bottom)
+    upper_wick = (h - max(o, c)) / bar_range
+    shooting_star = upper_wick >= 0.6 and close_position <= 0.4
+
+    return {
+        "bullish": bullish or hammer,
+        "bearish": bearish or shooting_star,
+        "hammer": hammer,
+        "shooting_star": shooting_star,
+        "close_position": round(close_position, 2),
+    }
+
+
+def detect_inside_day(df: pd.DataFrame) -> bool:
+    """Detect if yesterday was an inside day (range within prior day's range)."""
+    if df is None or len(df) < 3:
+        return False
+    # Yesterday's range inside day-before-yesterday's range
+    h1 = float(df["High"].iloc[-2])
+    l1 = float(df["Low"].iloc[-2])
+    h0 = float(df["High"].iloc[-3])
+    l0 = float(df["Low"].iloc[-3])
+    return h1 < h0 and l1 > l0
+
+
 def compute_gap_pct(df: pd.DataFrame) -> float | None:
     """Today's open vs yesterday's close as a percentage."""
     if df is None or len(df) < 2:

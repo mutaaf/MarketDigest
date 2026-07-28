@@ -1,0 +1,127 @@
+mode: auto-tune
+schedule:
+  daily_cycle: '17:00'
+  weekly_cycle: fri 17:30
+tunable_parameters:
+  ema_trend_follow:
+    pullback_atr_mult:
+      min: 0.2
+      max: 1.0
+      step: 0.1
+    stop_atr_mult:
+      min: 1.0
+      max: 2.5
+      step: 0.25
+    min_adx:
+      min: 20
+      max: 35
+      step: 5
+  bollinger_mean_reversion:
+    entry_pct_b:
+      min: 0.0
+      max: 0.2
+      step: 0.05
+    rsi_threshold:
+      min: 25
+      max: 45
+      step: 5
+    max_adx:
+      min: 20
+      max: 40
+      step: 5
+    min_bandwidth:
+      min: 1.0
+      max: 4.0
+      step: 0.5
+  donchian_breakout:
+    channel_period:
+      min: 10
+      max: 30
+      step: 5
+    exit_period:
+      min: 5
+      max: 15
+      step: 5
+    min_volume_ratio:
+      min: 1.0
+      max: 2.0
+      step: 0.1
+  rsi_momentum:
+    rsi_short_period:
+      min: 2
+      max: 5
+      step: 1
+    rsi_threshold:
+      min: 5
+      max: 20
+      step: 5
+    max_hold_bars:
+      min: 3
+      max: 10
+      step: 1
+  pivot_bounce:
+    proximity_atr_mult:
+      min: 0.1
+      max: 0.5
+      step: 0.1
+    stop_atr_mult:
+      min: 0.3
+      max: 1.0
+      step: 0.1
+  iv_premium:
+    min_iv_rank:
+      min: 30
+      max: 70
+      step: 10
+    profit_target_pct:
+      min: 30
+      max: 70
+      step: 10
+  orb_breakout:
+    max_iv_rank:
+      min: 20
+      max: 60
+      step: 10
+  swing_reversal:
+    min_conditions:
+      min: 2
+      max: 3
+      step: 1
+  macd_divergence:
+    min_conditions:
+      min: 2
+      max: 3
+      step: 1
+  volatility_squeeze:
+    min_conditions:
+      min: 2
+      max: 3
+      step: 1
+global_tunable:
+  min_confluence_score:
+    min: 40
+    max: 80
+    step: 5
+regime:
+  adx_trending:
+    min: 20
+    max: 35
+    step: 5
+  adx_ranging:
+    min: 15
+    max: 25
+    step: 5
+  bb_squeeze_percentile:
+    min: 10
+    max: 30
+    step: 5
+rate_limits:
+  max_daily_changes: 3
+  max_weekly_changes: 8
+  max_param_change_pct: 25
+  cooling_period_days: 3
+  auto_rollback_threshold_pct: 10
+  min_trades_for_tuning: 10
+performance:
+  rolling_window_days: 30
+  min_trades_for_evaluation: 5

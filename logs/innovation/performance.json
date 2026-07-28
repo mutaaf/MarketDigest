@@ -1,0 +1,327 @@
+{
+  "updated": "2026-04-27T17:02:28.516241",
+  "strategies_30d": {
+    "unknown": {
+      "total_trades": 5,
+      "wins": 3,
+      "losses": 2,
+      "win_rate": 60.0,
+      "avg_r": -0.12,
+      "total_pnl": -53.4,
+      "profit_factor": 0.22,
+      "by_regime": {
+        "": {
+          "trades": 5,
+          "wins": 3,
+          "pnl": -53.400000000000006
+        }
+      },
+      "best_symbol": "AAPL",
+      "worst_symbol": "GOOGL"
+    },
+    "EMA Trend Follow": {
+      "total_trades": 1,
+      "wins": 1,
+      "losses": 0,
+      "win_rate": 100.0,
+      "avg_r": 0.17,
+      "total_pnl": 1.75,
+      "profit_factor": "inf",
+      "by_regime": {
+        "trending_up": {
+          "trades": 1,
+          "wins": 1,
+          "pnl": 1.75
+        }
+      },
+      "best_symbol": "USDCAD",
+      "worst_symbol": "USDCAD"
+    },
+    "BB Mean Reversion": {
+      "total_trades": 7,
+      "wins": 5,
+      "losses": 2,
+      "win_rate": 71.4,
+      "avg_r": 0.66,
+      "total_pnl": 185.54,
+      "profit_factor": "inf",
+      "by_regime": {
+        "ranging": {
+          "trades": 3,
+          "wins": 3,
+          "pnl": 120.0
+        },
+        "low_vol": {
+          "trades": 4,
+          "wins": 2,
+          "pnl": 65.53999999999999
+        }
+      },
+      "best_symbol": "AMZN",
+      "worst_symbol": "AAPL"
+    },
+    "MACD Divergence": {
+      "total_trades": 6,
+      "wins": 3,
+      "losses": 3,
+      "win_rate": 50.0,
+      "avg_r": 0.09,
+      "total_pnl": 4.9,
+      "profit_factor": 2.89,
+      "by_regime": {
+        "low_vol": {
+          "trades": 4,
+          "wins": 1,
+          "pnl": -0.6799999999999999
+        },
+        "trending_up": {
+          "trades": 2,
+          "wins": 2,
+          "pnl": 5.58
+        }
+      },
+      "best_symbol": "USDCAD",
+      "worst_symbol": "USDJPY"
+    },
+    "RSI Momentum": {
+      "total_trades": 3,
+      "wins": 0,
+      "losses": 3,
+      "win_rate": 0.0,
+      "avg_r": -0.73,
+      "total_pnl": -88.07,
+      "profit_factor": 0.0,
+      "by_regime": {
+        "volatile": {
+          "trades": 3,
+          "wins": 0,
+          "pnl": -88.07
+        }
+      },
+      "best_symbol": "META",
+      "worst_symbol": "META"
+    }
+  },
+  "strategies_all": {
+    "unknown": {
+      "total_trades": 5,
+      "wins": 3,
+      "losses": 2,
+      "win_rate": 60.0,
+      "avg_r": -0.12,
+      "total_pnl": -53.4,
+      "profit_factor": 0.22,
+      "by_regime": {
+        "": {
+          "trades": 5,
+          "wins": 3,
+          "pnl": -53.400000000000006
+        }
+      },
+      "best_symbol": "AAPL",
+      "worst_symbol": "GOOGL"
+    },
+    "EMA Trend Follow": {
+      "total_trades": 1,
+      "wins": 1,
+      "losses": 0,
+      "win_rate": 100.0,
+      "avg_r": 0.17,
+      "total_pnl": 1.75,
+      "profit_factor": "inf",
+      "by_regime": {
+        "trending_up": {
+          "trades": 1,
+          "wins": 1,
+          "pnl": 1.75
+        }
+      },
+      "best_symbol": "USDCAD",
+      "worst_symbol": "USDCAD"
+    },
+    "BB Mean Reversion": {
+      "total_trades": 7,
+      "wins": 5,
+      "losses": 2,
+      "win_rate": 71.4,
+      "avg_r": 0.66,
+      "total_pnl": 185.54,
+      "profit_factor": "inf",
+      "by_regime": {
+        "ranging": {
+          "trades": 3,
+          "wins": 3,
+          "pnl": 120.0
+        },
+        "low_vol": {
+          "trades": 4,
+          "wins": 2,
+          "pnl": 65.53999999999999
+        }
+      },
+      "best_symbol": "AMZN",
+      "worst_symbol": "AAPL"
+    },
+    "MACD Divergence": {
+      "total_trades": 6,
+      "wins": 3,
+      "losses": 3,
+      "win_rate": 50.0,
+      "avg_r": 0.09,
+      "total_pnl": 4.9,
+      "profit_factor": 2.89,
+      "by_regime": {
+        "low_vol": {
+          "trades": 4,
+          "wins": 1,
+          "pnl": -0.6799999999999999
+        },
+        "trending_up": {
+          "trades": 2,
+          "wins": 2,
+          "pnl": 5.58
+        }
+      },
+      "best_symbol": "USDCAD",
+      "worst_symbol": "USDJPY"
+    },
+    "RSI Momentum": {
+      "total_trades": 3,
+      "wins": 0,
+      "losses": 3,
+      "win_rate": 0.0,
+      "avg_r": -0.73,
+      "total_pnl": -88.07,
+      "profit_factor": 0.0,
+      "by_regime": {
+        "volatile": {
+          "trades": 3,
+          "wins": 0,
+          "pnl": -88.07
+        }
+      },
+      "best_symbol": "META",
+      "worst_symbol": "META"
+    }
+  },
+  "performers": {
+    "outperformers": [],
+    "underperformers": [
+      {
+        "strategy": "unknown",
+        "reason": "negative P&L ($-53.40)",
+        "total_trades": 5,
+        "wins": 3,
+        "losses": 2,
+        "win_rate": 60.0,
+        "avg_r": -0.12,
+        "total_pnl": -53.4,
+        "profit_factor": 0.22,
+        "by_regime": {
+          "": {
+            "trades": 5,
+            "wins": 3,
+            "pnl": -53.400000000000006
+          }
+        },
+        "best_symbol": "AAPL",
+        "worst_symbol": "GOOGL"
+      }
+    ],
+    "neutral": [
+      {
+        "strategy": "EMA Trend Follow",
+        "reason": "insufficient trades",
+        "total_trades": 1,
+        "wins": 1,
+        "losses": 0,
+        "win_rate": 100.0,
+        "avg_r": 0.17,
+        "total_pnl": 1.75,
+        "profit_factor": "inf",
+        "by_regime": {
+          "trending_up": {
+            "trades": 1,
+            "wins": 1,
+            "pnl": 1.75
+          }
+        },
+        "best_symbol": "USDCAD",
+        "worst_symbol": "USDCAD"
+      },
+      {
+        "strategy": "BB Mean Reversion",
+        "total_trades": 7,
+        "wins": 5,
+        "losses": 2,
+        "win_rate": 71.4,
+        "avg_r": 0.66,
+        "total_pnl": 185.54,
+        "profit_factor": "inf",
+        "by_regime": {
+          "ranging": {
+            "trades": 3,
+            "wins": 3,
+            "pnl": 120.0
+          },
+          "low_vol": {
+            "trades": 4,
+            "wins": 2,
+            "pnl": 65.53999999999999
+          }
+        },
+        "best_symbol": "AMZN",
+        "worst_symbol": "AAPL"
+      },
+      {
+        "strategy": "MACD Divergence",
+        "total_trades": 6,
+        "wins": 3,
+        "losses": 3,
+        "win_rate": 50.0,
+        "avg_r": 0.09,
+        "total_pnl": 4.9,
+        "profit_factor": 2.89,
+        "by_regime": {
+          "low_vol": {
+            "trades": 4,
+            "wins": 1,
+            "pnl": -0.6799999999999999
+          },
+          "trending_up": {
+            "trades": 2,
+            "wins": 2,
+            "pnl": 5.58
+          }
+        },
+        "best_symbol": "USDCAD",
+        "worst_symbol": "USDJPY"
+      },
+      {
+        "strategy": "RSI Momentum",
+        "reason": "insufficient trades",
+        "total_trades": 3,
+        "wins": 0,
+        "losses": 3,
+        "win_rate": 0.0,
+        "avg_r": -0.73,
+        "total_pnl": -88.07,
+        "profit_factor": 0.0,
+        "by_regime": {
+          "volatile": {
+            "trades": 3,
+            "wins": 0,
+            "pnl": -88.07
+          }
+        },
+        "best_symbol": "META",
+        "worst_symbol": "META"
+      }
+    ]
+  },
+  "overall": {
+    "total_trades_30d": 22,
+    "total_pnl_30d": 50.72,
+    "win_rate_30d": 54.5
+  }
+}

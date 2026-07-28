@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-04-06T23:14:19.738587",
+  "count": 1,
+  "signals": [
+    {
+      "id": "bced80ee",
+      "timestamp": "2026-04-06T23:14:19.738364",
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 67.0,
+      "grade": "B-",
+      "entry_price": 258.86,
+      "stop_loss": 267.25,
+      "target_1": 242.07,
+      "target_2": 233.68,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 54.42800986733298,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 254.14151,
+          "slow_ema": 254.99463
+        },
+        "macd": {
+          "macd": -1.75471,
+          "signal": -2.89407,
+          "histogram": 1.13937,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 262.0174,
+          "middle": 253.4805,
+          "lower": 244.9436,
+          "pct_b": 0.815,
+          "bandwidth": 6.74,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 254.23333,
+          "r1": 257.81667,
+          "r2": 259.71334,
+          "s1": 252.33666,
+          "s2": 248.75332
+        },
+        "atr": 5.59574,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 80,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 95,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 259.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    }
+  ]
+}

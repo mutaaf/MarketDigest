@@ -1,0 +1,32 @@
+# Risk management configuration
+
+forex:
+  account_balance: 500.0
+  max_risk_per_trade_pct: 2.0       # $10 max risk per trade
+  max_concurrent_positions: 2
+  daily_loss_limit_pct: 3.0         # $15 daily max loss -> pause signals
+  stop_multiplier: 1.5              # ATR * 1.5 for stop distance
+  # Position sizing: micro lots (1,000 units)
+  lot_type: micro
+  lot_size: 1000
+
+options:
+  account_balance: 500.0
+  max_risk_per_trade_pct: 8.0       # $40 max risk per trade
+  max_concurrent_positions: 3
+  daily_loss_limit_pct: 3.0         # $15 daily max loss -> pause trading
+  min_days_to_expiry: 7             # No 0DTE
+  max_option_price: 3.00            # Max premium per contract for affordability
+  min_option_price: 0.50            # Avoid illiquid penny options
+  allowed_strategies:
+    - long_call
+    - long_put
+    - bull_call_spread
+    - bear_put_spread
+  # No naked selling allowed
+
+# Portfolio-level limits
+portfolio:
+  max_total_risk_pct: 10.0          # Max 10% of total capital at risk at any time
+  max_correlated_positions: 2       # Max 2 positions in same direction on correlated assets
+  cool_down_after_daily_limit_hours: 24

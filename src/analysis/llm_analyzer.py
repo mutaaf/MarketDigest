@@ -58,6 +58,7 @@ _DEFAULT_PROMPTS = {
     "next_steps_daytrade": "Based on the day trade picks data above, provide 3-5 actionable trading items for TODAY's session. For each item: name the specific instrument, cite entry/target/stop levels, and describe the setup (e.g. 'NVDA breaking R1 at $125 with 1.8x volume — target $128, stop $123'). Focus on the highest-conviction setups from the scored picks. Number each item. Write concisely — one sentence per item, no preamble.",
     "multi_tf_outlook": "Based on the multi-timeframe technical data above (daily, weekly, monthly indicators), provide a concise outlook per timeframe. Day Trade: intraday setup and key levels. Swing (1-2 weeks): weekly trend direction and inflection points. Long Term (1-3 months): monthly trend health and value. Connect the timeframes — does weekly confirm or conflict with the daily? 2-3 sentences per timeframe, reference specific levels.",
     "fundamentals_analysis": "Based on the financial data above (income, balance sheet, cash flow, ratios), provide a concise fundamental assessment. Cover: Valuation — cheap or expensive vs earnings/assets? Quality — margins healthy and improving? Growth — revenue/EPS trending up? Health — debt manageable, cash flow positive? End with one sentence on whether fundamentals support the technical setup. Flowing prose, no bullets. Reference specific numbers.",
+    "signal_explanation": "You are a trading mentor explaining a signal to a beginner with a $500 account. Based on the signal data AND market context above (news, sentiment, economic events), explain: (1) WHY this signal fired — which indicators and strategy conditions aligned, (2) HOW current news and market sentiment support or contradict this trade — reference specific headlines or events, (3) the specific dollar risk and reward — 'You would risk $X to potentially make $Y', (4) what would INVALIDATE this setup — what price, indicator, or news event means you should exit, (5) whether to take or skip based on the FULL picture (technicals + news + sentiment). Define financial terms in plain English. If there are upcoming high-impact economic events that could affect this trade, warn about them. If Fear & Greed is at extremes, factor that in. Keep it to 5-8 sentences. End with a clear 'Take this trade' or 'Skip this one' recommendation.",
 }
 
 _DEFAULT_TOKEN_OVERRIDES = {
@@ -323,6 +324,115 @@ def _format_multi_tf_data(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _format_signal_data(data: dict) -> str:
+    """Format trading signal data for LLM explanation."""
+    lines = []
+    sig = data if not data.get("signal") else data["signal"]
+
+    lines.append(f"Symbol: {sig.get('symbol', '?')} ({sig.get('name', '?')})")
+    lines.append(f"Asset Type: {sig.get('asset_type', '?')}")
+    lines.append(f"Direction: {sig.get('direction', '?')}")
+    lines.append(f"Confluence Score: {sig.get('confluence_score', 0)}/100 (Grade: {sig.get('grade', '?')})")
+    lines.append(f"Entry: {sig.get('entry_price', '?')}")
+    lines.append(f"Stop Loss: {sig.get('stop_loss', '?')}")
+    lines.append(f"Target 1 (2R): {sig.get('target_1', '?')}")
+    lines.append(f"Target 2 (3R): {sig.get('target_2', '?')}")
+    lines.append(f"Risk/Reward: {sig.get('risk_reward', '?')}:1")
+
+    ps = sig.get("position_size", {})
+    if ps:
+        lines.append(f"Dollar Risk: ${ps.get('dollar_risk', '?')}")
+        lines.append(f"Dollar Reward: ${ps.get('dollar_reward', '?')}")
+        lines.append(f"Position Size: {ps.get('label', '?')}")
+
+    indicators = sig.get("indicators", {})
+    lines.append("\nINDICATOR VALUES:")
+    if indicators.get("rsi") is not None:
+        lines.append(f"  RSI(14): {indicators['rsi']:.1f}")
+    ema = indicators.get("ema_cross", {})
+    if ema:
+        lines.append(f"  EMA 9/21: {ema.get('signal', 'none')} (Fast={ema.get('fast_ema')}, Slow={ema.get('slow_ema')})")
+    macd = indicators.get("macd", {})
+    if macd:
+        lines.append(f"  MACD: histogram={macd.get('histogram')}, crossover={macd.get('crossover')}, crossunder={macd.get('crossunder')}")
+    stoch = indicators.get("stochastic", {})
+    if stoch:
+        lines.append(f"  Stochastic: K={stoch.get('k')}, D={stoch.get('d')}")
+    bb = indicators.get("bollinger", {})
+    if bb:
+        lines.append(f"  Bollinger: %B={bb.get('pct_b'):.2f}, Bandwidth={bb.get('bandwidth'):.1f}%, Squeeze={bb.get('squeeze')}")
+    pivots = indicators.get("pivots", {})
+    if pivots:
+        lines.append(f"  Pivots: S2={pivots.get('s2')}, S1={pivots.get('s1')}, P={pivots.get('pivot')}, R1={pivots.get('r1')}, R2={pivots.get('r2')}")
+    if indicators.get("atr") is not None:
+        lines.append(f"  ATR(14): {indicators['atr']}")
+    if indicators.get("iv_rank") is not None:
+        lines.append(f"  IV Rank: {indicators['iv_rank']:.1f}%")
+
+    components = indicators.get("components", {})
+    if components:
+        lines.append("\nCONFLUENCE SCORES (each 0-100):")
+        for k, v in components.items():
+            lines.append(f"  {k}: {v:.0f}")
+
+    opt = sig.get("option_details", {})
+    if opt:
+        lines.append(f"\nOPTION: {opt.get('strategy', '?')} @ ${opt.get('strike', '?')} strike, {opt.get('dte', '?')} DTE")
+
+    # Strategy info
+    if sig.get("strategy_name"):
+        lines.append(f"\nSTRATEGY: {sig['strategy_name']}")
+    if sig.get("regime"):
+        lines.append(f"MARKET REGIME: {sig['regime']}")
+    if sig.get("conditions_met"):
+        lines.append("CONDITIONS MET:")
+        for c in sig["conditions_met"]:
+            lines.append(f"  ✓ {c}")
+
+    # Market context (news, sentiment, events)
+    ctx = sig.get("market_context", {})
+    if ctx:
+        # Fear & Greed
+        fg = ctx.get("fear_greed", {})
+        if fg.get("score"):
+            lines.append(f"\nMARKET SENTIMENT:")
+            lines.append(f"  Fear & Greed Index: {fg['score']}/100 ({fg.get('classification', '?')})")
+
+        # Composite sentiment
+        sent = ctx.get("sentiment", {})
+        if sent.get("composite_score"):
+            lines.append(f"  Composite Sentiment: {sent['composite_score']}/100 ({sent.get('classification', '?')})")
+
+        # News headlines
+        news = ctx.get("news", [])
+        if news:
+            lines.append(f"\nRECENT NEWS ({len(news)} headlines):")
+            for n in news[:5]:
+                headline = n.get("headline") or n.get("title", "")
+                source = n.get("source", "")
+                if headline:
+                    lines.append(f"  - [{source}] {headline[:120]}")
+
+        # Economic events
+        events = ctx.get("economic_events", [])
+        if events:
+            lines.append(f"\nECONOMIC EVENTS (next 48h):")
+            for e in events[:5]:
+                impact = e.get("impact", "?").upper()
+                lines.append(f"  - [{impact}] {e.get('event', '?')} on {e.get('date', '?')}"
+                             f" (est: {e.get('estimate', '?')}, prev: {e.get('prev', '?')})")
+
+        # Earnings
+        earnings = ctx.get("earnings", [])
+        if earnings:
+            lines.append(f"\nEARNINGS:")
+            for e in earnings:
+                lines.append(f"  - {e.get('symbol', '?')} reports {e.get('date', '?')} "
+                             f"(EPS est: {e.get('eps_estimate', '?')})")
+
+    return "\n".join(lines)
+
+
 def _format_fundamentals_data(data: dict) -> str:
     """Format fundamentals data for LLM context."""
     lines = []
@@ -517,6 +627,7 @@ _DATA_HEADERS = {
     "next_steps_daytrade": lambda data, ctx: f"=== DAY TRADE PICKS DATA ===\n{_format_daytrade_picks(data)}",
     "multi_tf_outlook": lambda data, ctx: f"=== MULTI-TIMEFRAME OUTLOOK ===\n{_format_multi_tf_data(data)}",
     "fundamentals_analysis": lambda data, ctx: f"=== FUNDAMENTALS DATA ===\n{_format_fundamentals_data(data)}",
+    "signal_explanation": lambda data, ctx: f"=== TRADING SIGNAL DATA ===\n{_format_signal_data(data)}",
 }
 
 

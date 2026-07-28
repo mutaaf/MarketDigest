@@ -1,0 +1,197 @@
+# Signal strategy configuration
+# All strategies enforce minimum 2:1 risk-reward ratio
+
+min_risk_reward: 2.0
+min_confluence_score: 55  # C or above — shows more signals, grades below B- are flagged as "speculative"
+scan_interval_minutes: 5
+
+# Confluence weights by asset type
+forex_weights:
+  ema_cross: 0.20
+  rsi: 0.20
+  bollinger: 0.15
+  stochastic: 0.15
+  pivot: 0.15
+  macd: 0.10
+  atr_filter: 0.05
+
+options_weights:
+  ema_cross: 0.15
+  rsi: 0.15
+  bollinger: 0.15
+  iv_rank: 0.20
+  pivot: 0.15
+  greeks: 0.15
+  atr_filter: 0.05
+
+# Indicator parameters
+indicators:
+  ema_fast: 9
+  ema_slow: 21
+  ema_trend: 50
+  rsi_period: 14
+  rsi_oversold: 30
+  rsi_overbought: 70
+  bb_period: 20
+  bb_std: 2.0
+  stoch_k: 14
+  stoch_d: 3
+  stoch_smooth: 3
+  stoch_oversold: 20
+  stoch_overbought: 80
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  atr_period: 14
+
+# Trade management
+trade_management:
+  # Partial profit: close 50% at target_1 (2R), trail rest to target_2 (3R)
+  partial_close_pct: 0.50
+  target_1_r: 2.0
+  target_2_r: 3.0
+  # Move stop to breakeven after hitting 1R profit
+  breakeven_at_r: 1.0
+
+# Instruments to scan for signals
+signal_instruments:
+  forex:
+    - symbol: USDJPY
+      yfinance: JPY=X
+      twelvedata: USD/JPY
+      name: USD/JPY
+      pip_size: 0.01
+      pip_value_per_micro_lot: 0.07
+    - symbol: EURUSD
+      yfinance: EURUSD=X
+      twelvedata: EUR/USD
+      name: EUR/USD
+      pip_size: 0.0001
+      pip_value_per_micro_lot: 0.10
+    - symbol: GBPUSD
+      yfinance: GBPUSD=X
+      twelvedata: GBP/USD
+      name: GBP/USD
+      pip_size: 0.0001
+      pip_value_per_micro_lot: 0.10
+    - symbol: AUDUSD
+      yfinance: AUDUSD=X
+      twelvedata: AUD/USD
+      name: AUD/USD
+      pip_size: 0.0001
+      pip_value_per_micro_lot: 0.10
+    - symbol: USDCAD
+      yfinance: CAD=X
+      twelvedata: USD/CAD
+      name: USD/CAD
+      pip_size: 0.0001
+      pip_value_per_micro_lot: 0.10
+    - symbol: USDCHF
+      yfinance: CHF=X
+      twelvedata: USD/CHF
+      name: USD/CHF
+      pip_size: 0.0001
+      pip_value_per_micro_lot: 0.10
+  options:
+    - symbol: SPY
+      yfinance: SPY
+      name: SPDR S&P 500 ETF
+    - symbol: QQQ
+      yfinance: QQQ
+      name: Invesco QQQ Trust
+    - symbol: AAPL
+      yfinance: AAPL
+      name: Apple Inc.
+    - symbol: MSFT
+      yfinance: MSFT
+      name: Microsoft Corp.
+    - symbol: NVDA
+      yfinance: NVDA
+      name: NVIDIA Corp.
+    - symbol: TSLA
+      yfinance: TSLA
+      name: Tesla Inc.
+    - symbol: META
+      yfinance: META
+      name: Meta Platforms
+    - symbol: AMZN
+      yfinance: AMZN
+      name: Amazon.com Inc.
+    - symbol: GOOGL
+      yfinance: GOOGL
+      name: Alphabet Inc.
+    - symbol: AMD
+      yfinance: AMD
+      name: Advanced Micro Devices
+
+# ── Strategy configurations (tweakable) ──────────────────────────
+
+strategies:
+  ema_trend_follow:
+    enabled: true
+    ema_fast: 9
+    ema_slow: 21
+    ema_trend: 50
+    pullback_atr_mult: 0.5    # How close to 21 EMA for pullback entry
+    stop_atr_mult: 1.5        # ATR multiplier for stop distance
+    min_adx: 25               # Minimum ADX to confirm trend
+  bollinger_mean_reversion:
+    enabled: true
+    entry_pct_b: 0.05         # %B threshold for entry (0.05 = at lower band)
+    rsi_threshold: 35          # RSI must be below this for BUY
+    max_adx: 30                # Max ADX (above = trending, skip)
+    min_bandwidth: 2.0         # Min BB width (below = squeeze, skip)
+  donchian_breakout:
+    enabled: true
+    channel_period: 20         # 20-day high/low channel
+    exit_period: 10            # 10-day low for trailing stop
+    min_volume_ratio: 1.2      # Volume must be above average
+    max_squeeze_bars: 5        # Look back N bars for squeeze
+  rsi_momentum:
+    enabled: true
+    rsi_short_period: 2        # Ultra-short RSI period (Connors)
+    rsi_threshold: 10          # RSI(2) must be below this
+    sma_trend_period: 200      # Long-term trend filter
+    max_hold_bars: 5           # Max bars to hold (time stop)
+  pivot_bounce:
+    enabled: true
+    proximity_atr_mult: 0.3    # How close to pivot level
+    stop_atr_mult: 0.5         # Stop distance below pivot
+  iv_premium:
+    enabled: true
+    min_iv_rank: 50            # Min IV rank to sell premium
+    min_dte: 30                # Min days to expiry
+    max_dte: 45                # Max days to expiry
+    profit_target_pct: 50      # Close at 50% of max profit
+  orb_breakout:
+    enabled: true
+    max_iv_rank: 40            # Max IV (want cheap options)
+    min_dte: 14
+    max_dte: 21
+  swing_reversal:
+    enabled: true
+    min_conditions: 2          # Need at least 2 of 4 conditions
+  macd_divergence:
+    enabled: true
+    min_conditions: 2
+  volatility_squeeze:
+    enabled: true
+    min_conditions: 2
+
+# Market regime detection thresholds
+regime:
+  adx_trending: 25             # ADX above this = trending
+  adx_ranging: 20              # ADX below this = ranging
+  bb_squeeze_percentile: 20    # BB bandwidth in bottom 20% = squeeze
+
+# Backtesting gates
+backtest_gate:
+  min_trades: 50
+  min_win_rate: 50.0
+  min_risk_reward: 2.0
+  lookback_months: 6
+
+# Paper trading gates
+paper_gate:
+  min_trades: 50
+  min_win_rate: 50.0

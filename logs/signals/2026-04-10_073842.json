@@ -1,0 +1,2032 @@
+{
+  "timestamp": "2026-04-10T07:38:42.137926",
+  "count": 33,
+  "signals": [
+    {
+      "id": "f7f2cf71",
+      "timestamp": "2026-04-10T07:37:22.153507",
+      "symbol": "USDJPY",
+      "name": "USD/JPY",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 159.058,
+      "stop_loss": 160.55744,
+      "target_1": 149.407,
+      "target_2": 155.05948,
+      "risk_reward": 6.44,
+      "indicators": {
+        "rsi": 53.000330660592084,
+        "macd": {
+          "macd": 0.44506,
+          "signal": 0.61816,
+          "histogram": -0.17309,
+          "crossover": false,
+          "crossunder": false
+        },
+        "atr": 0.99963
+      },
+      "explanation": "This trading signal to sell USDJPY fired due to a bearish MACD divergence, which means that while the price reached a higher high, the MACD indicator (a tool that tracks momentum) made a lower high. This divergence often suggests that the price may reverse or decline, especially since the RSI, which gauges momentum on a scale from 0 to 100, is at 53, giving it room to fall. Additionally, the market is currently in a low-volatility regime, and the price is close to a resistance level, which is a price point where selling pressure can often increase.\n\nCurrent news and market sentiment support this trade to some extent, as the Fear & Greed Index sits at 37, indicating a fear-driven market, which often leads investors to buy safe havens like the yen. However, the recent headlines discussing geopolitical tensions, particularly around Ukraine and Iran, create a complex backdrop that could lead to sudden market reactions that affect USDJPY. For this trade, you're looking at a dollar risk of $10 (the amount you would lose if the trade hits the stop loss) against a potential reward of $64.40, giving a very favorable risk/reward ratio of 6.44:1.\n\nTo invalidate this setup, if the price crosses above 160.56, which is your stop loss, it would suggest that momentum is shifting against your trade; similarly, if there's positive news about U.S.-Iran talks that decreases fears in the market, this could trigger a price surge. Given the current technical setup, the alignment of the indicators, and the fear-centric sentiment in the market, the potential to profit seems favorable. However, keep in mind potential high-impact economic data releases that could change market dynamics. Overall, take this trade cautiously, considering it has a solid technical basis but remain alert to news that could affect market direction.",
+      "pine_strategy": null,
+      "strategy_name": "MACD Divergence",
+      "regime": "low_vol",
+      "conditions_met": [
+        "Bearish MACD divergence (price higher high, MACD lower high)",
+        "RSI has room to fall (53)",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-7 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on MACD histogram flip or crossover confirmation \u2014 wait for the turn, don't front-run",
+        "time_stop_bars": 10,
+        "urgency": "Divergences can take 2-5 bars to resolve \u2014 be patient but enter within 2 days of the signal",
+        "when_to_exit": "Exit at next support/resistance level. Also exit if MACD histogram reverses direction against your trade."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 64.4,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "This trading signal to sell USDJPY fired due to a bearish MACD divergence, which means that while the price reached a higher high, the MACD indicator (a tool that tracks momentum) made a lower high. This divergence often suggests that the price may reverse or decline, especially since the RSI, which gauges momentum on a scale from 0 to 100, is at 53, giving it room to fall. Additionally, the market is currently in a low-volatility regime, and the price is close to a resistance level, which is a price point where selling pressure can often increase.\n\nCurrent news and market sentiment support this trade to some extent, as the Fear & Greed Index sits at 37, indicating a fear-driven market, which often leads investors to buy safe havens like the yen. However, the recent headlines discussing geopolitical tensions, particularly around Ukraine and Iran, create a complex backdrop that could lead to sudden market reactions that affect USDJPY. For this trade, you're looking at a dollar risk of $10 (the amount you would lose if the trade hits the stop loss) against a potential reward of $64.40, giving a very favorable risk/reward ratio of 6.44:1.\n\nTo invalidate this setup, if the price crosses above 160.56, which is your stop loss, it would suggest that momentum is shifting against your trade; similarly, if there's positive news about U.S.-Iran talks that decreases fears in the market, this could trigger a price surge. Given the current technical setup, the alignment of the indicators, and the fear-centric sentiment in the market, the potential to profit seems favorable. However, keep in mind potential high-impact economic data releases that could change market dynamics. Overall, take this trade cautiously, considering it has a solid technical basis but remain alert to news that could affect market direction."
+    },
+    {
+      "id": "3c578391",
+      "timestamp": "2026-04-10T07:37:22.898968",
+      "symbol": "USDCAD",
+      "name": "USD/CAD",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 1.3818,
+      "stop_loss": 1.39125,
+      "target_1": 1.3484,
+      "target_2": 1.3566,
+      "risk_reward": 3.53,
+      "indicators": {
+        "rsi": 52.40989551434659,
+        "macd": {
+          "macd": 0.00492,
+          "signal": 0.00534,
+          "histogram": -0.00042,
+          "crossover": false,
+          "crossunder": true
+        },
+        "atr": 0.0063
+      },
+      "explanation": "The signal to sell the USDCAD pair indicates a strong potential for the Canadian dollar to appreciate against the US dollar, driven by a bearish bias in the MACD (Moving Average Convergence Divergence), which is a trend-following momentum indicator. Specifically, the signal fired because the MACD showed a bearish crossunder, meaning the momentum is shifting downward, and the Relative Strength Index (RSI), which gauges whether a currency is overbought or oversold, has room to decline further at 52.4, just above the neutral line.\n\nCurrent news and market sentiment reflect fears tied to geopolitical tensions, particularly with the US and Iran talks, which could influence oil prices and, consequently, the Canadian economy, as it's a key oil producer. The Fear & Greed Index, sitting at 37, signals fear in the market, aligning with a more cautious trading environment where traders may favor safe havens or hold back on riskier positions, which supports the case for a sell trade.\n\nRegarding risk and reward, your position size of 1 micro lot means you're risking $9.45 to potentially earn $33.36, with a very favorable risk/reward ratio of 3.53:1. However, if the price moves above 1.39125, the stop-loss you set, it could invalidate the setup as it would signal a continuing bullish trend against your trade.\n\nGiven the technical indicators, the fear-driven market sentiment, and the current geopolitical climate, this trade has solid support. However, keep an eye on any upcoming economic data releases that could sway market dynamics. Overall, the signal looks promising; therefore, I recommend taking this trade.",
+      "pine_strategy": null,
+      "strategy_name": "MACD Divergence",
+      "regime": "trending_up",
+      "conditions_met": [
+        "MACD bearish crossunder",
+        "RSI has room to fall (52)",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-7 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on MACD histogram flip or crossover confirmation \u2014 wait for the turn, don't front-run",
+        "time_stop_bars": 10,
+        "urgency": "Divergences can take 2-5 bars to resolve \u2014 be patient but enter within 2 days of the signal",
+        "when_to_exit": "Exit at next support/resistance level. Also exit if MACD histogram reverses direction against your trade."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 9.45,
+        "dollar_reward": 33.36,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "The signal to sell the USDCAD pair indicates a strong potential for the Canadian dollar to appreciate against the US dollar, driven by a bearish bias in the MACD (Moving Average Convergence Divergence), which is a trend-following momentum indicator. Specifically, the signal fired because the MACD showed a bearish crossunder, meaning the momentum is shifting downward, and the Relative Strength Index (RSI), which gauges whether a currency is overbought or oversold, has room to decline further at 52.4, just above the neutral line.\n\nCurrent news and market sentiment reflect fears tied to geopolitical tensions, particularly with the US and Iran talks, which could influence oil prices and, consequently, the Canadian economy, as it's a key oil producer. The Fear & Greed Index, sitting at 37, signals fear in the market, aligning with a more cautious trading environment where traders may favor safe havens or hold back on riskier positions, which supports the case for a sell trade.\n\nRegarding risk and reward, your position size of 1 micro lot means you're risking $9.45 to potentially earn $33.36, with a very favorable risk/reward ratio of 3.53:1. However, if the price moves above 1.39125, the stop-loss you set, it could invalidate the setup as it would signal a continuing bullish trend against your trade.\n\nGiven the technical indicators, the fear-driven market sentiment, and the current geopolitical climate, this trade has solid support. However, keep an eye on any upcoming economic data releases that could sway market dynamics. Overall, the signal looks promising; therefore, I recommend taking this trade."
+    },
+    {
+      "id": "14a62dd9",
+      "timestamp": "2026-04-10T07:37:23.732483",
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 260.48999,
+      "stop_loss": 263.79798,
+      "target_1": 253.049,
+      "target_2": 257.75198,
+      "risk_reward": 2.25,
+      "indicators": {
+        "bb": {
+          "upper": 260.61992,
+          "middle": 253.049,
+          "lower": 245.47808,
+          "pct_b": 0.991,
+          "bandwidth": 5.98,
+          "squeeze": false
+        },
+        "rsi": 55.66309292186696,
+        "stoch": {
+          "k": 72.8,
+          "d": 71.7
+        },
+        "atr": 6.35612
+      },
+      "explanation": "This trading signal to sell a put option on Apple Inc. has been triggered because the price is currently near the upper Bollinger Band (BB), indicating that the stock may be overbought\u2014a condition confirmed by the Relative Strength Index (RSI) of 55.7, which is leaning towards the overbought zone. The strategy employed here is mean reversion, which suggests that prices will eventually move back towards their average, and the confluence score of 80/100 indicates a strong alignment of conditions for placing this trade.\n\nCurrent market sentiment, reflected by the Fear & Greed Index at 37, signals a sense of fear among investors, which can sometimes lead to more cautious trading behaviors. The headlines, particularly those regarding geopolitical tensions involving Iran, suggest that there are significant uncertainties that could prompt volatility. Specifically, the headline about the food security crisis in Lebanon and the ongoing U.S.-Iran talks imply broader market risk that could influence Apple's stock indirectly through systemic factors.\n\nIn terms of financial specifics, the setup involves a dollar risk of $40 (the maximum amount you could lose) and a reward potential of $90 if the price falls to the target levels. To invalidate this setup, you would want to monitor the price moving above the stop-loss level of $263.80, or any positive news regarding the economy or Apple itself that would shift market sentiment towards greed.\n\nGiven the current uncertainty in the market and the mixed signals from sentiment and news, it would be prudent to skip this trade unless you have a higher risk tolerance. Avoiding trades in uncertain climates helps preserve your capital for clearer opportunities. Therefore, my recommendation is to Skip this one.",
+      "pine_strategy": null,
+      "strategy_name": "BB Mean Reversion",
+      "regime": "low_vol",
+      "conditions_met": [
+        "Price at upper BB (%B=0.99)",
+        "RSI leaning overbought (56)",
+        "Stochastic overbought (K=73)",
+        "BB width sufficient (6.0%)"
+      ],
+      "timing": {
+        "hold_duration": "1-5 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter at daily close or next open \u2014 band touches are end-of-day signals",
+        "time_stop_bars": 7,
+        "urgency": "Enter today if conditions met \u2014 mean reversion setups decay quickly",
+        "when_to_exit": "Close entire position at middle Bollinger Band (SMA 20). If price doesn't reach middle band within 5 days, exit at close."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 90.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 260.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "This trading signal to sell a put option on Apple Inc. has been triggered because the price is currently near the upper Bollinger Band (BB), indicating that the stock may be overbought\u2014a condition confirmed by the Relative Strength Index (RSI) of 55.7, which is leaning towards the overbought zone. The strategy employed here is mean reversion, which suggests that prices will eventually move back towards their average, and the confluence score of 80/100 indicates a strong alignment of conditions for placing this trade.\n\nCurrent market sentiment, reflected by the Fear & Greed Index at 37, signals a sense of fear among investors, which can sometimes lead to more cautious trading behaviors. The headlines, particularly those regarding geopolitical tensions involving Iran, suggest that there are significant uncertainties that could prompt volatility. Specifically, the headline about the food security crisis in Lebanon and the ongoing U.S.-Iran talks imply broader market risk that could influence Apple's stock indirectly through systemic factors.\n\nIn terms of financial specifics, the setup involves a dollar risk of $40 (the maximum amount you could lose) and a reward potential of $90 if the price falls to the target levels. To invalidate this setup, you would want to monitor the price moving above the stop-loss level of $263.80, or any positive news regarding the economy or Apple itself that would shift market sentiment towards greed.\n\nGiven the current uncertainty in the market and the mixed signals from sentiment and news, it would be prudent to skip this trade unless you have a higher risk tolerance. Avoiding trades in uncertain climates helps preserve your capital for clearer opportunities. Therefore, my recommendation is to Skip this one."
+    },
+    {
+      "id": "8f231f02",
+      "timestamp": "2026-04-10T07:37:24.169113",
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 183.91,
+      "stop_loss": 189.91921,
+      "target_1": 177.146,
+      "target_2": 175.25349,
+      "risk_reward": 1.13,
+      "indicators": {
+        "bb": {
+          "upper": 187.38391,
+          "middle": 177.146,
+          "lower": 166.90809,
+          "pct_b": 0.83,
+          "bandwidth": 11.56,
+          "squeeze": false
+        },
+        "rsi": 56.609284163510935,
+        "stoch": {
+          "k": 83.6,
+          "d": 73.4
+        },
+        "atr": 5.0706
+      },
+      "explanation": "BB Mean Reversion strategy: SELL . Conditions met: Price near upper BB (%B=0.83), RSI leaning overbought (57), Stochastic overbought (K=84), BB width sufficient (11.6%).",
+      "pine_strategy": null,
+      "strategy_name": "BB Mean Reversion",
+      "regime": "ranging",
+      "conditions_met": [
+        "Price near upper BB (%B=0.83)",
+        "RSI leaning overbought (57)",
+        "Stochastic overbought (K=84)",
+        "BB width sufficient (11.6%)"
+      ],
+      "timing": {
+        "hold_duration": "1-5 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter at daily close or next open \u2014 band touches are end-of-day signals",
+        "time_stop_bars": 7,
+        "urgency": "Enter today if conditions met \u2014 mean reversion setups decay quickly",
+        "when_to_exit": "Close entire position at middle Bollinger Band (SMA 20). If price doesn't reach middle band within 5 days, exit at close."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 45.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 184.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "BB Mean Reversion strategy: SELL . Conditions met: Price near upper BB (%B=0.83), RSI leaning overbought (57), Stochastic overbought (K=84), BB width sufficient (11.6%)."
+    },
+    {
+      "id": "c93927c2",
+      "timestamp": "2026-04-10T07:37:24.499300",
+      "symbol": "META",
+      "name": "Meta Platforms",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 628.39001,
+      "stop_loss": 644.7224,
+      "target_1": 592.66801,
+      "target_2": 580.24065,
+      "risk_reward": 2.19,
+      "indicators": {
+        "rsi2": 98.19093520978522,
+        "sma200": 682.0814605712891,
+        "sma5": 592.6680053710937,
+        "macd": {
+          "macd": -11.48998,
+          "signal": -18.22315,
+          "histogram": 6.73317,
+          "crossover": false,
+          "crossunder": false
+        }
+      },
+      "explanation": "The sell signal for Meta Platforms options has fired due to several strategy conditions aligning perfectly. The stock is trading below its 200-day Simple Moving Average (SMA), indicating a long-term downtrend, and the Relative Strength Index (RSI), a momentum gauge from 0-100, is at an extreme overbought level of 98. This means current buyers are very aggressive, potentially leading to a price correction as profit-taking begins.\n\nMarket sentiment also supports this trade, with a Fear & Greed Index reading at 37, indicating a fearful market where investors may be more prone to sell than buy, especially considering recent geopolitical tensions, like the Iran conflict impacting global markets. The $40 risk on this setup plays against a potential reward of about $87.6 at the first target, which provides a healthy risk/reward ratio of about 2.19 to 1. \n\nHowever, the setup would be invalidated if the price rises above $644.72, as this would indicate a strong reversal, and the indicators would likely start showing weakness. Given that we are currently in a volatile market and considering upcoming high-impact economic events, it's prudent to remain cautious. Take this trade or skip this one: Skip this one, as external factors and sentiment might lead to unpredictable movements that outweigh the potential profit.",
+      "pine_strategy": null,
+      "strategy_name": "RSI Momentum",
+      "regime": "volatile",
+      "conditions_met": [
+        "Below 200 SMA (682.08) \u2014 long-term downtrend",
+        "RSI(2) extreme overbought (98)",
+        "Higher high (active buying into rally)",
+        "MACD positive (momentum still strong)"
+      ],
+      "timing": {
+        "hold_duration": "1-5 days (typically 2-3)",
+        "time_horizon": "short-term swing",
+        "best_entry_window": "Enter at today's close or tomorrow's open \u2014 RSI(2) extremes resolve within 1-5 bars",
+        "time_stop_bars": 5,
+        "urgency": "Enter today \u2014 RSI(2) signals are time-sensitive and lose edge after 1-2 days",
+        "when_to_exit": "Exit when price closes above the 5-day SMA. If it doesn't within 5 days, exit at close regardless (time stop)."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 87.6,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 628.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "The sell signal for Meta Platforms options has fired due to several strategy conditions aligning perfectly. The stock is trading below its 200-day Simple Moving Average (SMA), indicating a long-term downtrend, and the Relative Strength Index (RSI), a momentum gauge from 0-100, is at an extreme overbought level of 98. This means current buyers are very aggressive, potentially leading to a price correction as profit-taking begins.\n\nMarket sentiment also supports this trade, with a Fear & Greed Index reading at 37, indicating a fearful market where investors may be more prone to sell than buy, especially considering recent geopolitical tensions, like the Iran conflict impacting global markets. The $40 risk on this setup plays against a potential reward of about $87.6 at the first target, which provides a healthy risk/reward ratio of about 2.19 to 1. \n\nHowever, the setup would be invalidated if the price rises above $644.72, as this would indicate a strong reversal, and the indicators would likely start showing weakness. Given that we are currently in a volatile market and considering upcoming high-impact economic events, it's prudent to remain cautious. Take this trade or skip this one: Skip this one, as external factors and sentiment might lead to unpredictable movements that outweigh the potential profit."
+    },
+    {
+      "id": "af36068e",
+      "timestamp": "2026-04-10T07:37:24.715040",
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 233.64999,
+      "stop_loss": 228.72835,
+      "target_1": 210.7565,
+      "target_2": 206.28444,
+      "risk_reward": 4.65,
+      "indicators": {
+        "bb": {
+          "upper": 225.05163,
+          "middle": 210.7565,
+          "lower": 196.46137,
+          "pct_b": 1.301,
+          "bandwidth": 13.57,
+          "squeeze": false
+        },
+        "rsi": 68.9828472083709,
+        "stoch": {
+          "k": 91.0,
+          "d": 85.2
+        },
+        "atr": 7.35344
+      },
+      "explanation": "The signal to sell a put option on Amazon was triggered because the stock's price is currently high relative to its recent performance, placing it at the upper range of its Bollinger Bands (a tool that shows price volatility and possible reversals). Specifically, the RSI (Relative Strength Index) is at 69, indicating that the stock is overbought, while Stochastic indicators suggest similar buying enthusiasm, reinforcing the setup for a potential price drop. \n\nCurrent news does cast some shadows on market sentiment, with the Fear & Greed Index sitting at 37, which indicates fear prevailing among investors; this aligns with the notion that many may anticipate a downturn. Headlines like the ongoing tensions and humanitarian crises linked to the conflict in Lebanon and Iran could lead to market volatility, especially affecting companies like Amazon in a broad market dip. \n\nIn terms of risk and reward, the setup involves risking $40 to potentially gain $186, making it an appealing 4.65:1 risk-reward ratio. To invalidate this trade, you would need to watch for the stock price rising above $234, which would suggest that the bullish momentum remains strong, contradicting this bearish setup. \n\nConsidering the overall context of high fear among investors along with concerning geopolitical news, this environment might signal caution in executing this trade, as unforeseen news could further impact market reactions. Therefore, based on the technicals, news, and sentiment, I recommend taking this trade cautiously, but remain alert to watch for significant economic events that could sway the market unexpectedly.",
+      "pine_strategy": null,
+      "strategy_name": "BB Mean Reversion",
+      "regime": "ranging",
+      "conditions_met": [
+        "Price at upper BB (%B=1.30)",
+        "RSI overbought (69)",
+        "Stochastic overbought (K=91)",
+        "BB width sufficient (13.6%)"
+      ],
+      "timing": {
+        "hold_duration": "1-5 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter at daily close or next open \u2014 band touches are end-of-day signals",
+        "time_stop_bars": 7,
+        "urgency": "Enter today if conditions met \u2014 mean reversion setups decay quickly",
+        "when_to_exit": "Close entire position at middle Bollinger Band (SMA 20). If price doesn't reach middle band within 5 days, exit at close."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 186.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 234.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "The signal to sell a put option on Amazon was triggered because the stock's price is currently high relative to its recent performance, placing it at the upper range of its Bollinger Bands (a tool that shows price volatility and possible reversals). Specifically, the RSI (Relative Strength Index) is at 69, indicating that the stock is overbought, while Stochastic indicators suggest similar buying enthusiasm, reinforcing the setup for a potential price drop. \n\nCurrent news does cast some shadows on market sentiment, with the Fear & Greed Index sitting at 37, which indicates fear prevailing among investors; this aligns with the notion that many may anticipate a downturn. Headlines like the ongoing tensions and humanitarian crises linked to the conflict in Lebanon and Iran could lead to market volatility, especially affecting companies like Amazon in a broad market dip. \n\nIn terms of risk and reward, the setup involves risking $40 to potentially gain $186, making it an appealing 4.65:1 risk-reward ratio. To invalidate this trade, you would need to watch for the stock price rising above $234, which would suggest that the bullish momentum remains strong, contradicting this bearish setup. \n\nConsidering the overall context of high fear among investors along with concerning geopolitical news, this environment might signal caution in executing this trade, as unforeseen news could further impact market reactions. Therefore, based on the technicals, news, and sentiment, I recommend taking this trade cautiously, but remain alert to watch for significant economic events that could sway the market unexpectedly."
+    },
+    {
+      "id": "c0c9046b",
+      "timestamp": "2026-04-10T07:37:24.715059",
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 233.64999,
+      "stop_loss": 196.46137,
+      "target_1": 289.43293,
+      "target_2": 326.62155,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 225.05163,
+          "middle": 210.7565,
+          "lower": 196.46137,
+          "pct_b": 1.301,
+          "bandwidth": 13.57,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": 1.87777,
+          "signal": -0.82578,
+          "histogram": 2.70355,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 68.9828472083709,
+        "vol_ratio": 1.55,
+        "squeeze_releasing": true
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (210.7565), MACD momentum positive, Volume 1.6x avg.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "ranging",
+      "conditions_met": [
+        "Squeeze releasing (bandwidth expanding)",
+        "Price above middle BB (210.7565)",
+        "MACD momentum positive",
+        "Volume 1.6x avg"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 234.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (210.7565), MACD momentum positive, Volume 1.6x avg."
+    },
+    {
+      "id": "b6dee3fc",
+      "timestamp": "2026-04-10T07:37:22.153527",
+      "symbol": "USDJPY",
+      "name": "USD/JPY",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 159.058,
+      "stop_loss": 160.35441,
+      "target_1": 157.11338,
+      "target_2": 155.81697,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 160.35441,
+          "middle": 159.1756,
+          "lower": 157.99679,
+          "pct_b": 0.45,
+          "bandwidth": 1.48,
+          "squeeze": true
+        },
+        "macd": {
+          "macd": 0.44506,
+          "signal": 0.61816,
+          "histogram": -0.17309,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 53.000330660592084,
+        "vol_ratio": null,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: SELL . Conditions met: In squeeze (awaiting breakout), Price below middle BB (159.1756), MACD momentum negative.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "low_vol",
+      "conditions_met": [
+        "In squeeze (awaiting breakout)",
+        "Price below middle BB (159.1756)",
+        "MACD momentum negative"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 9.07,
+        "dollar_reward": 13.61,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Volatility Squeeze strategy: SELL . Conditions met: In squeeze (awaiting breakout), Price below middle BB (159.1756), MACD momentum negative."
+    },
+    {
+      "id": "9c156df0",
+      "timestamp": "2026-04-10T07:37:22.305881",
+      "symbol": "EURUSD",
+      "name": "EUR/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 1.17288,
+      "stop_loss": 1.14439,
+      "target_1": 1.22987,
+      "target_2": 1.25836,
+      "risk_reward": 2.0,
+      "indicators": {
+        "donchian": {
+          "upper": 1.17288,
+          "lower": 1.14157,
+          "middle": 1.15722
+        },
+        "vol_ratio": null,
+        "was_squeeze": true,
+        "close_position": 1.0
+      },
+      "explanation": "Donchian Breakout strategy: BUY . Conditions met: Close above 20-day high (1.1729), Recent BB squeeze (volatility expansion), Strong close (100% of range).",
+      "pine_strategy": null,
+      "strategy_name": "Donchian Breakout",
+      "regime": "volatile",
+      "conditions_met": [
+        "Close above 20-day high (1.1729)",
+        "Recent BB squeeze (volatility expansion)",
+        "Strong close (100% of range)"
+      ],
+      "timing": {
+        "hold_duration": "5-20 days (let winners run)",
+        "time_horizon": "swing to position",
+        "best_entry_window": "Enter on breakout close \u2014 needs daily candle confirmation above the channel",
+        "time_stop_bars": 0,
+        "urgency": "Act on today's close if breakout confirmed \u2014 false breakouts reverse fast",
+        "when_to_exit": "No fixed target \u2014 trail stop using 10-day low (Turtle exit). Let the trend carry you. Only exit when price closes below 10-day low."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 20.0,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Donchian Breakout strategy: BUY . Conditions met: Close above 20-day high (1.1729), Recent BB squeeze (volatility expansion), Strong close (100% of range)."
+    },
+    {
+      "id": "989892a0",
+      "timestamp": "2026-04-10T07:37:22.305900",
+      "symbol": "EURUSD",
+      "name": "EUR/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 1.17288,
+      "stop_loss": 1.1408,
+      "target_1": 1.22101,
+      "target_2": 1.25309,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 1.17099,
+          "middle": 1.1559,
+          "lower": 1.1408,
+          "pct_b": 1.063,
+          "bandwidth": 2.61,
+          "squeeze": true
+        },
+        "macd": {
+          "macd": -9e-05,
+          "signal": -0.00285,
+          "histogram": 0.00276,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 59.097318615747014,
+        "vol_ratio": null,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: In squeeze (awaiting breakout), Price above middle BB (1.1559), MACD momentum positive.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "volatile",
+      "conditions_met": [
+        "In squeeze (awaiting breakout)",
+        "Price above middle BB (1.1559)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 15.0,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: In squeeze (awaiting breakout), Price above middle BB (1.1559), MACD momentum positive."
+    },
+    {
+      "id": "4542eddf",
+      "timestamp": "2026-04-10T07:37:22.542712",
+      "symbol": "GBPUSD",
+      "name": "GBP/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 1.34608,
+      "stop_loss": 1.31438,
+      "target_1": 1.39363,
+      "target_2": 1.42534,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 1.3491,
+          "middle": 1.33174,
+          "lower": 1.31438,
+          "pct_b": 0.913,
+          "bandwidth": 2.61,
+          "squeeze": true
+        },
+        "macd": {
+          "macd": -0.00179,
+          "signal": -0.00414,
+          "histogram": 0.00235,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 56.58070791272558,
+        "vol_ratio": null,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: In squeeze (awaiting breakout), Price above middle BB (1.3317), MACD momentum positive.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "volatile",
+      "conditions_met": [
+        "In squeeze (awaiting breakout)",
+        "Price above middle BB (1.3317)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 15.0,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: In squeeze (awaiting breakout), Price above middle BB (1.3317), MACD momentum positive."
+    },
+    {
+      "id": "7d75cfa7",
+      "timestamp": "2026-04-10T07:37:22.898990",
+      "symbol": "USDCAD",
+      "name": "USD/CAD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 1.3818,
+      "stop_loss": 1.37695,
+      "target_1": 1.4139,
+      "target_2": 1.3964,
+      "risk_reward": 6.62,
+      "indicators": {
+        "ema_fast": 1.3858564772963917,
+        "ema_slow": 1.3816032024051936,
+        "ema_trend": 1.3769465617354093,
+        "rsi": 52.40989551434659,
+        "atr": 0.0063
+      },
+      "explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (1.3816), RSI in pullback zone (52). Missing: Close below 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_up",
+      "conditions_met": [
+        "EMAs stacked bullish (9>21>50)",
+        "Price pulled back near 21 EMA (1.3816)",
+        "RSI in pullback zone (52)"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on daily close confirmation or next day open",
+        "time_stop_bars": 15,
+        "urgency": "Wait for today's close to confirm \u2014 don't chase",
+        "when_to_exit": "Close 50% at Target 1 (2R). Trail stop on rest using 21 EMA \u2014 exit when price closes below 21 EMA."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 2,
+        "dollar_risk": 9.7,
+        "dollar_reward": 64.21,
+        "label": "2 micro lots"
+      },
+      "ai_explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (1.3816), RSI in pullback zone (52). Missing: Close below 9 EMA."
+    },
+    {
+      "id": "d7fe0e4d",
+      "timestamp": "2026-04-10T07:37:23.086634",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 0.78806,
+      "stop_loss": 0.78763,
+      "target_1": 0.8123,
+      "target_2": 0.8041,
+      "risk_reward": 56.37,
+      "indicators": {
+        "ema_fast": 0.7932179957877664,
+        "ema_slow": 0.79117184087761,
+        "ema_trend": 0.7876278754987284,
+        "rsi": 47.794305467185275,
+        "atr": 0.00619
+      },
+      "explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (0.7912), RSI in pullback zone (48). Missing: Close below 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_up",
+      "conditions_met": [
+        "EMAs stacked bullish (9>21>50)",
+        "Price pulled back near 21 EMA (0.7912)",
+        "RSI in pullback zone (48)"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on daily close confirmation or next day open",
+        "time_stop_bars": 15,
+        "urgency": "Wait for today's close to confirm \u2014 don't chase",
+        "when_to_exit": "Close 50% at Target 1 (2R). Trail stop on rest using 21 EMA \u2014 exit when price closes below 21 EMA."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 23,
+        "dollar_risk": 9.89,
+        "dollar_reward": 557.5,
+        "label": "23 micro lots"
+      },
+      "ai_explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (0.7912), RSI in pullback zone (48). Missing: Close below 9 EMA."
+    },
+    {
+      "id": "5d48adc8",
+      "timestamp": "2026-04-10T07:37:23.086652",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 0.78806,
+      "stop_loss": 0.78634,
+      "target_1": 0.79077,
+      "target_2": 0.79275,
+      "risk_reward": 1.58,
+      "indicators": {
+        "pivots": {
+          "pivot": 0.79077,
+          "r1": 0.79275,
+          "r2": 0.79409,
+          "s1": 0.78943,
+          "s2": 0.78745
+        },
+        "rsi": 47.794305467185275,
+        "candle": {
+          "bullish": false,
+          "bearish": true,
+          "hammer": false,
+          "shooting_star": true,
+          "close_position": 0.22
+        },
+        "atr": 0.00619
+      },
+      "explanation": "Pivot Bounce strategy: BUY . Conditions met: Price near S1 (0.7894), RSI has room (48), Above S2 (pivot structure intact). Missing: No bullish reversal candle.",
+      "pine_strategy": null,
+      "strategy_name": "Pivot Bounce",
+      "regime": "trending_up",
+      "conditions_met": [
+        "Price near S1 (0.7894)",
+        "RSI has room (48)",
+        "Above S2 (pivot structure intact)"
+      ],
+      "timing": {
+        "hold_duration": "1-3 days",
+        "time_horizon": "short-term swing",
+        "best_entry_window": "Enter on the reversal candle close or next bar open \u2014 pivot bounces work best intraday to next-day",
+        "time_stop_bars": 5,
+        "urgency": "Act today \u2014 pivot levels reset daily, this setup is only valid for 1-2 days",
+        "when_to_exit": "Take profit at central Pivot (P) level. If price reaches R1/S1 on the other side, that's bonus. Exit by end of day 3 if neither target nor stop hit."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 5,
+        "dollar_risk": 8.6,
+        "dollar_reward": 13.59,
+        "label": "5 micro lots"
+      },
+      "ai_explanation": "Pivot Bounce strategy: BUY . Conditions met: Price near S1 (0.7894), RSI has room (48), Above S2 (pivot structure intact). Missing: No bullish reversal candle."
+    },
+    {
+      "id": "98f67fa3",
+      "timestamp": "2026-04-10T07:37:23.281621",
+      "symbol": "SPY",
+      "name": "SPDR S&P 500 ETF",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 679.90997,
+      "stop_loss": 701.28547,
+      "target_1": 502.6973,
+      "target_2": 569.0763,
+      "risk_reward": 8.29,
+      "indicators": {
+        "rsi": 60.833698924254556,
+        "macd": {
+          "macd": -1.87186,
+          "signal": -6.0228,
+          "histogram": 4.15094,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.83
+        },
+        "atr": 10.68775
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (61), MACD momentum shifting, Near resistance level. Missing: No bearish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "volatile",
+      "conditions_met": [
+        "RSI overbought (61)",
+        "MACD momentum shifting",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 331.6,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 680.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (61), MACD momentum shifting, Near resistance level. Missing: No bearish candle."
+    },
+    {
+      "id": "0c4cc812",
+      "timestamp": "2026-04-10T07:37:23.281640",
+      "symbol": "SPY",
+      "name": "SPDR S&P 500 ETF",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 679.90997,
+      "stop_loss": 633.35778,
+      "target_1": 749.73826,
+      "target_2": 796.29046,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 680.55368,
+          "middle": 656.95573,
+          "lower": 633.35778,
+          "pct_b": 0.986,
+          "bandwidth": 7.18,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": -1.87186,
+          "signal": -6.0228,
+          "histogram": 4.15094,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 60.833698924254556,
+        "vol_ratio": 0.59,
+        "squeeze_releasing": true
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (656.9557), MACD momentum positive.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "volatile",
+      "conditions_met": [
+        "Squeeze releasing (bandwidth expanding)",
+        "Price above middle BB (656.9557)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 680.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (656.9557), MACD momentum positive."
+    },
+    {
+      "id": "00b9d4d4",
+      "timestamp": "2026-04-10T07:37:23.529439",
+      "symbol": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 610.19,
+      "stop_loss": 561.52659,
+      "target_1": 683.18512,
+      "target_2": 731.84853,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 613.84295,
+          "middle": 587.68477,
+          "lower": 561.52659,
+          "pct_b": 0.93,
+          "bandwidth": 8.9,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": -1.56411,
+          "signal": -5.52581,
+          "histogram": 3.9617,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 60.2535061699645,
+        "vol_ratio": 0.57,
+        "squeeze_releasing": true
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (587.6848), MACD momentum positive.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "volatile",
+      "conditions_met": [
+        "Squeeze releasing (bandwidth expanding)",
+        "Price above middle BB (587.6848)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 610.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Squeeze releasing (bandwidth expanding), Price above middle BB (587.6848), MACD momentum positive."
+    },
+    {
+      "id": "affd4b47",
+      "timestamp": "2026-04-10T07:37:23.732502",
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 260.48999,
+      "stop_loss": 245.47808,
+      "target_1": 283.00786,
+      "target_2": 298.01977,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 260.61992,
+          "middle": 253.049,
+          "lower": 245.47808,
+          "pct_b": 0.991,
+          "bandwidth": 5.98,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": -0.59651,
+          "signal": -1.99718,
+          "histogram": 1.40067,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 55.66309292186696,
+        "vol_ratio": 0.68,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Low bandwidth (6.0%), Price above middle BB (253.0490), MACD momentum positive.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "low_vol",
+      "conditions_met": [
+        "Low bandwidth (6.0%)",
+        "Price above middle BB (253.0490)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 260.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Low bandwidth (6.0%), Price above middle BB (253.0490), MACD momentum positive."
+    },
+    {
+      "id": "a8e2405e",
+      "timestamp": "2026-04-10T07:37:24.349350",
+      "symbol": "TSLA",
+      "name": "Tesla Inc.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 345.62,
+      "stop_loss": 313.21902,
+      "target_1": 498.83,
+      "target_2": 474.07,
+      "risk_reward": 4.73,
+      "indicators": {
+        "rsi": 35.10191321560292,
+        "macd": {
+          "macd": -14.57388,
+          "signal": -12.32387,
+          "histogram": -2.25001,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.72
+        },
+        "atr": 16.20049
+      },
+      "explanation": "Swing Reversal strategy: BUY . Conditions met: RSI oversold (35), Reversal candle (bullish reversal), MACD momentum shifting. Missing: Not near support.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_down",
+      "conditions_met": [
+        "RSI oversold (35)",
+        "Reversal candle (bullish reversal)",
+        "MACD momentum shifting"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 189.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 346.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: BUY . Conditions met: RSI oversold (35), Reversal candle (bullish reversal), MACD momentum shifting. Missing: Not near support."
+    },
+    {
+      "id": "939558ba",
+      "timestamp": "2026-04-10T07:37:24.499317",
+      "symbol": "META",
+      "name": "Meta Platforms",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 628.39001,
+      "stop_loss": 529.45804,
+      "target_1": 776.78798,
+      "target_2": 875.71995,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 653.85986,
+          "middle": 591.65895,
+          "lower": 529.45804,
+          "pct_b": 0.795,
+          "bandwidth": 21.03,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": -11.48998,
+          "signal": -18.22315,
+          "histogram": 6.73317,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 57.17172007129922,
+        "vol_ratio": 1.06,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Price above middle BB (591.6590), MACD momentum positive, Volume 1.1x avg. Missing: No squeeze detected.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "volatile",
+      "conditions_met": [
+        "Price above middle BB (591.6590)",
+        "MACD momentum positive",
+        "Volume 1.1x avg"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 628.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Price above middle BB (591.6590), MACD momentum positive, Volume 1.1x avg. Missing: No squeeze detected."
+    },
+    {
+      "id": "f13a449a",
+      "timestamp": "2026-04-10T07:37:24.956119",
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 318.48999,
+      "stop_loss": 337.21965,
+      "target_1": 145.5952,
+      "target_2": 147.3291,
+      "risk_reward": 9.23,
+      "indicators": {
+        "rsi": 62.65122525857997,
+        "macd": {
+          "macd": 0.07268,
+          "signal": -3.71903,
+          "histogram": 3.79171,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.88
+        },
+        "atr": 9.36483
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (63), MACD momentum shifting, Near resistance level. Missing: No bearish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_up",
+      "conditions_met": [
+        "RSI overbought (63)",
+        "MACD momentum shifting",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 369.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 318.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (63), MACD momentum shifting, Near resistance level. Missing: No bearish candle."
+    },
+    {
+      "id": "899621b9",
+      "timestamp": "2026-04-10T07:37:25.152169",
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 236.64,
+      "stop_loss": 256.59556,
+      "target_1": 83.75,
+      "target_2": 107.67,
+      "risk_reward": 7.66,
+      "indicators": {
+        "rsi": 66.81847822548559,
+        "macd": {
+          "macd": 5.70744,
+          "signal": 1.84025,
+          "histogram": 3.86719,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.93
+        },
+        "atr": 9.97778
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (67), MACD momentum shifting, Near resistance level. Missing: No bearish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_up",
+      "conditions_met": [
+        "RSI overbought (67)",
+        "MACD momentum shifting",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 306.4,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 237.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (67), MACD momentum shifting, Near resistance level. Missing: No bearish candle."
+    },
+    {
+      "id": "4879000b",
+      "timestamp": "2026-04-10T07:37:22.542729",
+      "symbol": "GBPUSD",
+      "name": "GBP/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 53.33333333333333,
+      "grade": "C-",
+      "entry_price": 1.34608,
+      "stop_loss": 1.32873,
+      "target_1": 1.3847,
+      "target_2": 1.39236,
+      "risk_reward": 2.23,
+      "indicators": {
+        "rsi": 56.58070791272558,
+        "macd": {
+          "macd": -0.00179,
+          "signal": -0.00414,
+          "histogram": 0.00235,
+          "crossover": false,
+          "crossunder": false
+        },
+        "atr": 0.01157
+      },
+      "explanation": "MACD Divergence strategy: BUY . Conditions met: Bullish MACD divergence (price lower low, MACD higher low), Near support level. Missing: RSI elevated.",
+      "pine_strategy": null,
+      "strategy_name": "MACD Divergence",
+      "regime": "volatile",
+      "conditions_met": [
+        "Bullish MACD divergence (price lower low, MACD higher low)",
+        "Near support level"
+      ],
+      "timing": {
+        "hold_duration": "3-7 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on MACD histogram flip or crossover confirmation \u2014 wait for the turn, don't front-run",
+        "time_stop_bars": 10,
+        "urgency": "Divergences can take 2-5 bars to resolve \u2014 be patient but enter within 2 days of the signal",
+        "when_to_exit": "Exit at next support/resistance level. Also exit if MACD histogram reverses direction against your trade."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 22.3,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "MACD Divergence strategy: BUY . Conditions met: Bullish MACD divergence (price lower low, MACD higher low), Near support level. Missing: RSI elevated."
+    },
+    {
+      "id": "01628f4b",
+      "timestamp": "2026-04-10T07:37:23.086661",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 53.33333333333333,
+      "grade": "C-",
+      "entry_price": 0.78806,
+      "stop_loss": 0.79735,
+      "target_1": 0.7629,
+      "target_2": 0.7633,
+      "risk_reward": 2.71,
+      "indicators": {
+        "rsi": 47.794305467185275,
+        "macd": {
+          "macd": 0.00298,
+          "signal": 0.00403,
+          "histogram": -0.00106,
+          "crossover": false,
+          "crossunder": false
+        },
+        "atr": 0.00619
+      },
+      "explanation": "MACD Divergence strategy: SELL . Conditions met: Bearish MACD divergence (price higher high, MACD lower high), Near resistance level. Missing: RSI low.",
+      "pine_strategy": null,
+      "strategy_name": "MACD Divergence",
+      "regime": "trending_up",
+      "conditions_met": [
+        "Bearish MACD divergence (price higher high, MACD lower high)",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-7 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on MACD histogram flip or crossover confirmation \u2014 wait for the turn, don't front-run",
+        "time_stop_bars": 10,
+        "urgency": "Divergences can take 2-5 bars to resolve \u2014 be patient but enter within 2 days of the signal",
+        "when_to_exit": "Exit at next support/resistance level. Also exit if MACD histogram reverses direction against your trade."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 9.29,
+        "dollar_reward": 25.18,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "MACD Divergence strategy: SELL . Conditions met: Bearish MACD divergence (price higher high, MACD lower high), Near resistance level. Missing: RSI low."
+    },
+    {
+      "id": "0db163f8",
+      "timestamp": "2026-04-10T07:37:22.305910",
+      "symbol": "EURUSD",
+      "name": "EUR/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 1.17288,
+      "stop_loss": 1.15462,
+      "target_1": 1.2024,
+      "target_2": 1.1928,
+      "risk_reward": 1.62,
+      "indicators": {
+        "rsi": 59.097318615747014,
+        "macd": {
+          "macd": -9e-05,
+          "signal": -0.00285,
+          "histogram": 0.00276,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 1.0
+        },
+        "atr": 0.00913
+      },
+      "explanation": "Swing Reversal strategy: BUY . Conditions met: Reversal candle (bullish reversal), Near support level. Missing: RSI not oversold, MACD not supportive.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "volatile",
+      "conditions_met": [
+        "Reversal candle (bullish reversal)",
+        "Near support level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 16.2,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Swing Reversal strategy: BUY . Conditions met: Reversal candle (bullish reversal), Near support level. Missing: RSI not oversold, MACD not supportive."
+    },
+    {
+      "id": "2ed442de",
+      "timestamp": "2026-04-10T07:37:22.542738",
+      "symbol": "GBPUSD",
+      "name": "GBP/USD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 1.34608,
+      "stop_loss": 1.32294,
+      "target_1": 1.3847,
+      "target_2": 1.3574,
+      "risk_reward": 1.67,
+      "indicators": {
+        "rsi": 56.58070791272558,
+        "macd": {
+          "macd": -0.00179,
+          "signal": -0.00414,
+          "histogram": 0.00235,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.95
+        },
+        "atr": 0.01157
+      },
+      "explanation": "Swing Reversal strategy: BUY . Conditions met: Reversal candle (bullish reversal), Near support level. Missing: RSI not oversold, MACD not supportive.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "volatile",
+      "conditions_met": [
+        "Reversal candle (bullish reversal)",
+        "Near support level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 16.7,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Swing Reversal strategy: BUY . Conditions met: Reversal candle (bullish reversal), Near support level. Missing: RSI not oversold, MACD not supportive."
+    },
+    {
+      "id": "a75f372a",
+      "timestamp": "2026-04-10T07:37:22.717436",
+      "symbol": "AUDUSD",
+      "name": "AUD/USD",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 0.70804,
+      "stop_loss": 0.72358,
+      "target_1": 0.6422,
+      "target_2": 0.6459,
+      "risk_reward": 4.24,
+      "indicators": {
+        "rsi": 57.731969562746905,
+        "macd": {
+          "macd": -0.00037,
+          "signal": -0.00193,
+          "histogram": 0.00156,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": true,
+          "shooting_star": false,
+          "close_position": 0.83
+        },
+        "atr": 0.00777
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: MACD momentum shifting, Near resistance level. Missing: RSI not overbought, No bearish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_up",
+      "conditions_met": [
+        "MACD momentum shifting",
+        "Near resistance level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 42.4,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: MACD momentum shifting, Near resistance level. Missing: RSI not overbought, No bearish candle."
+    },
+    {
+      "id": "c642aefa",
+      "timestamp": "2026-04-10T07:37:22.899002",
+      "symbol": "USDCAD",
+      "name": "USD/CAD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 1.3818,
+      "stop_loss": 1.3692,
+      "target_1": 1.4139,
+      "target_2": 1.3964,
+      "risk_reward": 2.55,
+      "indicators": {
+        "rsi": 52.40989551434659,
+        "macd": {
+          "macd": 0.00492,
+          "signal": 0.00534,
+          "histogram": -0.00042,
+          "crossover": false,
+          "crossunder": true
+        },
+        "candle": {
+          "bullish": false,
+          "bearish": true,
+          "hammer": false,
+          "shooting_star": true,
+          "close_position": 0.27
+        },
+        "atr": 0.0063
+      },
+      "explanation": "Swing Reversal strategy: BUY . Conditions met: MACD momentum shifting, Near support level. Missing: RSI not oversold, No bullish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_up",
+      "conditions_met": [
+        "MACD momentum shifting",
+        "Near support level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 25.5,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Swing Reversal strategy: BUY . Conditions met: MACD momentum shifting, Near support level. Missing: RSI not oversold, No bullish candle."
+    },
+    {
+      "id": "cf22fe92",
+      "timestamp": "2026-04-10T07:37:23.086669",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 0.78806,
+      "stop_loss": 0.77568,
+      "target_1": 0.8123,
+      "target_2": 0.8041,
+      "risk_reward": 1.96,
+      "indicators": {
+        "rsi": 47.794305467185275,
+        "macd": {
+          "macd": 0.00298,
+          "signal": 0.00403,
+          "histogram": -0.00106,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": false,
+          "bearish": true,
+          "hammer": false,
+          "shooting_star": true,
+          "close_position": 0.22
+        },
+        "atr": 0.00619
+      },
+      "explanation": "Swing Reversal strategy: BUY . Conditions met: MACD momentum shifting, Near support level. Missing: RSI not oversold, No bullish candle.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "trending_up",
+      "conditions_met": [
+        "MACD momentum shifting",
+        "Near support level"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.0,
+        "dollar_reward": 19.6,
+        "label": "1 micro lot"
+      },
+      "ai_explanation": "Swing Reversal strategy: BUY . Conditions met: MACD momentum shifting, Near support level. Missing: RSI not oversold, No bullish candle."
+    },
+    {
+      "id": "36657bc7",
+      "timestamp": "2026-04-10T07:37:23.529457",
+      "symbol": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 610.19,
+      "stop_loss": 634.0488,
+      "target_1": 425.8686,
+      "target_2": 503.1446,
+      "risk_reward": 7.73,
+      "indicators": {
+        "rsi": 60.2535061699645,
+        "macd": {
+          "macd": -1.56411,
+          "signal": -5.52581,
+          "histogram": 3.9617,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.96
+        },
+        "atr": 11.9294
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (60), MACD momentum shifting. Missing: No bearish candle, Not near resistance.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "volatile",
+      "conditions_met": [
+        "RSI overbought (60)",
+        "MACD momentum shifting"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 309.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 610.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (60), MACD momentum shifting. Missing: No bearish candle, Not near resistance."
+    },
+    {
+      "id": "42eb65b5",
+      "timestamp": "2026-04-10T07:37:24.169131",
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 183.91,
+      "stop_loss": 166.90809,
+      "target_1": 209.41287,
+      "target_2": 226.41479,
+      "risk_reward": 1.5,
+      "indicators": {
+        "bb": {
+          "upper": 187.38391,
+          "middle": 177.146,
+          "lower": 166.90809,
+          "pct_b": 0.83,
+          "bandwidth": 11.56,
+          "squeeze": false
+        },
+        "macd": {
+          "macd": -0.78113,
+          "signal": -2.11021,
+          "histogram": 1.32908,
+          "crossover": false,
+          "crossunder": false
+        },
+        "rsi": 56.609284163510935,
+        "vol_ratio": 0.68,
+        "squeeze_releasing": false
+      },
+      "explanation": "Volatility Squeeze strategy: BUY . Conditions met: Price above middle BB (177.1460), MACD momentum positive. Missing: No squeeze detected.",
+      "pine_strategy": null,
+      "strategy_name": "Volatility Squeeze",
+      "regime": "ranging",
+      "conditions_met": [
+        "Price above middle BB (177.1460)",
+        "MACD momentum positive"
+      ],
+      "timing": {
+        "hold_duration": "2-7 days (squeezes resolve quickly once they break)",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on squeeze release candle \u2014 when BB expands after compression",
+        "time_stop_bars": 10,
+        "urgency": "Act on the breakout day \u2014 squeezes are explosive but short-lived, the first 2-3 bars carry most of the move",
+        "when_to_exit": "Ride the momentum expansion. Close when Bollinger Bandwidth starts contracting again or price re-enters the Bollinger range. Use lower BB as trailing stop for longs."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 60.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_call",
+        "strike": 184.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Volatility Squeeze strategy: BUY . Conditions met: Price above middle BB (177.1460), MACD momentum positive. Missing: No squeeze detected."
+    },
+    {
+      "id": "534410b4",
+      "timestamp": "2026-04-10T07:37:24.499326",
+      "symbol": "META",
+      "name": "Meta Platforms",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 628.39001,
+      "stop_loss": 676.53937,
+      "target_1": 478.3077,
+      "target_2": 520.26,
+      "risk_reward": 3.12,
+      "indicators": {
+        "rsi": 57.17172007129922,
+        "macd": {
+          "macd": -11.48998,
+          "signal": -18.22315,
+          "histogram": 6.73317,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": false,
+          "bearish": true,
+          "hammer": false,
+          "shooting_star": true,
+          "close_position": 0.37
+        },
+        "atr": 24.07468
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: Reversal candle (shooting star), MACD momentum shifting. Missing: RSI not overbought, Not near resistance.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "volatile",
+      "conditions_met": [
+        "Reversal candle (shooting star)",
+        "MACD momentum shifting"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 124.8,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 628.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: Reversal candle (shooting star), MACD momentum shifting. Missing: RSI not overbought, Not near resistance."
+    },
+    {
+      "id": "466faf1a",
+      "timestamp": "2026-04-10T07:37:24.715067",
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 40.0,
+      "grade": "D",
+      "entry_price": 233.64999,
+      "stop_loss": 248.35687,
+      "target_1": 165.29,
+      "target_2": 178.85,
+      "risk_reward": 4.65,
+      "indicators": {
+        "rsi": 68.9828472083709,
+        "macd": {
+          "macd": 1.87777,
+          "signal": -0.82578,
+          "histogram": 2.70355,
+          "crossover": false,
+          "crossunder": false
+        },
+        "candle": {
+          "bullish": true,
+          "bearish": false,
+          "hammer": false,
+          "shooting_star": false,
+          "close_position": 0.99
+        },
+        "atr": 7.35344
+      },
+      "explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (69), MACD momentum shifting. Missing: No bearish candle, Not near resistance.",
+      "pine_strategy": null,
+      "strategy_name": "Swing Reversal",
+      "regime": "ranging",
+      "conditions_met": [
+        "RSI overbought (69)",
+        "MACD momentum shifting"
+      ],
+      "timing": {
+        "hold_duration": "3-10 days",
+        "time_horizon": "swing",
+        "best_entry_window": "Enter on reversal candle close or next bar open \u2014 confirmation candle is key",
+        "time_stop_bars": 10,
+        "urgency": "Enter within 1 day of the reversal candle \u2014 reversals that don't follow through quickly often fail",
+        "when_to_exit": "Close 50% at first support/resistance target. Trail the rest with a 2 ATR stop. Exit fully if the reversal candle's low/high is broken."
+      },
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 186.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 234.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      },
+      "ai_explanation": "Swing Reversal strategy: SELL . Conditions met: RSI overbought (69), MACD momentum shifting. Missing: No bearish candle, Not near resistance."
+    }
+  ]
+}

@@ -7,23 +7,29 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from fastapi import FastAPI  # noqa: E402
+from fastapi import FastAPI, Request  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from fastapi.responses import FileResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
 from ui.routes import (  # noqa: E402
     cache,
     digests,
     history,
+    innovation,
     instruments,
     onboarding,
     options,
+    pine,
     prompts,
     retrace,
+    risk,
     scorecard,
     settings,
+    signals,
     sources,
     status,
+    trading,
 )
 
 app = FastAPI(title="Market Digest Command Center", version="1.0.0")
@@ -50,8 +56,27 @@ app.include_router(history.router)
 app.include_router(retrace.router)
 app.include_router(scorecard.router)
 app.include_router(options.router)
+app.include_router(signals.router)
+app.include_router(trading.router)
+app.include_router(risk.router)
+app.include_router(pine.router)
+app.include_router(innovation.router)
 
-# Serve built React frontend as static files
+# Serve built React frontend
 FRONTEND_DIST = Path(__file__).parent / "frontend" / "dist"
 if FRONTEND_DIST.exists():
-    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+    # Serve static assets (JS, CSS, images) directly
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST / "assets")), name="assets")
+
+    # Catch-all: serve index.html for any non-API route so React Router handles client-side navigation
+    @app.get("/{full_path:path}")
+    async def serve_spa(request: Request, full_path: str):
+        # Don't intercept API routes
+        if full_path.startswith("api/"):
+            return
+        # Try to serve exact file first (favicon, robots.txt, etc.)
+        file_path = FRONTEND_DIST / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+        # Otherwise return index.html for React Router
+        return FileResponse(FRONTEND_DIST / "index.html")

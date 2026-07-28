@@ -1,0 +1,885 @@
+{
+  "timestamp": "2026-04-07T09:39:36.100166",
+  "count": 12,
+  "signals": [
+    {
+      "id": "a3efa760",
+      "timestamp": "2026-04-07T09:39:33.947946",
+      "symbol": "USDJPY",
+      "name": "USD/JPY",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 78.5,
+      "grade": "B+",
+      "entry_price": 159.84,
+      "stop_loss": 159.943,
+      "target_1": 159.63399,
+      "target_2": 159.53099,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 58.21632815931911,
+        "ema_cross": {
+          "signal": "bullish",
+          "fast_ema": 159.41084,
+          "slow_ema": 158.86229
+        },
+        "stochastic": {
+          "k": 78.9,
+          "d": 63.2
+        },
+        "macd": {
+          "macd": 0.67632,
+          "signal": 0.74225,
+          "histogram": -0.06594,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 160.43156,
+          "middle": 159.1824,
+          "lower": 157.93324,
+          "pct_b": 0.763,
+          "bandwidth": 1.57,
+          "squeeze": true
+        },
+        "pivots": {
+          "pivot": 159.63,
+          "r1": 159.943,
+          "r2": 160.106,
+          "s1": 159.467,
+          "s2": 159.154
+        },
+        "atr": 0.99096,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 95,
+          "bollinger": 80,
+          "stochastic": 75,
+          "macd": 70,
+          "pivot": 95,
+          "atr_filter": 40
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "ema_crossover",
+      "status": "active",
+      "position_size": {
+        "units": 13,
+        "dollar_risk": 9.37,
+        "dollar_reward": 18.75,
+        "label": "13 micro lots"
+      }
+    },
+    {
+      "id": "827c545a",
+      "timestamp": "2026-04-07T09:39:35.253653",
+      "symbol": "MSFT",
+      "name": "Microsoft Corp.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 70.8,
+      "grade": "B",
+      "entry_price": 369.03,
+      "stop_loss": 357.37,
+      "target_1": 392.34,
+      "target_2": 404.0,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 36.821467308906364,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 371.55168,
+          "slow_ema": 380.19461
+        },
+        "macd": {
+          "macd": -10.35616,
+          "signal": -10.84671,
+          "histogram": 0.49055,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 413.0944,
+          "middle": 381.674,
+          "lower": 350.25359,
+          "pct_b": 0.299,
+          "bandwidth": 16.46,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 372.03667,
+          "r1": 374.57334,
+          "r2": 376.26668,
+          "s1": 370.34333,
+          "s2": 367.80666
+        },
+        "atr": 7.77137,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 95,
+          "bollinger": 80,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 95,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bull_call_spread",
+        "strike": 369.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "ae4c226c",
+      "timestamp": "2026-04-07T09:39:34.375938",
+      "symbol": "AUDUSD",
+      "name": "AUD/USD",
+      "asset_type": "forex",
+      "direction": "SELL",
+      "confluence_score": 66.2,
+      "grade": "B-",
+      "entry_price": 0.69493,
+      "stop_loss": 0.70585,
+      "target_1": 0.67309,
+      "target_2": 0.66217,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 47.86552607825253,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 0.69262,
+          "slow_ema": 0.69636
+        },
+        "stochastic": {
+          "k": 29.4,
+          "d": 28.0
+        },
+        "macd": {
+          "macd": -0.00338,
+          "signal": -0.00259,
+          "histogram": -0.00079,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 0.71684,
+          "middle": 0.69874,
+          "lower": 0.68065,
+          "pct_b": 0.395,
+          "bandwidth": 5.18,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 0.69034,
+          "r1": 0.69191,
+          "r2": 0.69526,
+          "s1": 0.68699,
+          "s2": 0.68542
+        },
+        "atr": 0.00728,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "stochastic": 50,
+          "macd": 70,
+          "pivot": 95,
+          "atr_filter": 60
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "ema_crossover",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 10.92,
+        "dollar_reward": 21.84,
+        "label": "1 micro lot"
+      }
+    },
+    {
+      "id": "234aabe8",
+      "timestamp": "2026-04-07T09:39:35.098769",
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 62.5,
+      "grade": "C+",
+      "entry_price": 247.74,
+      "stop_loss": 238.15,
+      "target_1": 266.92,
+      "target_2": 276.52,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 40.8304952951816,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 252.86121,
+          "slow_ema": 254.33512
+        },
+        "macd": {
+          "macd": -2.124,
+          "signal": -2.74006,
+          "histogram": 0.61606,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 261.21874,
+          "middle": 252.8735,
+          "lower": 244.52826,
+          "pct_b": 0.192,
+          "bandwidth": 6.6,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 259.15999,
+          "r1": 261.86,
+          "r2": 264.86001,
+          "s1": 256.15998,
+          "s2": 253.45998
+        },
+        "atr": 6.39497,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 95,
+          "bollinger": 80,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 40,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bull_call_spread",
+        "strike": 248.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "493e3c29",
+      "timestamp": "2026-04-07T09:39:35.964854",
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 62.5,
+      "grade": "C+",
+      "entry_price": 300.7,
+      "stop_loss": 302.01,
+      "target_1": 298.07,
+      "target_2": 296.76,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 51.51947199634136,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 294.38366,
+          "slow_ema": 297.04449
+        },
+        "macd": {
+          "macd": -4.03281,
+          "signal": -5.50294,
+          "histogram": 1.47014,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 319.6105,
+          "middle": 297.3735,
+          "lower": 275.13651,
+          "pct_b": 0.575,
+          "bandwidth": 14.96,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 298.59666,
+          "r1": 302.01333,
+          "r2": 304.03666,
+          "s1": 296.57332,
+          "s2": 293.15666
+        },
+        "atr": 8.16039,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 95,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 301.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "4620bdd3",
+      "timestamp": "2026-04-07T09:39:34.638294",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 61.2,
+      "grade": "C+",
+      "entry_price": 0.79931,
+      "stop_loss": 0.79769,
+      "target_1": 0.80255,
+      "target_2": 0.80417,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 62.262826196840564,
+        "ema_cross": {
+          "signal": "bullish",
+          "fast_ema": 0.79675,
+          "slow_ema": 0.79171
+        },
+        "stochastic": {
+          "k": 78.3,
+          "d": 70.6
+        },
+        "macd": {
+          "macd": 0.00513,
+          "signal": 0.0045,
+          "histogram": 0.00064,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 0.80455,
+          "middle": 0.79143,
+          "lower": 0.7783,
+          "pct_b": 0.8,
+          "bandwidth": 3.32,
+          "squeeze": true
+        },
+        "pivots": {
+          "pivot": 0.79972,
+          "r1": 0.80319,
+          "r2": 0.80522,
+          "s1": 0.79769,
+          "s2": 0.79422
+        },
+        "atr": 0.00642,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 50,
+          "bollinger": 50,
+          "stochastic": 50,
+          "macd": 70,
+          "pivot": 95,
+          "atr_filter": 40
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "ema_crossover",
+      "status": "active",
+      "position_size": {
+        "units": 6,
+        "dollar_risk": 9.72,
+        "dollar_reward": 19.44,
+        "label": "6 micro lots"
+      }
+    },
+    {
+      "id": "4d46d7b4",
+      "timestamp": "2026-04-07T09:39:35.382373",
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.2,
+      "grade": "C+",
+      "entry_price": 174.79,
+      "stop_loss": 178.37,
+      "target_1": 167.62,
+      "target_2": 164.04,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 46.16969744161307,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 175.07364,
+          "slow_ema": 176.95981
+        },
+        "macd": {
+          "macd": -2.36214,
+          "signal": -2.74333,
+          "histogram": 0.38119,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 188.16727,
+          "middle": 177.22025,
+          "lower": 166.27323,
+          "pct_b": 0.389,
+          "bandwidth": 12.35,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 177.06333,
+          "r1": 178.36666,
+          "r2": 179.09333,
+          "s1": 176.33666,
+          "s2": 175.03333
+        },
+        "atr": 4.85239,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 80,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 175.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "08d48204",
+      "timestamp": "2026-04-07T09:39:35.798005",
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.2,
+      "grade": "C+",
+      "entry_price": 210.4,
+      "stop_loss": 213.96,
+      "target_1": 203.27,
+      "target_2": 199.71,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 50.07747146772121,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 209.14022,
+          "slow_ema": 209.56305
+        },
+        "macd": {
+          "macd": -1.16225,
+          "signal": -1.95745,
+          "histogram": 0.7952,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 217.0712,
+          "middle": 209.192,
+          "lower": 201.31279,
+          "pct_b": 0.577,
+          "bandwidth": 7.53,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 211.77666,
+          "r1": 213.96333,
+          "r2": 215.13666,
+          "s1": 210.60333,
+          "s2": 208.41666
+        },
+        "atr": 5.43331,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 80,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 210.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "a6205742",
+      "timestamp": "2026-04-07T09:39:36.100064",
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices",
+      "asset_type": "option",
+      "direction": "BUY",
+      "confluence_score": 59.5,
+      "grade": "C",
+      "entry_price": 217.93,
+      "stop_loss": 216.5,
+      "target_1": 220.78,
+      "target_2": 222.21,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 57.274303548809364,
+        "ema_cross": {
+          "signal": "bullish",
+          "fast_ema": 211.27878,
+          "slow_ema": 207.52218
+        },
+        "macd": {
+          "macd": 2.36412,
+          "signal": -0.00962,
+          "histogram": 2.37374,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 221.38081,
+          "middle": 204.8755,
+          "lower": 188.37019,
+          "pct_b": 0.895,
+          "bandwidth": 16.11,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 221.40666,
+          "r1": 225.08333,
+          "r2": 229.98666,
+          "s1": 216.50333,
+          "s2": 212.82666
+        },
+        "atr": 10.2672,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 50,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 95,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bull_call_spread",
+        "strike": 218.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": 0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "faa73006",
+      "timestamp": "2026-04-07T09:39:34.823189",
+      "symbol": "SPY",
+      "name": "SPDR S&P 500 ETF",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 59.2,
+      "grade": "C",
+      "entry_price": 654.3,
+      "stop_loss": 660.59,
+      "target_1": 641.71,
+      "target_2": 635.42,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 45.62630244470264,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 652.91339,
+          "slow_ema": 657.82569
+        },
+        "macd": {
+          "macd": -6.49929,
+          "signal": -7.9212,
+          "histogram": 1.42191,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 678.86515,
+          "middle": 656.40491,
+          "lower": 633.94467,
+          "pct_b": 0.453,
+          "bandwidth": 6.84,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 658.05666,
+          "r1": 660.5933,
+          "r2": 662.25661,
+          "s1": 656.39335,
+          "s2": 653.85671
+        },
+        "atr": 9.96359,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 80,
+          "atr_filter": 80
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 654.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "c982e0a3",
+      "timestamp": "2026-04-07T09:39:34.952877",
+      "symbol": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 59.2,
+      "grade": "C",
+      "entry_price": 581.88,
+      "stop_loss": 591.18,
+      "target_1": 563.29,
+      "target_2": 553.99,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 45.37528981978107,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 581.83096,
+          "slow_ema": 586.96723
+        },
+        "macd": {
+          "macd": -6.41353,
+          "signal": -7.33581,
+          "histogram": 0.92229,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 613.09435,
+          "middle": 587.23174,
+          "lower": 561.36912,
+          "pct_b": 0.397,
+          "bandwidth": 8.81,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 587.93333,
+          "r1": 591.17666,
+          "r2": 593.85331,
+          "s1": 585.25667,
+          "s2": 582.01335
+        },
+        "atr": 11.04186,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 70,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 80,
+          "atr_filter": 80
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 582.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "916d5e1e",
+      "timestamp": "2026-04-07T09:39:35.645030",
+      "symbol": "META",
+      "name": "Meta Platforms",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 57.2,
+      "grade": "C",
+      "entry_price": 568.42,
+      "stop_loss": 579.87,
+      "target_1": 545.51,
+      "target_2": 534.06,
+      "risk_reward": 2.0,
+      "indicators": {
+        "rsi": 39.82425371521995,
+        "ema_cross": {
+          "signal": "bearish",
+          "fast_ema": 572.89083,
+          "slow_ema": 591.81244
+        },
+        "macd": {
+          "macd": -21.01677,
+          "signal": -20.9236,
+          "histogram": -0.09317,
+          "crossover": false,
+          "crossunder": false
+        },
+        "bollinger": {
+          "upper": 666.3915,
+          "middle": 594.67747,
+          "lower": 522.96343,
+          "pct_b": 0.317,
+          "bandwidth": 24.12,
+          "squeeze": false
+        },
+        "pivots": {
+          "pivot": 575.93667,
+          "r1": 579.87333,
+          "r2": 586.72664,
+          "s1": 569.08335,
+          "s2": 565.14669
+        },
+        "atr": 18.74587,
+        "iv_rank": null,
+        "components": {
+          "ema_cross": 65,
+          "rsi": 50,
+          "bollinger": 50,
+          "iv_rank": 40,
+          "greeks": 50,
+          "pivot": 80,
+          "atr_filter": 100
+        }
+      },
+      "explanation": "",
+      "pine_strategy": "multi_confluence",
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 80.0,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "bear_put_spread",
+        "strike": 568.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    }
+  ]
+}

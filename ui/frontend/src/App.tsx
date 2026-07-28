@@ -11,13 +11,25 @@ import Settings from './pages/Settings'
 import Retrace from './pages/Retrace'
 import ScoreCard from './pages/ScoreCard'
 import OptionsFlow from './pages/OptionsFlow'
+import SignalTerminal from './pages/SignalTerminal'
+import RiskDashboard from './pages/RiskDashboard'
+import PaperTrading from './pages/PaperTrading'
+import Backtesting from './pages/Backtesting'
+import PineScripts from './pages/PineScripts'
+import InnovationDashboard from './pages/InnovationDashboard'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/onboarding" element={<Onboarding />} />
       <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<SignalTerminal />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/risk" element={<RiskDashboard />} />
+        <Route path="/paper" element={<PaperTrading />} />
+        <Route path="/backtest" element={<Backtesting />} />
+        <Route path="/pine" element={<PineScripts />} />
+        <Route path="/innovation" element={<InnovationDashboard />} />
         <Route path="/instruments" element={<Instruments />} />
         <Route path="/prompts" element={<Prompts />} />
         <Route path="/sources" element={<DataSources />} />

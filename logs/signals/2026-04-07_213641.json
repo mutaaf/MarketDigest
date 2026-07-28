@@ -1,0 +1,284 @@
+{
+  "timestamp": "2026-04-07T21:36:41.495314",
+  "count": 6,
+  "signals": [
+    {
+      "id": "6e456459",
+      "timestamp": "2026-04-07T21:36:41.495192",
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 80.0,
+      "grade": "A-",
+      "entry_price": 221.53,
+      "stop_loss": 227.35899,
+      "target_1": 205.0555,
+      "target_2": 197.27989,
+      "risk_reward": 2.83,
+      "indicators": {
+        "bb": {
+          "upper": 222.22539,
+          "middle": 205.0555,
+          "lower": 187.88561,
+          "pct_b": 0.98,
+          "bandwidth": 16.75,
+          "squeeze": false
+        },
+        "rsi": 59.68115975201784,
+        "stoch": {
+          "k": 84.7,
+          "d": 74.5
+        },
+        "atr": 10.2672
+      },
+      "explanation": "BB Mean Reversion strategy: SELL . Conditions met: Price at upper BB (%B=0.98), RSI leaning overbought (60), Stochastic overbought (K=85), BB width sufficient (16.8%).",
+      "pine_strategy": null,
+      "strategy_name": "BB Mean Reversion",
+      "regime": "ranging",
+      "conditions_met": [
+        "Price at upper BB (%B=0.98)",
+        "RSI leaning overbought (60)",
+        "Stochastic overbought (K=85)",
+        "BB width sufficient (16.8%)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 113.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 222.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "7173edb9",
+      "timestamp": "2026-04-07T21:36:39.267455",
+      "symbol": "USDCAD",
+      "name": "USD/CAD",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 1.38386,
+      "stop_loss": 1.37636,
+      "target_1": 1.4139,
+      "target_2": 1.3964,
+      "risk_reward": 4.01,
+      "indicators": {
+        "ema_fast": 1.3872577168606803,
+        "ema_slow": 1.3812059188092558,
+        "ema_trend": 1.3763553065978356,
+        "rsi": 55.281928750294604,
+        "atr": 0.00674
+      },
+      "explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (1.3812), RSI in pullback zone (55). Missing: Close below 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_up",
+      "conditions_met": [
+        "EMAs stacked bullish (9>21>50)",
+        "Price pulled back near 21 EMA (1.3812)",
+        "RSI in pullback zone (55)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 7.5,
+        "dollar_reward": 30.08,
+        "label": "1 micro lot"
+      }
+    },
+    {
+      "id": "c84130fb",
+      "timestamp": "2026-04-07T21:36:39.419017",
+      "symbol": "USDCHF",
+      "name": "USD/CHF",
+      "asset_type": "forex",
+      "direction": "BUY",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 0.79034,
+      "stop_loss": 0.78741,
+      "target_1": 0.8123,
+      "target_2": 0.8041,
+      "risk_reward": 7.49,
+      "indicators": {
+        "ema_fast": 0.7952723572420336,
+        "ema_slow": 0.7914858278574534,
+        "ema_trend": 0.7874067932184183,
+        "rsi": 50.48008804268383,
+        "atr": 0.00663
+      },
+      "explanation": "EMA Trend Follow strategy: BUY . Conditions met: EMAs stacked bullish (9>21>50), Price pulled back near 21 EMA (0.7915), RSI in pullback zone (50). Missing: Close below 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_up",
+      "conditions_met": [
+        "EMAs stacked bullish (9>21>50)",
+        "Price pulled back near 21 EMA (0.7915)",
+        "RSI in pullback zone (50)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 3,
+        "dollar_risk": 8.79,
+        "dollar_reward": 65.84,
+        "label": "3 micro lots"
+      }
+    },
+    {
+      "id": "02bfdc2d",
+      "timestamp": "2026-04-07T21:36:39.676147",
+      "symbol": "SPY",
+      "name": "SPDR S&P 500 ETF",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 659.21997,
+      "stop_loss": 667.61749,
+      "target_1": 502.6973,
+      "target_2": 569.0763,
+      "risk_reward": 18.64,
+      "indicators": {
+        "ema_fast": 653.8973878022256,
+        "ema_slow": 658.272960683128,
+        "ema_trend": 667.61749281088,
+        "rsi": 48.72993048423665,
+        "atr": 10.16707
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (658.2730), RSI in pullback zone (49). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (658.2730)",
+        "RSI in pullback zone (49)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 745.6,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 659.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "dc3e54a5",
+      "timestamp": "2026-04-07T21:36:39.922108",
+      "symbol": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 588.59003,
+      "stop_loss": 596.94058,
+      "target_1": 425.8686,
+      "target_2": 503.1446,
+      "risk_reward": 19.49,
+      "indicators": {
+        "ema_fast": 583.1729674213524,
+        "ema_slow": 587.577229954035,
+        "ema_trend": 596.9405795853157,
+        "rsi": 49.02855934090268,
+        "atr": 11.27784
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (587.5772), RSI in pullback zone (49). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (587.5772)",
+        "RSI in pullback zone (49)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 779.6,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 589.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    },
+    {
+      "id": "e8b5fb1d",
+      "timestamp": "2026-04-07T21:36:40.595518",
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "asset_type": "option",
+      "direction": "SELL",
+      "confluence_score": 60.0,
+      "grade": "C+",
+      "entry_price": 178.10001,
+      "stop_loss": 180.39347,
+      "target_1": 95.0176,
+      "target_2": 129.1296,
+      "risk_reward": 36.23,
+      "indicators": {
+        "ema_fast": 175.7366438710454,
+        "ema_slow": 177.26117057239256,
+        "ema_trend": 180.39347282106957,
+        "rsi": 49.93044057115598,
+        "atr": 5.03172
+      },
+      "explanation": "EMA Trend Follow strategy: SELL . Conditions met: EMAs stacked bearish (9<21<50), Price pulled back near 21 EMA (177.2612), RSI in pullback zone (50). Missing: Close above 9 EMA.",
+      "pine_strategy": null,
+      "strategy_name": "EMA Trend Follow",
+      "regime": "trending_down",
+      "conditions_met": [
+        "EMAs stacked bearish (9<21<50)",
+        "Price pulled back near 21 EMA (177.2612)",
+        "RSI in pullback zone (50)"
+      ],
+      "status": "active",
+      "position_size": {
+        "units": 1,
+        "dollar_risk": 40.0,
+        "dollar_reward": 1449.2,
+        "label": "1 contract"
+      },
+      "option_details": {
+        "strategy": "long_put",
+        "strike": 178.0,
+        "expiry": "",
+        "dte": 14,
+        "iv": null,
+        "delta": -0.5,
+        "theta": null,
+        "iv_rank": null
+      }
+    }
+  ]
+}

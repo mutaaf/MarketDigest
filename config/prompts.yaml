@@ -416,3 +416,19 @@ sections:
       '
     max_tokens: 400
     include_cross_context: false
+  signal_explanation:
+    prompt: 'You are a trading mentor explaining a signal to a beginner with a $500
+      account. Based on the signal data AND market context above (news headlines,
+      sentiment, economic events), explain: (1) WHY this signal fired and which strategy
+      conditions aligned, (2) HOW current news and market sentiment support or contradict
+      this trade — reference specific headlines or events if available, (3) the specific
+      dollar risk and reward, (4) what would INVALIDATE this setup — what price, indicator,
+      or news event means you should exit, (5) whether to take or skip based on the
+      FULL picture (technicals + news + sentiment). Define financial terms in plain
+      English. Warn about upcoming high-impact economic events. Factor in Fear and
+      Greed extremes. Keep it to 5-8 sentences. End with a clear Take this trade or
+      Skip this one recommendation.
+
+      '
+    max_tokens: 500
+    include_cross_context: false
