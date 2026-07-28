@@ -147,6 +147,84 @@ class LLMProvider:
         tokens = response.usage_metadata.total_token_count if hasattr(response, "usage_metadata") and response.usage_metadata else 0
         return LLMResponse(text=text, provider="gemini", model=model, tokens_used=tokens, cached=False)
 
+    @retry(stop=stop_after_attempt(2), retry=retry_if_exception_type(Exception), reraise=True)
+    def _call_anthropic_image(self, client, model: str, system_prompt: str, user_prompt: str,
+                              image_b64: str, media_type: str, max_tokens: int) -> LLMResponse:
+        response = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            system=system_prompt,
+            messages=[{"role": "user", "content": [
+                {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_b64}},
+                {"type": "text", "text": user_prompt},
+            ]}],
+        )
+        text = response.content[0].text
+        tokens = response.usage.input_tokens + response.usage.output_tokens
+        return LLMResponse(text=text, provider="anthropic", model=model, tokens_used=tokens, cached=False)
+
+    @retry(stop=stop_after_attempt(2), retry=retry_if_exception_type(Exception), reraise=True)
+    def _call_openai_image(self, client, model: str, system_prompt: str, user_prompt: str,
+                           image_b64: str, media_type: str, max_tokens: int) -> LLMResponse:
+        response = client.chat.completions.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": [
+                    {"type": "text", "text": user_prompt},
+                    {"type": "image_url", "image_url": {"url": f"data:{media_type};base64,{image_b64}"}},
+                ]},
+            ],
+        )
+        text = response.choices[0].message.content
+        tokens = response.usage.total_tokens if response.usage else 0
+        return LLMResponse(text=text, provider="openai", model=model, tokens_used=tokens, cached=False)
+
+    @retry(stop=stop_after_attempt(2), retry=retry_if_exception_type(Exception), reraise=True)
+    def _call_gemini_image(self, client, model: str, system_prompt: str, user_prompt: str,
+                           image_b64: str, media_type: str, max_tokens: int) -> LLMResponse:
+        import base64 as _b64
+        gen_model = client.GenerativeModel(
+            model_name=model,
+            system_instruction=system_prompt,
+            generation_config={"max_output_tokens": max_tokens},
+        )
+        response = gen_model.generate_content([
+            {"mime_type": media_type, "data": _b64.b64decode(image_b64)},
+            user_prompt,
+        ])
+        text = response.text
+        tokens = response.usage_metadata.total_token_count if hasattr(response, "usage_metadata") and response.usage_metadata else 0
+        return LLMResponse(text=text, provider="gemini", model=model, tokens_used=tokens, cached=False)
+
+    def generate_with_image(self, system_prompt: str, user_prompt: str, image_b64: str,
+                            media_type: str, max_tokens: int = 1500) -> LLMResponse | None:
+        """Vision call with the same provider fallback chain. Not cached —
+        each screenshot is one-shot."""
+        last_error = None
+        for provider_name, model in self.PROVIDERS:
+            client = self._get_client(provider_name)
+            if client is None:
+                continue
+            try:
+                logger.info(f"Calling LLM (vision): {provider_name}/{model}")
+                if provider_name == "anthropic":
+                    return self._call_anthropic_image(client, model, system_prompt, user_prompt,
+                                                      image_b64, media_type, max_tokens)
+                if provider_name == "openai":
+                    return self._call_openai_image(client, model, system_prompt, user_prompt,
+                                                   image_b64, media_type, max_tokens)
+                if provider_name == "gemini":
+                    return self._call_gemini_image(client, model, system_prompt, user_prompt,
+                                                   image_b64, media_type, max_tokens)
+            except Exception as e:
+                last_error = e
+                logger.warning(f"LLM vision call failed ({provider_name}): {e}")
+                continue
+        logger.error(f"All LLM providers failed for vision call. Last error: {last_error}")
+        return None
+
     def generate(self, system_prompt: str, user_prompt: str, max_tokens: int = 400) -> LLMResponse | None:
         """Generate text using first available provider, with caching."""
         # Check cache first

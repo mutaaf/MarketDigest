@@ -6,6 +6,7 @@ import { Compass, Plus, Check, Upload, Trash2 } from 'lucide-react'
 import api from '../api/client'
 import { SearchResult } from '../api/compass-types'
 import { inputCls, primaryBtn } from '../components/compass/ui'
+import SmartImport from '../components/compass/SmartImport'
 
 type Step = 'name' | 'holdings' | 'targets' | 'done'
 
@@ -206,7 +207,6 @@ function HoldingsStep({ slug, holdings, setHoldings, cash, setCash, busy, err, o
   const [adding, setAdding] = useState(false)
   const [rowErr, setRowErr] = useState<string | null>(null)
   const [showImport, setShowImport] = useState(false)
-  const [csv, setCsv] = useState('')
   const timer = useRef<number>()
 
   const onSymbolChange = (val: string) => {
@@ -245,21 +245,10 @@ function HoldingsStep({ slug, holdings, setHoldings, cash, setCash, busy, err, o
     } catch { /* row stays; harmless */ }
   }
 
-  const importCsv = async () => {
-    setAdding(true)
-    setRowErr(null)
-    try {
-      const res = await api.post(`/portfolio/${slug}/import-csv`, { csv })
-      setHoldings([...holdings, ...Array(res.data.imported).fill(null).map((_, i) => ({ symbol: `imported-${i}`, shares: 0, cost: 0 }))])
-      const summary = await api.get(`/portfolio/${slug}/summary`)
-      setHoldings(summary.data.valuation.holdings.map((h: any) => ({ symbol: h.symbol, shares: h.shares, cost: h.cost_basis })))
-      setShowImport(false)
-      setCsv('')
-    } catch (error: any) {
-      setRowErr(error.response?.data?.detail || "Couldn't read that file.")
-    } finally {
-      setAdding(false)
-    }
+  const refreshFromServer = async () => {
+    const summary = await api.get(`/portfolio/${slug}/summary`)
+    setHoldings(summary.data.valuation.holdings.map((h: any) => ({ symbol: h.symbol, shares: h.shares, cost: h.cost_basis })))
+    setShowImport(false)
   }
 
   return (
@@ -313,26 +302,16 @@ function HoldingsStep({ slug, holdings, setHoldings, cash, setCash, busy, err, o
             <Plus size={15} /> {adding ? 'Adding…' : 'Add this holding'}
           </button>
           <button onClick={() => setShowImport(true)} className="mt-1 flex min-h-[36px] w-full items-center justify-center gap-1.5 text-xs text-apple-gray-400 active:text-apple-gray-600">
-            <Upload size={12} /> Or import a CSV from your broker
+            <Upload size={12} /> Or import from a screenshot, pasted text, or CSV
           </button>
         </div>
       ) : (
         <div className="rounded-2xl border border-apple-gray-200 bg-white p-3">
-          <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-apple-gray-300 text-sm font-medium text-apple-gray-600 active:bg-apple-gray-50">
-            <Upload size={16} /> Choose CSV file
-            <input type="file" accept=".csv,text/csv" className="hidden"
-              onChange={e => e.target.files?.[0]?.text().then(setCsv)} />
-          </label>
-          <textarea value={csv} onChange={e => setCsv(e.target.value)} rows={4}
-            placeholder={'Or paste it:\nSymbol,Shares,Avg Cost\nVOO,40,380.50'}
-            className="mt-2 w-full rounded-xl border border-apple-gray-200 bg-apple-gray-50 p-3 font-mono text-xs" />
-          {rowErr && <p className="mt-1 text-xs text-apple-red">{rowErr}</p>}
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            <button onClick={() => { setShowImport(false); setRowErr(null) }} className="min-h-[44px] rounded-xl border border-apple-gray-200 text-sm font-medium text-apple-gray-600">Back</button>
-            <button onClick={importCsv} disabled={adding || !csv.trim()} className="min-h-[44px] rounded-xl bg-apple-blue text-sm font-semibold text-white disabled:opacity-40">
-              {adding ? 'Importing…' : 'Import'}
-            </button>
-          </div>
+          <SmartImport slug={slug} onDone={refreshFromServer} />
+          <button onClick={() => setShowImport(false)}
+            className="mt-2 flex min-h-[36px] w-full items-center justify-center text-xs text-apple-gray-400 active:text-apple-gray-600">
+            Back to typing them in
+          </button>
         </div>
       )}
 

@@ -7,6 +7,7 @@ import {
   AllocationBars, EmptyState, ErrorState, GradeChip, PageSkeleton, Sheet,
   WarningsBanner, inputCls, money, primaryBtn, signed, usePortfolioSelection,
 } from '../components/compass/ui'
+import SmartImport from '../components/compass/SmartImport'
 
 export default function CompassPortfolio() {
   const { portfolios, selected, setSelected, refresh: refreshList, error: listError } = usePortfolioSelection()
@@ -398,64 +399,9 @@ function CashSheet({ slug, current, onClose, onSaved }: { slug: string; current:
 }
 
 function ImportSheet({ slug, onClose, onSaved }: { slug: string; onClose: () => void; onSaved: () => void }) {
-  const [csv, setCsv] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [err, setErr] = useState<string | null>(null)
-  const [result, setResult] = useState<{ imported: number; skipped: string[] } | null>(null)
-
-  const onFile = (file: File | undefined) => {
-    if (!file) return
-    file.text().then(setCsv).catch(() => setErr("Couldn't read that file."))
-  }
-
-  const submit = async () => {
-    setBusy(true)
-    setErr(null)
-    try {
-      const res = await api.post(`/portfolio/${slug}/import-csv`, { csv })
-      setResult(res.data)
-    } catch (error: any) {
-      setErr(error.response?.data?.detail || "Couldn't read that file. It needs Symbol and Shares columns.")
-    } finally {
-      setBusy(false)
-    }
-  }
-
   return (
-    <Sheet title="Import from a CSV file" onClose={onClose}>
-      {result ? (
-        <div className="space-y-3">
-          <p className="text-sm text-apple-gray-700">
-            Imported <strong>{result.imported}</strong> holding{result.imported === 1 ? '' : 's'}.
-          </p>
-          {result.skipped.length > 0 && (
-            <div className="rounded-xl bg-apple-yellow/10 p-3 text-xs text-yellow-800">
-              <p className="mb-1 font-medium">Some rows were skipped:</p>
-              {result.skipped.slice(0, 5).map((s, i) => <p key={i}>{s}</p>)}
-              {result.skipped.length > 5 && <p>…and {result.skipped.length - 5} more.</p>}
-            </div>
-          )}
-          <button onClick={onSaved} className={primaryBtn}>Done</button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <p className="text-xs text-apple-gray-500">
-            Export your positions from your broker as a CSV, then choose the file here (or paste its contents).
-            It needs at least a <strong>Symbol</strong> column and a <strong>Shares</strong> column.
-          </p>
-          <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-apple-gray-300 text-sm font-medium text-apple-gray-600 active:bg-apple-gray-50">
-            <Upload size={16} /> Choose CSV file
-            <input type="file" accept=".csv,text/csv" className="hidden" onChange={e => onFile(e.target.files?.[0])} />
-          </label>
-          <textarea value={csv} onChange={e => setCsv(e.target.value)} rows={5}
-            placeholder={'Or paste CSV text:\nSymbol,Shares,Avg Cost\nVOO,40,380.50'}
-            className="w-full rounded-xl border border-apple-gray-200 bg-apple-gray-50 p-3 font-mono text-xs" />
-          {err && <p className="text-xs text-apple-red">{err}</p>}
-          <button onClick={submit} disabled={busy || !csv.trim()} className={primaryBtn}>
-            {busy ? 'Importing…' : 'Import holdings'}
-          </button>
-        </div>
-      )}
+    <Sheet title="Bring in your holdings" onClose={onClose}>
+      <SmartImport slug={slug} onDone={onSaved} />
     </Sheet>
   )
 }

@@ -116,6 +116,22 @@ async def targets(name: str, body: TargetsUpdate):
     return save_portfolio(data)
 
 
+class HoldingsImport(BaseModel):
+    holdings: list[HoldingUpsert] = Field(min_length=1, max_length=200)
+
+
+@router.post("/{name}/import-holdings")
+async def import_bulk(name: str, body: HoldingsImport):
+    """Bulk import (used by the review step of smart import)."""
+    from src.portfolio.store import import_holdings
+    _load_or_404(name)
+    rows = [{"symbol": h.symbol.strip().upper(), "shares": round(h.shares, 6),
+             "cost_basis": round(h.cost_basis, 4), "account": h.account.strip()}
+            for h in body.holdings]
+    import_holdings(name, rows)
+    return {"imported": len(rows)}
+
+
 @router.post("/{name}/import-csv")
 async def import_csv(name: str, body: CsvImport):
     from src.portfolio.store import import_holdings, parse_csv
@@ -214,6 +230,28 @@ async def save_retirement(name: str, body: RetirementInputs):
 # ── Comparison + symbol search (portfolio-independent) ──────────
 
 compass_router = APIRouter(prefix="/api/compass", tags=["compass"])
+
+
+class ExtractRequest(BaseModel):
+    image_base64: str | None = Field(default=None, max_length=14_000_000)  # ~10MB image
+    media_type: str = "image/png"
+    text: str | None = Field(default=None, max_length=50_000)
+
+
+@compass_router.post("/extract-holdings")
+async def extract_holdings(body: ExtractRequest):
+    """Read holdings from a brokerage screenshot or pasted text. Returns
+    candidates for user review — nothing is saved by this endpoint."""
+    from src.portfolio.extract import extract_from_image, extract_from_text
+
+    if body.image_base64:
+        if body.media_type not in ("image/png", "image/jpeg", "image/webp", "image/gif"):
+            raise HTTPException(status_code=422, detail="That image type isn't supported — "
+                                                        "use a PNG or JPEG screenshot.")
+        return extract_from_image(body.image_base64, body.media_type)
+    if body.text and body.text.strip():
+        return extract_from_text(body.text)
+    raise HTTPException(status_code=422, detail="Send a screenshot or some copied text.")
 
 
 @compass_router.get("/compare")
