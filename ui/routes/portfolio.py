@@ -68,9 +68,8 @@ async def summary(name: str):
     allocation breakdowns, and health check. Partial data comes with warnings."""
     from src.portfolio.analyzer import analyze_allocation
     from src.portfolio.health import assess_health
-    from src.portfolio.valuation import value_portfolio
-
     from src.portfolio.overlap import analyze_overlap
+    from src.portfolio.valuation import value_portfolio
 
     portfolio = _load_or_404(name)
     valuation = value_portfolio(portfolio)
