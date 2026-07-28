@@ -1,8 +1,8 @@
 """Risk management API routes."""
 
-import yaml
 from pathlib import Path
 
+import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 

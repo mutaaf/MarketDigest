@@ -2,12 +2,11 @@
 
 import math
 from datetime import datetime
-from typing import Any
 
 import requests
 
-from src.fetchers.base import BaseFetcher
 from config.settings import get_settings
+from src.fetchers.base import BaseFetcher
 
 
 class AlphaVantageOptionsFetcher(BaseFetcher):

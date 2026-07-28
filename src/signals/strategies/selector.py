@@ -1,26 +1,32 @@
 """Strategy selector — picks the right strategies based on market regime."""
 
-import yaml
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_pivot_points, compute_adx,
-    compute_stochastic, compute_macd, compute_bollinger_bands,
-    detect_ema_crossover, compute_volume_ratio,
+    compute_adx,
+    compute_atr,
+    compute_bollinger_bands,
+    compute_macd,
+    compute_pivot_points,
+    compute_rsi,
+    compute_stochastic,
+    compute_volume_ratio,
+    detect_ema_crossover,
 )
 from src.signals.strategies.base import MarketRegime, StrategySignal
-from src.signals.strategies.regime import detect_regime
-from src.signals.strategies.trend_ema import EMATrendFollow
-from src.signals.strategies.mean_reversion import BollingerMeanReversion
 from src.signals.strategies.breakout import DonchianBreakout
-from src.signals.strategies.momentum import RSIMomentum
-from src.signals.strategies.pivot_bounce import PivotBounce
 from src.signals.strategies.iv_premium import IVPremiumSelling
-from src.signals.strategies.orb import ORBDirectional
-from src.signals.strategies.swing_reversal import SwingReversal
 from src.signals.strategies.macd_divergence import MACDDivergence
+from src.signals.strategies.mean_reversion import BollingerMeanReversion
+from src.signals.strategies.momentum import RSIMomentum
+from src.signals.strategies.orb import ORBDirectional
+from src.signals.strategies.pivot_bounce import PivotBounce
+from src.signals.strategies.regime import detect_regime
+from src.signals.strategies.swing_reversal import SwingReversal
+from src.signals.strategies.trend_ema import EMATrendFollow
 from src.signals.strategies.volatility_squeeze import VolatilitySqueeze
 from src.utils.logging_config import get_logger
 

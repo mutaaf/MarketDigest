@@ -395,7 +395,7 @@ def _format_signal_data(data: dict) -> str:
         # Fear & Greed
         fg = ctx.get("fear_greed", {})
         if fg.get("score"):
-            lines.append(f"\nMARKET SENTIMENT:")
+            lines.append("\nMARKET SENTIMENT:")
             lines.append(f"  Fear & Greed Index: {fg['score']}/100 ({fg.get('classification', '?')})")
 
         # Composite sentiment
@@ -416,7 +416,7 @@ def _format_signal_data(data: dict) -> str:
         # Economic events
         events = ctx.get("economic_events", [])
         if events:
-            lines.append(f"\nECONOMIC EVENTS (next 48h):")
+            lines.append("\nECONOMIC EVENTS (next 48h):")
             for e in events[:5]:
                 impact = e.get("impact", "?").upper()
                 lines.append(f"  - [{impact}] {e.get('event', '?')} on {e.get('date', '?')}"
@@ -425,7 +425,7 @@ def _format_signal_data(data: dict) -> str:
         # Earnings
         earnings = ctx.get("earnings", [])
         if earnings:
-            lines.append(f"\nEARNINGS:")
+            lines.append("\nEARNINGS:")
             for e in earnings:
                 lines.append(f"  - {e.get('symbol', '?')} reports {e.get('date', '?')} "
                              f"(EPS est: {e.get('eps_estimate', '?')})")

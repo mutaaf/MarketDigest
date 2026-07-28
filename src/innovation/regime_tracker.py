@@ -1,11 +1,9 @@
 """Regime tracker — tracks market regime shifts and adjusts strategy emphasis."""
 
 import json
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from collections import Counter
-
-import yaml
 
 from src.utils.logging_config import get_logger
 

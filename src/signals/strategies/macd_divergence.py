@@ -1,13 +1,12 @@
 """Strategy: MACD Divergence — trade divergence between price and MACD histogram."""
 
 import pandas as pd
-import numpy as np
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_macd, compute_ema,
+    compute_ema,
     find_support_resistance,
 )
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class MACDDivergence(BaseStrategy):

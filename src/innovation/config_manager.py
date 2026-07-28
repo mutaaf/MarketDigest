@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-from src.innovation.safety import validate_param_change, check_daily_budget, log_change
+from src.innovation.safety import check_daily_budget, log_change, validate_param_change
 from src.utils.logging_config import get_logger
 
 logger = get_logger("innovation.config")

@@ -2,8 +2,8 @@
 
 import pandas as pd
 
-from src.analysis.technicals import compute_rsi, compute_sma, compute_atr, compute_macd
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.analysis.technicals import compute_rsi, compute_sma
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class RSIMomentum(BaseStrategy):

@@ -3,10 +3,11 @@
 import pandas as pd
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_donchian, compute_donchian_exit,
-    compute_bollinger_bands, compute_volume_ratio,
+    compute_bollinger_bands,
+    compute_donchian,
+    compute_donchian_exit,
 )
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class DonchianBreakout(BaseStrategy):
@@ -35,7 +36,6 @@ class DonchianBreakout(BaseStrategy):
         price = float(close.iloc[-1])
         high = float(df["High"].iloc[-1])
         low = float(df["Low"].iloc[-1])
-        atr = indicators.get("atr") or price * 0.01
 
         donchian = compute_donchian(df, channel_period)
         donchian_exit = compute_donchian_exit(df, exit_period)
@@ -112,7 +112,7 @@ class DonchianBreakout(BaseStrategy):
                 if close_position <= 0.25:
                     met.append(f"Weak close ({close_position:.0%} of range)")
                 else:
-                    failed.append(f"Not weak enough close")
+                    failed.append("Not weak enough close")
 
                 if len(met) < 2:
                     continue

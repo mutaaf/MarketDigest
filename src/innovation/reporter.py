@@ -1,6 +1,5 @@
 """Reporter — format daily and weekly Telegram reports."""
 
-import json
 from datetime import datetime
 from pathlib import Path
 
@@ -14,13 +13,13 @@ REPORTS_DIR = Path(__file__).parent.parent.parent / "logs" / "innovation" / "rep
 def format_daily_report(performance: dict, changes: list[dict],
                         regime_summary: dict, performers: dict) -> str:
     """Format the daily Innovation Agent report for Telegram."""
-    from src.digest.formatter import bold, code, esc
+    from src.digest.formatter import code, esc
 
     overall = performance.get("overall", {})
     strategies = performance.get("strategies_30d", {})
 
     lines = [
-        f"\n🧠 <b>Innovation Agent — Daily Report</b>",
+        "\n🧠 <b>Innovation Agent — Daily Report</b>",
         "",
     ]
 
@@ -72,7 +71,7 @@ def format_daily_report(performance: dict, changes: list[dict],
     under = performers.get("underperformers", [])
     if under:
         lines.append("")
-        lines.append(f"💡 <b>RECOMMENDATION:</b>")
+        lines.append("💡 <b>RECOMMENDATION:</b>")
         for u in under[:2]:
             lines.append(f"  Consider tuning {esc(u['strategy'])} — {esc(u.get('reason', ''))}")
 
@@ -82,18 +81,18 @@ def format_daily_report(performance: dict, changes: list[dict],
 def format_weekly_report(performance: dict, changes_week: list[dict],
                          regime_summary: dict, performers: dict) -> str:
     """Format comprehensive weekly report."""
-    from src.digest.formatter import bold, code, esc
+    from src.digest.formatter import esc
 
     strategies = performance.get("strategies_30d", {})
 
     lines = [
-        f"\n🧠 <b>Innovation Agent — Weekly Review</b>",
+        "\n🧠 <b>Innovation Agent — Weekly Review</b>",
         "",
     ]
 
     # Strategy rankings
     if strategies:
-        lines.append(f"📈 <b>STRATEGY RANKINGS (30-day):</b>")
+        lines.append("📈 <b>STRATEGY RANKINGS (30-day):</b>")
         sorted_strats = sorted(strategies.items(), key=lambda x: x[1].get("total_pnl", 0), reverse=True)
         for i, (name, m) in enumerate(sorted_strats, 1):
             emoji = "🟢" if m.get("total_pnl", 0) >= 0 else "🔴"
@@ -115,11 +114,11 @@ def format_weekly_report(performance: dict, changes_week: list[dict],
     under = performers.get("underperformers", [])
     if out:
         lines.append("")
-        lines.append(f"⭐ <b>OUTPERFORMERS:</b>")
+        lines.append("⭐ <b>OUTPERFORMERS:</b>")
         for o in out:
             lines.append(f"  {esc(o['strategy'])} — {esc(o.get('reason', ''))}")
     if under:
-        lines.append(f"⚠️ <b>UNDERPERFORMERS:</b>")
+        lines.append("⚠️ <b>UNDERPERFORMERS:</b>")
         for u in under:
             lines.append(f"  {esc(u['strategy'])} — {esc(u.get('reason', ''))}")
 

@@ -3,10 +3,9 @@
 import pandas as pd
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_ema, compute_bollinger_bands,
-    compute_volume_ratio, compute_macd,
+    compute_bollinger_bands,
 )
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class VolatilitySqueeze(BaseStrategy):
@@ -24,7 +23,6 @@ class VolatilitySqueeze(BaseStrategy):
             return None
 
         price = float(close.iloc[-1])
-        atr = indicators.get("atr") or price * 0.01
         bb = indicators.get("bollinger")
         macd = indicators.get("macd")
         rsi = indicators.get("rsi")

@@ -1,14 +1,16 @@
 """Tuner — parameter optimization via hill-climbing with backtest validation."""
 
-import yaml
 from pathlib import Path
 
-from src.innovation.safety import (
-    load_innovation_config, validate_param_change,
-    check_daily_budget, is_auto_tune,
-)
+import yaml
+
 from src.innovation.config_manager import safe_update_strategy_param
 from src.innovation.learner import compute_strategy_performance
+from src.innovation.safety import (
+    check_daily_budget,
+    is_auto_tune,
+    load_innovation_config,
+)
 from src.utils.logging_config import get_logger
 
 logger = get_logger("innovation.tuner")

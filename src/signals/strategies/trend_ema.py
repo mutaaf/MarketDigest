@@ -3,10 +3,10 @@
 import pandas as pd
 
 from src.analysis.technicals import (
-    compute_ema, compute_rsi, compute_atr, compute_adx,
+    compute_ema,
     find_support_resistance,
 )
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class EMATrendFollow(BaseStrategy):
@@ -113,7 +113,7 @@ class EMATrendFollow(BaseStrategy):
                 if price >= pullback_zone:
                     met.append(f"Price pulled back near 21 EMA ({es:.4f})")
                 else:
-                    failed.append(f"Price too far below 21 EMA")
+                    failed.append("Price too far below 21 EMA")
                     continue
 
                 if rsi and 40 <= rsi <= 60:

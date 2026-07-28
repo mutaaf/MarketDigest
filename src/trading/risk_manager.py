@@ -1,9 +1,10 @@
 """Risk manager — enforces position limits, daily loss limits, and trade validation."""
 
 import json
-import yaml
-from datetime import datetime, date
+from datetime import date
 from pathlib import Path
+
+import yaml
 
 from src.utils.logging_config import get_logger
 

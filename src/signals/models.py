@@ -1,9 +1,9 @@
 """Signal data models."""
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Literal
-import uuid
 
 
 @dataclass

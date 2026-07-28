@@ -1,9 +1,9 @@
 """Learner — analyzes trade outcomes to build rolling strategy performance metrics."""
 
 import json
-from datetime import datetime, timedelta, date
-from pathlib import Path
 from collections import defaultdict
+from datetime import datetime, timedelta
+from pathlib import Path
 
 from src.utils.logging_config import get_logger
 

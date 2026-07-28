@@ -65,7 +65,7 @@ async def analyze_signal(signal_data: dict, force: bool = False):
     """
     signal_id = signal_data.get("id", "")
 
-    from src.signals.ai_cache import get_cached_insight, generate_and_cache_insight
+    from src.signals.ai_cache import generate_and_cache_insight, get_cached_insight
 
     # Check cache first (unless force refresh)
     if not force and signal_id:
@@ -245,8 +245,9 @@ async def send_summary():
 @router.get("/config")
 async def get_signal_config():
     """Get current signal configuration."""
-    import yaml
     from pathlib import Path
+
+    import yaml
     config_path = Path(__file__).parent.parent.parent / "config" / "signals.yaml"
     with open(config_path) as f:
         config = yaml.safe_load(f)

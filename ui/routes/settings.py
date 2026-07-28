@@ -7,7 +7,15 @@ import zipfile
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from config.settings import PROJECT_ROOT, add_chat_id, get_env_var, get_settings, reload_settings, remove_chat_id, update_env_var
+from config.settings import (
+    PROJECT_ROOT,
+    add_chat_id,
+    get_env_var,
+    get_settings,
+    reload_settings,
+    remove_chat_id,
+    update_env_var,
+)
 from ui.models import ApiKeyUpdate, RecipientAdd, SettingsUpdate
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
@@ -140,7 +148,6 @@ def test_recipient(chat_id: str):
 @router.get("/api-keys")
 def get_api_keys_status():
     """Return all API keys with configured status (values masked)."""
-    settings = get_settings()
     result = []
     for ui_key, env_var, label, category in _API_KEY_DEFS:
         raw = get_env_var(env_var)

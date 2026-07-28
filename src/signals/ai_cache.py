@@ -1,7 +1,7 @@
 """AI insight cache — persist AI explanations with TTL and staleness tracking."""
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from src.utils.logging_config import get_logger

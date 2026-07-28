@@ -1,12 +1,12 @@
 """Paper trading engine — simulates trades alongside live signals."""
 
 import json
-from datetime import datetime, date
+from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
 from src.signals.models import Signal
-from src.trading.risk_manager import validate_trade, record_trade_result
+from src.trading.risk_manager import record_trade_result, validate_trade
 from src.utils.logging_config import get_logger
 
 logger = get_logger("paper_engine")
@@ -133,11 +133,6 @@ def paper_close_trade(trade_id: str, exit_price: float,
                 entry = trade["entry_price"]
                 direction = trade["direction"]
                 dollar_risk = trade["dollar_risk"]
-
-                if direction == "BUY":
-                    price_pnl_pct = (exit_price - entry) / entry
-                else:
-                    price_pnl_pct = (entry - exit_price) / entry
 
                 risk_distance = abs(entry - trade["stop_loss"])
                 if risk_distance > 0:

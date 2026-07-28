@@ -506,7 +506,6 @@ def detect_reversal_candle(df: pd.DataFrame) -> dict:
     if bar_range == 0:
         return {"bullish": False, "bearish": False}
 
-    body_pct = abs(c - o) / bar_range
     close_position = (c - lo) / bar_range  # 0 = closed at low, 1 = closed at high
 
     # Bullish: close > open AND close in upper 60% of range

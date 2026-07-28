@@ -1,17 +1,21 @@
 """Forex signal generation — USD/JPY focused with 2:1 R/R enforcement."""
 
-import yaml
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_pivot_points,
-    compute_stochastic, compute_macd, compute_bollinger_bands,
+    compute_atr,
+    compute_bollinger_bands,
+    compute_macd,
+    compute_pivot_points,
+    compute_rsi,
+    compute_stochastic,
     detect_ema_crossover,
 )
 from src.signals.confluence import compute_confluence
-from src.signals.models import Signal, PositionSize
+from src.signals.models import PositionSize, Signal
 from src.utils.logging_config import get_logger
 
 logger = get_logger("forex_signals")
@@ -133,7 +137,6 @@ def _compute_levels(price: float, direction: str, indicators: dict,
     atr = indicators.get("atr") or price * 0.01
     pivots = indicators.get("pivots", {})
     stop_mult = 1.5  # ATR multiplier for stops
-    min_rr = config.get("min_risk_reward", 2.0)
 
     trade_mgmt = config.get("trade_management", {})
     t1_r = trade_mgmt.get("target_1_r", 2.0)
@@ -332,7 +335,7 @@ def generate_forex_signals(df: pd.DataFrame, instrument: dict) -> list[Signal]:
     risk_config = _load_risk().get("forex", {})
 
     # Use new strategy engine
-    from src.signals.strategies.selector import select_and_run, compute_all_indicators
+    from src.signals.strategies.selector import compute_all_indicators, select_and_run
     indicators = compute_all_indicators(df, config)
     if not indicators:
         return []

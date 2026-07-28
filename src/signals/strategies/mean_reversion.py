@@ -2,10 +2,7 @@
 
 import pandas as pd
 
-from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_bollinger_bands, compute_stochastic, compute_adx,
-)
-from src.signals.strategies.base import BaseStrategy, StrategySignal, MarketRegime, TradeTiming
+from src.signals.strategies.base import BaseStrategy, MarketRegime, StrategySignal, TradeTiming
 
 
 class BollingerMeanReversion(BaseStrategy):
@@ -105,7 +102,7 @@ class BollingerMeanReversion(BaseStrategy):
                 elif rsi and rsi > 55:
                     met.append(f"RSI leaning overbought ({rsi:.0f})")
                 else:
-                    failed.append(f"RSI not overbought" if rsi else "No RSI")
+                    failed.append("RSI not overbought" if rsi else "No RSI")
 
                 if stoch and stoch["k"] > 70:
                     if stoch.get("d") and stoch["k"] < stoch["d"]:

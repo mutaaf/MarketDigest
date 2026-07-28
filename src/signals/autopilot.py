@@ -11,20 +11,21 @@ This is the brain of Signal Forge. It runs on a loop and:
 
 import asyncio
 import json
-import time
 import threading
-from datetime import datetime, date
+import time
+from datetime import date, datetime
 from pathlib import Path
 
 import yaml
 
-from src.signals.engine import scan_signals, _fetch_ohlcv
+from src.signals.engine import scan_signals
 from src.signals.models import Signal
 from src.trading.paper_engine import (
-    paper_enter_trade, paper_close_trade, get_paper_portfolio,
-    check_open_trades, get_trade_journal,
+    check_open_trades,
+    get_paper_portfolio,
+    paper_enter_trade,
 )
-from src.trading.risk_manager import validate_trade, get_risk_dashboard
+from src.trading.risk_manager import get_risk_dashboard, validate_trade
 from src.utils.logging_config import get_logger
 
 logger = get_logger("autopilot")
@@ -148,11 +149,11 @@ def _format_trade_alert(action: str, symbol: str, direction: str, price: float,
 
 def _format_daily_summary(portfolio: dict, signals_count: int, trades_today: int) -> str:
     """Format end-of-day summary for Telegram."""
-    from src.digest.formatter import bold, code
+    from src.digest.formatter import code
 
     lines = [
-        f"\n📊 <b>Signal Forge — Daily Summary</b>",
-        f"",
+        "\n📊 <b>Signal Forge — Daily Summary</b>",
+        "",
     ]
 
     for key in ("forex", "options"):
@@ -165,7 +166,7 @@ def _format_daily_summary(portfolio: dict, signals_count: int, trades_today: int
         lines.append(f"<b>{key.upper()}</b>: {code(f'${bal:.2f}')} ({ret:+.1f}%) | {total} trades | {wr:.0f}% WR")
 
     lines.extend([
-        f"",
+        "",
         f"Signals scanned today: {code(str(signals_count))}",
         f"Trades executed today: {code(str(trades_today))}",
     ])

@@ -2,7 +2,6 @@
 
 import time
 
-import yaml
 from fastapi import APIRouter, HTTPException
 
 from config.settings import get_settings
@@ -71,12 +70,12 @@ def get_options_flow(symbol: str):
 
     # Run analysis
     from src.analysis.options_flow import (
+        _compute_arc_status,
         analyze_options_flow,
         build_daily_breakdown,
         generate_arc_reading,
         load_flow_history,
         save_flow_snapshot,
-        _compute_arc_status,
     )
 
     flow = analyze_options_flow(chain_data)
@@ -226,24 +225,24 @@ def get_options_flow_v2(symbol: str):
     if cached and (now - cached["ts"]) < _V2_CACHE_TTL:
         return cached["data"]
 
-    from src.fetchers.options_provider import OptionsDataProvider
+    from src.analysis.options_advanced import (
+        analyze_iv,
+        classify_flow,
+        compute_advanced_greeks,
+        compute_conviction_v2,
+        compute_flow_momentum,
+        correlate_dark_pool,
+        detect_unusual_activity,
+    )
     from src.analysis.options_flow import (
+        _compute_arc_status,
         analyze_options_flow,
         build_daily_breakdown,
+        generate_arc_reading,
         load_flow_history,
         save_flow_snapshot,
-        _compute_arc_status,
-        generate_arc_reading,
     )
-    from src.analysis.options_advanced import (
-        detect_unusual_activity,
-        classify_flow,
-        compute_conviction_v2,
-        analyze_iv,
-        compute_advanced_greeks,
-        correlate_dark_pool,
-        compute_flow_momentum,
-    )
+    from src.fetchers.options_provider import OptionsDataProvider
 
     provider = OptionsDataProvider()
     enriched = provider.get_enriched_data(sym)
@@ -386,8 +385,9 @@ def _gen_v3_analyses(
 
     # Load prompts
     try:
-        import yaml as _yaml
         from pathlib import Path
+
+        import yaml as _yaml
         prompts_path = Path(__file__).parent.parent.parent / "config" / "prompts.yaml"
         if prompts_path.exists():
             with open(prompts_path) as f:

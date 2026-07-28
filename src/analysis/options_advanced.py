@@ -42,8 +42,7 @@ def detect_unusual_activity(flow_alerts: list[dict] | None, chain_data: dict | N
             "volume_oi_flags": [],
         }
 
-    config = _load_options_config()
-    sweep_min = config.get("analysis", {}).get("sweep_min_premium", 50000)
+    _load_options_config()
 
     sweeps = [a for a in flow_alerts if a.get("type") in ("sweep", "golden_sweep")]
     blocks = [a for a in flow_alerts if a.get("type") == "block"]
@@ -191,7 +190,6 @@ def compute_conviction_v2(
 
     factors: list[dict] = []
     available_weight = 0.0
-    scored_weight = 0.0
 
     # Factor 1: C/P Ratio (always available from yfinance)
     cp_ratio = flow_data.get("cp_ratio", 1.0)

@@ -1,10 +1,11 @@
 """Market regime detection — classifies current market conditions."""
 
-import numpy as np
 import pandas as pd
 
 from src.analysis.technicals import (
-    compute_adx, compute_ema, compute_bollinger_bands,
+    compute_adx,
+    compute_bollinger_bands,
+    compute_ema,
 )
 from src.signals.strategies.base import MarketRegime
 from src.utils.logging_config import get_logger

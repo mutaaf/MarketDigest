@@ -1,16 +1,20 @@
 """Options signal generation — SPY/AAPL with IV awareness and 2:1 R/R enforcement."""
 
-import yaml
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from src.analysis.technicals import (
-    compute_rsi, compute_atr, compute_pivot_points,
-    compute_macd, compute_bollinger_bands, detect_ema_crossover,
+    compute_atr,
+    compute_bollinger_bands,
+    compute_macd,
+    compute_pivot_points,
+    compute_rsi,
+    detect_ema_crossover,
 )
 from src.signals.confluence import compute_confluence
-from src.signals.models import Signal, PositionSize, OptionDetails
+from src.signals.models import OptionDetails, PositionSize, Signal
 from src.utils.logging_config import get_logger
 
 logger = get_logger("options_signals")
@@ -303,7 +307,7 @@ def generate_options_signals(df: pd.DataFrame, instrument: dict) -> list[Signal]
     config = _load_config()
     risk_config = _load_risk().get("options", {})
 
-    from src.signals.strategies.selector import select_and_run, compute_all_indicators
+    from src.signals.strategies.selector import compute_all_indicators, select_and_run
     indicators = compute_all_indicators(df, config)
     if not indicators:
         return []

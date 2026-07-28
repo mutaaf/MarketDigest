@@ -8,17 +8,22 @@ Runs daily and weekly learning cycles to:
 """
 
 import json
-import time
 import threading
-from datetime import datetime, date
+import time
+from datetime import date, datetime
 from pathlib import Path
 
-from src.innovation.learner import update_performance_ledger, get_performance
-from src.innovation.tuner import propose_and_apply
-from src.innovation.regime_tracker import track_regimes, detect_regime_shift, compute_regime_overrides, get_regime_summary
 from src.innovation.config_manager import safe_update_regime_overrides
+from src.innovation.learner import get_performance, update_performance_ledger
+from src.innovation.regime_tracker import (
+    compute_regime_overrides,
+    detect_regime_shift,
+    get_regime_summary,
+    track_regimes,
+)
 from src.innovation.reporter import format_daily_report, format_weekly_report, save_report
-from src.innovation.safety import load_innovation_config, get_mode, get_change_history
+from src.innovation.safety import get_change_history, get_mode
+from src.innovation.tuner import propose_and_apply
 from src.utils.logging_config import get_logger
 
 logger = get_logger("innovation.agent")
@@ -47,6 +52,7 @@ def _send_telegram(message: str):
     """Send via existing Telegram delivery."""
     try:
         import asyncio
+
         from src.delivery.telegram_bot import TelegramDelivery
         delivery = TelegramDelivery()
         loop = asyncio.new_event_loop()

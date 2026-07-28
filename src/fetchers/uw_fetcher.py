@@ -1,10 +1,9 @@
 """Unusual Whales data fetcher — sweeps, blocks, dark pool, institutional activity."""
 
-from datetime import datetime
 from typing import Any
 
-from src.fetchers.base import BaseFetcher
 from config.settings import get_settings
+from src.fetchers.base import BaseFetcher
 
 
 class UnusualWhalesFetcher(BaseFetcher):

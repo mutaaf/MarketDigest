@@ -39,9 +39,11 @@ async def get_trade_journal(limit: int = 50):
 @router.post("/paper/enter")
 async def paper_enter(req: PaperTradeRequest):
     """Enter a paper trade from a signal."""
-    import yaml
     from pathlib import Path
-    from src.signals.models import Signal, PositionSize
+
+    import yaml
+
+    from src.signals.models import PositionSize, Signal
 
     # Build a signal object from the request
     risk = abs(req.entry_price - req.stop_loss)
@@ -106,6 +108,7 @@ async def paper_close(req: CloseTradeRequest):
 async def get_positions_with_prices():
     """Get open paper positions with current market prices and unrealized P&L."""
     import yfinance as yf
+
     from src.trading.paper_engine import get_paper_portfolio
 
     portfolio = get_paper_portfolio()
@@ -119,8 +122,9 @@ async def get_positions_with_prices():
         return {"positions": [], "total_unrealized_pnl": 0}
 
     # Build yfinance ticker map from signals config
-    import yaml
     from pathlib import Path
+
+    import yaml
     config_path = Path(__file__).parent.parent.parent / "config" / "signals.yaml"
     with open(config_path) as f:
         config = yaml.safe_load(f)
@@ -202,6 +206,7 @@ async def get_positions_with_prices():
 async def close_at_market(trade_id: str):
     """Close a paper trade at current market price."""
     import yfinance as yf
+
     from src.trading.paper_engine import get_paper_portfolio, paper_close_trade
 
     # Find the trade
@@ -217,8 +222,9 @@ async def close_at_market(trade_id: str):
         raise HTTPException(status_code=404, detail="Trade not found")
 
     # Get current price
-    import yaml
     from pathlib import Path
+
+    import yaml
     config_path = Path(__file__).parent.parent.parent / "config" / "signals.yaml"
     with open(config_path) as f:
         config = yaml.safe_load(f)

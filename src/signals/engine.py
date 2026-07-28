@@ -1,15 +1,15 @@
 """Signal engine — orchestrates signal scanning, backtesting, and signal history."""
 
 import json
-import yaml
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import yaml
 import yfinance as yf
 
-from src.signals.models import Signal
 from src.signals.forex_signals import generate_forex_signals
+from src.signals.models import Signal
 from src.signals.options_signals import generate_options_signals
 from src.utils.logging_config import get_logger
 
@@ -100,8 +100,8 @@ def scan_signals() -> list[Signal]:
 
 def _generate_ai_insights(signals: list[Signal]):
     """Auto-generate AI insights for TAKE-rated signals and cache them."""
-    from src.signals.autopilot import rate_signal
     from src.signals.ai_cache import generate_and_cache_insight, get_cached_explanation, is_fresh
+    from src.signals.autopilot import rate_signal
 
     # Fetch market context once for all signals
     market_context = None
@@ -251,7 +251,6 @@ def backtest_strategy(
 
     while i < len(df):
         current_slice = df.iloc[:i + 1]
-        price = float(current_slice["Close"].iloc[-1])
         high = float(current_slice["High"].iloc[-1])
         low = float(current_slice["Low"].iloc[-1])
         date = current_slice.index[-1]

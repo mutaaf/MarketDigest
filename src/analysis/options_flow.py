@@ -2,7 +2,7 @@
 
 import json
 import math
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from src.utils.logging_config import get_logger
@@ -138,7 +138,6 @@ def _compute_greeks_summary(chains: dict, stock_price: float) -> dict:
         for c in data.get("calls", []):
             strike = c.get("strike")
             oi = c.get("openInterest") or 0
-            vol = c.get("volume") or 0
             iv = c.get("impliedVolatility") or 0.3
             if strike and oi > 0:
                 delta = _black_scholes_delta(stock_price, strike, T, r, iv, "call")
@@ -468,6 +467,7 @@ def generate_arc_reading(flow_data: dict, history: list[dict]) -> str | None:
     )
     try:
         from pathlib import Path
+
         import yaml
         prompts_yaml = Path(__file__).parent.parent.parent / "config" / "prompts.yaml"
         if prompts_yaml.exists():
