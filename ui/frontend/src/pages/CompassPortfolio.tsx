@@ -13,7 +13,7 @@ export default function CompassPortfolio() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [sheet, setSheet] = useState<'add' | 'cash' | 'import' | 'create' | null>(null)
+  const [sheet, setSheet] = useState<'add' | 'cash' | 'import' | 'create' | 'deletePortfolio' | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const loadSummary = () => {
@@ -74,6 +74,10 @@ export default function CompassPortfolio() {
         <button onClick={() => setSheet('create')} title="New portfolio"
           className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-apple-gray-200 bg-white text-apple-gray-600 active:bg-apple-gray-100">
           <Plus size={18} />
+        </button>
+        <button onClick={() => setSheet('deletePortfolio')} title="Delete this portfolio"
+          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-apple-gray-200 bg-white text-apple-gray-300 active:text-apple-red">
+          <Trash2 size={16} />
         </button>
       </div>
 
@@ -212,7 +216,57 @@ export default function CompassPortfolio() {
       {sheet === 'create' && (
         <CreateSheet onClose={() => setSheet(null)} onCreated={slug => { setSheet(null); refreshList(); setSelected(slug) }} />
       )}
+      {sheet === 'deletePortfolio' && selected && summary && (
+        <DeletePortfolioSheet
+          slug={selected}
+          name={summary.name}
+          holdingsCount={summary.valuation.holdings.length}
+          onClose={() => setSheet(null)}
+          onDeleted={() => { setSheet(null); setSummary(null); refreshList() }}
+        />
+      )}
     </div>
+  )
+}
+
+function DeletePortfolioSheet({ slug, name, holdingsCount, onClose, onDeleted }: {
+  slug: string; name: string; holdingsCount: number; onClose: () => void; onDeleted: () => void
+}) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+
+  const confirm = async () => {
+    setBusy(true)
+    setErr(null)
+    try {
+      await api.delete(`/portfolio/${slug}`)
+      onDeleted()
+    } catch (error: any) {
+      setErr(error.response?.data?.detail || "Couldn't delete the portfolio.")
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Sheet title={`Delete "${name}"?`} onClose={onClose}>
+      <div className="space-y-3">
+        <p className="text-sm leading-relaxed text-apple-gray-600">
+          This permanently removes this portfolio ({holdingsCount} holding{holdingsCount === 1 ? '' : 's'}) and
+          its watchlist from Compass. Your actual brokerage accounts are not affected — Compass only tracks
+          what you typed in.
+        </p>
+        {err && <p className="text-xs text-apple-red">{err}</p>}
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={onClose} className="min-h-[48px] rounded-xl border border-apple-gray-200 bg-white text-sm font-semibold text-apple-gray-700 active:bg-apple-gray-100">
+            Keep it
+          </button>
+          <button onClick={confirm} disabled={busy}
+            className="min-h-[48px] rounded-xl bg-apple-red text-sm font-semibold text-white active:opacity-80 disabled:opacity-40">
+            {busy ? 'Deleting…' : 'Delete portfolio'}
+          </button>
+        </div>
+      </div>
+    </Sheet>
   )
 }
 

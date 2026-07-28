@@ -100,6 +100,16 @@ def delete_holding(name: str, symbol: str) -> dict:
     return save_portfolio(data)
 
 
+def delete_portfolio(name: str) -> None:
+    """Delete a portfolio and its watchlist. The file is gone for good."""
+    path = _path(name)
+    if not path.exists():
+        raise FileNotFoundError(name)
+    path.unlink()
+    watchlist = PROJECT_ROOT / "data" / "watchlists" / f"{_slug(name)}.json"
+    watchlist.unlink(missing_ok=True)
+
+
 def set_cash(name: str, amount: float) -> dict:
     data = load_portfolio(name)
     if data is None:

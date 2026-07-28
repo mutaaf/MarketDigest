@@ -52,7 +52,13 @@ def analyze_allocation(valuation: dict) -> dict:
 
     total = valuation.get("total_value") or 0
     if total <= 0:
-        return {"asset_classes": [], "sectors": [], "by_holding": [],
+        # Nothing priced yet — still list the holdings so they don't vanish
+        unpriced = [{**h, "weight": 0.0,
+                     "asset_class": (index.get(h["symbol"]) or {}).get("asset_class", "other"),
+                     "instrument_type": (index.get(h["symbol"]) or {}).get("instrument_type", "unknown"),
+                     "display_name": (index.get(h["symbol"]) or {}).get("name")}
+                    for h in valuation.get("holdings", [])]
+        return {"asset_classes": [], "sectors": [], "by_holding": unpriced,
                 "weighted_expense_ratio": None, "unclassified": []}
 
     asset_class_totals: dict[str, float] = {}
@@ -68,9 +74,14 @@ def analyze_allocation(valuation: dict) -> dict:
 
     for h in valuation.get("holdings", []):
         value = h.get("value")
-        if not value:
-            continue
         meta = index.get(h["symbol"])
+        if not value:
+            # Unpriced holdings still belong in the list — weight 0, no totals impact
+            by_holding.append({**h, "weight": 0.0,
+                               "asset_class": (meta or {}).get("asset_class", "other"),
+                               "instrument_type": (meta or {}).get("instrument_type", "unknown"),
+                               "display_name": (meta or {}).get("name")})
+            continue
         if meta is None:
             unclassified.append(h["symbol"])
             asset_class_totals["other"] = asset_class_totals.get("other", 0) + value

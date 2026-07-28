@@ -54,6 +54,14 @@ async def create(body: CreatePortfolio):
         raise HTTPException(status_code=422, detail=str(e))
 
 
+@router.delete("/{name}")
+async def delete(name: str):
+    from src.portfolio.store import delete_portfolio
+    _load_or_404(name)
+    delete_portfolio(name)
+    return {"ok": True}
+
+
 @router.get("/{name}/summary")
 async def summary(name: str):
     """Everything the portfolio page needs in one call: holdings valued,

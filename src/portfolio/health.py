@@ -123,6 +123,10 @@ def assess_health(allocation: dict, valuation: dict) -> dict:
     if not valuation.get("holdings") and not valuation.get("cash"):
         return {"grade": None, "score": None, "factors": [],
                 "summary": "Add your first holding to get a health check."}
+    if valuation.get("holdings") and not valuation.get("invested_value"):
+        return {"grade": None, "score": None, "factors": [],
+                "summary": "We couldn't get prices just now — your health check will "
+                           "appear once prices load. Pull to refresh in a minute."}
 
     factors = [
         _position_concentration(allocation),

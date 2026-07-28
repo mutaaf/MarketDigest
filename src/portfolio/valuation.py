@@ -15,6 +15,14 @@ def value_portfolio(portfolio: dict) -> dict:
     symbols = [h["symbol"] for h in holdings]
 
     prices = _fetcher.get_batch_prices(symbols) if symbols else {}
+    # Batch download misses symbols sometimes (and single-ticker responses parse
+    # differently across yfinance versions) — fall back per symbol so one flaky
+    # ticker never blanks a holding.
+    for sym in symbols:
+        if sym not in prices:
+            single = _fetcher.get_current_price(sym)
+            if single:
+                prices[sym] = single
 
     valued, warnings = [], []
     total_value = 0.0
