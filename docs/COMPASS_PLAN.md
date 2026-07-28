@@ -195,6 +195,44 @@ numbers — the Retrace pattern (track recommendations against reality) keeps us
 
 ---
 
+## Phase 5 — Ten Families (multi-household expansion)
+
+*Everything before this phase assumes one household on one Mac. Serving 10 families
+means leaving the LAN — which makes hosting, auth, and data isolation real requirements,
+not overkill.*
+
+### What changes and what doesn't
+- **Keeps:** the FastAPI + React app, all the analysis engines, file-per-portfolio
+  simplicity (10 families ≈ 20-30 portfolios — still no Postgres needed; SQLite or
+  namespaced JSON dirs are fine).
+- **Must add:**
+  1. **Hosting** — a $5-10/mo VPS (Hetzner/DigitalOcean) or Fly.io app running the
+     existing server in Docker. The Mac stays your dev machine, not the family server.
+  2. **Auth** — per-family login. Simplest robust option: one shared passphrase per
+     family mapping to a family namespace (`data/families/{family}/portfolios/`),
+     issued as a signed cookie. No password-reset flows, no email infra. Upgrade path
+     to magic-link email auth if it ever grows past friends-and-family.
+  3. **Data isolation** — every portfolio/watchlist/retirement route scoped to the
+     authenticated family's directory; the trading/digest admin routes locked to an
+     admin passphrase (or simply not exposed on the public deployment).
+  4. **TLS + domain** — Caddy in front (automatic HTTPS), one cheap domain.
+  5. **Rate limiting + API-key hygiene** — yfinance is unauthenticated (fine), but the
+     LLM keys are yours: cap assistant usage per family per day.
+  6. **Backups** — nightly tar of `data/` to object storage (it's just small JSON).
+
+### Decisions needed before building
+- Hosting platform + budget (recommendation: Hetzner CX22, ~$4/mo, Docker Compose)
+- Domain name
+- Auth flavor: family passphrase (recommended for 10 known families) vs magic-link email
+- Whether the public deployment is Compass-only (recommended) or includes the full
+  Command Center
+
+### Build order (est. 3-4 sessions)
+1. Dockerfile + compose (app + Caddy), Compass-only route surface
+2. Family auth middleware + namespaced data dirs + migration of existing portfolios
+3. Per-family LLM usage caps; backup cron
+4. Deploy, onboard family #2, iterate
+
 ## Phase 4 — Later / Optional
 
 - ETF overlap matrix (top-10 holdings intersection weight between her ETFs)
