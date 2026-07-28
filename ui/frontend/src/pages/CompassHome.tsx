@@ -14,6 +14,7 @@ export default function CompassHome() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [recs, setRecs] = useState<Recommendations | null>(null)
+  const [recsState, setRecsState] = useState<'loading' | 'ok' | 'error'>('loading')
   const [retire, setRetire] = useState<{ projection: { success_probability: number | null } | null } | null>(null)
 
   const loadSummary = () => {
@@ -25,11 +26,11 @@ export default function CompassHome() {
 
   useEffect(() => {
     if (!selected) return
-    setSummary(null); setRecs(null); setError(null)
+    setSummary(null); setRecs(null); setError(null); setRecsState('loading')
     loadSummary()
     api.get<Recommendations>(`/portfolio/${selected}/recommendations`, { timeout: 180000 })
-      .then(res => setRecs(res.data))
-      .catch(() => setRecs(null))
+      .then(res => { setRecs(res.data); setRecsState('ok') })
+      .catch(() => { setRecs(null); setRecsState('error') })
     api.get(`/portfolio/${selected}/retirement`, { timeout: 60000 })
       .then(res => setRetire(res.data))
       .catch(() => setRetire(null))
@@ -109,8 +110,15 @@ export default function CompassHome() {
               </div>
             </div>
           </Link>
-        ) : recs === null ? (
-          <Skeleton className="mt-1 h-12 w-full" />
+        ) : recsState === 'loading' ? (
+          <>
+            <Skeleton className="mt-1 h-12 w-full" />
+            <p className="mt-1 text-[11px] text-apple-gray-400">Analyzing today's fund data — the first look can take a minute.</p>
+          </>
+        ) : recsState === 'error' ? (
+          <p className="text-sm text-apple-gray-500">
+            Couldn't finish analyzing just now. <Link to="/compass/ideas" className="text-apple-blue">Open Ideas to retry</Link>.
+          </p>
         ) : (
           <p className="text-sm text-apple-gray-500">Add holdings or cash and Compass will suggest what to buy next.</p>
         )}

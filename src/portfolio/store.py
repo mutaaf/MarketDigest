@@ -67,6 +67,11 @@ def save_portfolio(data: dict) -> dict:
     return data
 
 
+def slug_for(name: str) -> str:
+    """Public slug derivation — the API returns this so clients never guess."""
+    return _slug(name)
+
+
 def create_portfolio(name: str) -> dict:
     if _path(name).exists():
         raise FileExistsError(f"A portfolio named '{name}' already exists")

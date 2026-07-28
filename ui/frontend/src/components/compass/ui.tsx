@@ -118,20 +118,26 @@ export function signed(n: number | null | undefined, suffix = ''): string {
   return `${n >= 0 ? '+' : ''}${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}${suffix}`
 }
 
-/** Bottom sheet on mobile, centered card on desktop. */
+/** Bottom sheet on mobile, centered card on desktop.
+ * z-[70] so it always covers the bottom tab bar (nav is z-50); body scrolls
+ * inside the sheet when content is taller than the screen. */
 export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 md:items-center" onClick={onClose}>
+    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/30 md:items-center" onClick={onClose}>
       <div
-        className="w-full rounded-t-3xl bg-white p-5 shadow-xl md:max-w-md md:rounded-3xl"
-        style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+        className="flex max-h-[88dvh] w-full flex-col rounded-t-3xl bg-white shadow-xl md:max-h-[85vh] md:max-w-md md:rounded-3xl"
         onClick={e => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center justify-between px-5 pt-4">
           <h3 className="text-base font-semibold text-apple-gray-800">{title}</h3>
           <button onClick={onClose} className="flex min-h-[44px] min-w-[44px] items-center justify-center text-apple-gray-400"><X size={20} /></button>
         </div>
-        {children}
+        <div
+          className="overflow-y-auto px-5 pt-2"
+          style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   )
@@ -140,10 +146,15 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
 export const inputCls = 'w-full min-h-[44px] rounded-xl border border-apple-gray-200 bg-apple-gray-50 px-3 text-sm text-apple-gray-800 focus:border-apple-blue focus:outline-none'
 export const primaryBtn = 'w-full min-h-[48px] rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40'
 
-/** Selected-portfolio state shared across Compass pages via localStorage. */
+/** Selected-portfolio state shared across Compass pages via localStorage.
+ *
+ * `selected` stays empty until the portfolio list has loaded and the stored
+ * preference is validated against it — so pages never fetch with a slug that
+ * points at a deleted portfolio (which used to leave a stuck 404 on devices
+ * that remembered an old selection). */
 export function usePortfolioSelection() {
   const [portfolios, setPortfolios] = useState<PortfolioListItem[] | null>(null)
-  const [selected, setSelectedState] = useState<string>(() => localStorage.getItem(SELECTED_KEY) || '')
+  const [selected, setSelectedState] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
   const refresh = () => {
@@ -152,9 +163,8 @@ export function usePortfolioSelection() {
       .then(res => {
         setPortfolios(res.data.portfolios)
         const slugs = res.data.portfolios.map(p => p.slug)
-        if (slugs.length && !slugs.includes(localStorage.getItem(SELECTED_KEY) || '')) {
-          setSelected(slugs[0])
-        }
+        const stored = localStorage.getItem(SELECTED_KEY) || ''
+        setSelected(slugs.includes(stored) ? stored : (slugs[0] ?? ''))
       })
       .catch(err => setError(err.response?.data?.detail || err.message))
   }

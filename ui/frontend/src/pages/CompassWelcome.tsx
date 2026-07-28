@@ -51,13 +51,14 @@ export default function CompassWelcome() {
     setBusy(true)
     setErr(null)
     try {
-      const res = await api.post('/portfolio/create', { name: name.trim() })
-      const s = (res.data.name as string).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '')
+      const res = await api.post('/portfolio/create', { name: name.trim() }, { timeout: 15000 })
+      const s = res.data.slug as string
       setSlug(s)
       localStorage.setItem('compass.selectedPortfolio', s)
       setStep('holdings')
     } catch (error: any) {
-      setErr(error.response?.data?.detail || "Couldn't create the portfolio — try a different name.")
+      const detail = error.response?.data?.detail
+      setErr(detail || "Couldn't reach Compass just now — give it a few seconds and tap Continue again.")
     } finally {
       setBusy(false)
     }

@@ -83,7 +83,10 @@ export default function CompassLayout() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-4 pb-24 md:pb-8">
+      <main
+        className="mx-auto max-w-3xl px-4 py-4 md:pb-8"
+        style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
+      >
         <Outlet />
       </main>
 

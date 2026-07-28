@@ -184,12 +184,12 @@ function AddWatchSheet({ slug, onClose, onSaved }: { slug: string; onClose: () =
   return (
     <Sheet title="Watch a fund or stock" onClose={onClose}>
       <form onSubmit={submit} className="space-y-3">
-        <div>
+        <div className="relative">
           <label className="mb-1 block text-xs font-medium text-apple-gray-500">Ticker symbol</label>
           <input value={symbol} onChange={e => onSymbolChange(e.target.value)} placeholder="e.g. SCHD"
             autoFocus autoCapitalize="characters" autoCorrect="off" className={inputCls} />
           {suggestions.length > 0 && (
-            <div className="mt-1 overflow-hidden rounded-xl border border-apple-gray-200 bg-white">
+            <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-apple-gray-200 bg-white shadow-lg">
               {suggestions.map(s => (
                 <button key={s.symbol} type="button" onClick={() => { setSymbol(s.symbol); setSuggestions([]) }}
                   className="flex w-full items-center justify-between px-3 py-2.5 text-left text-sm active:bg-apple-gray-50">

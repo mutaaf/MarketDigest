@@ -45,9 +45,10 @@ async def list_all():
 
 @router.post("/create")
 async def create(body: CreatePortfolio):
-    from src.portfolio.store import create_portfolio
+    from src.portfolio.store import create_portfolio, slug_for
     try:
-        return create_portfolio(body.name)
+        data = create_portfolio(body.name)
+        return {**data, "slug": slug_for(body.name)}
     except FileExistsError as e:
         raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:

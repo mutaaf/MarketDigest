@@ -110,7 +110,8 @@ export default function CompassAsk() {
       {/* Input bar */}
       <form
         onSubmit={(e: FormEvent) => { e.preventDefault(); send(input) }}
-        className="sticky bottom-16 flex gap-2 border-t border-apple-gray-200 bg-apple-gray-100 py-3 md:bottom-0"
+        className="sticky flex gap-2 border-t border-apple-gray-200 bg-apple-gray-100 py-3 md:bottom-0"
+        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
       >
         <input
           value={input}
