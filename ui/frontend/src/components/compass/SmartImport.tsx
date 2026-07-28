@@ -2,6 +2,10 @@
 // Extraction never saves directly: the user reviews editable rows first.
 import { ClipboardEvent, useState } from 'react'
 import { Camera, ClipboardPaste, FileText, Trash2, Upload } from 'lucide-react'
+
+// Coarse pointer ≈ phone/tablet: paste is long-press there, ⌘V/Ctrl+V on desktop
+const isTouch = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+const pasteHint = isTouch ? 'long-press → Paste' : (navigator.platform.includes('Mac') ? '⌘V' : 'Ctrl+V')
 import api from '../../api/client'
 import { inputCls, primaryBtn } from './ui'
 
@@ -73,6 +77,29 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
     if (item) {
       e.preventDefault()
       onImage(item.getAsFile())
+    }
+  }
+
+  // Mobile-friendly: a tap triggers the browser's own paste permission bubble
+  const pasteFromClipboard = async () => {
+    setErr(null)
+    try {
+      if (!navigator.clipboard?.read) {
+        setErr('Your browser can’t paste images this way — use "Choose screenshot" instead (your screenshots are in Photos).')
+        return
+      }
+      const items = await navigator.clipboard.read()
+      for (const item of items) {
+        const imageType = item.types.find(t => t.startsWith('image/'))
+        if (imageType) {
+          const blob = await item.getType(imageType)
+          onImage(new File([blob], 'pasted-screenshot', { type: imageType }))
+          return
+        }
+      }
+      setErr('No image on your clipboard. Copy a screenshot first, or use "Choose screenshot".')
+    } catch {
+      setErr('Couldn’t read your clipboard — use "Choose screenshot" instead (your screenshots are in Photos).')
     }
   }
 
@@ -167,9 +194,9 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
       {mode === 'photo' && (
         <div className="space-y-2">
           <p className="text-xs text-apple-gray-500">
-            Take a screenshot of your positions in your brokerage app or website, then choose it here
-            (or just paste it with {navigator.platform.includes('Mac') ? '⌘V' : 'Ctrl+V'}).
-            Compass reads the holdings out of the picture.
+            {isTouch
+              ? 'Take a screenshot of your positions in your brokerage app, then choose it from your Photos below. Compass reads the holdings out of the picture.'
+              : `Take a screenshot of your positions in your brokerage app or website, then choose it here (or just paste it with ${pasteHint}). Compass reads the holdings out of the picture.`}
           </p>
           <label className="flex min-h-[80px] cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-apple-gray-300 text-sm font-medium text-apple-gray-600 active:bg-apple-gray-50">
             <Upload size={18} />
@@ -177,6 +204,10 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
             <input type="file" accept="image/*" className="hidden" disabled={busy}
               onChange={e => onImage(e.target.files?.[0])} />
           </label>
+          <button onClick={pasteFromClipboard} disabled={busy}
+            className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-apple-gray-200 bg-white text-xs font-medium text-apple-gray-600 active:bg-apple-gray-100 disabled:opacity-40">
+            <ClipboardPaste size={14} /> Paste a copied screenshot
+          </button>
           {imagePreview && busy && (
             <img src={imagePreview} alt="" className="max-h-32 w-full rounded-xl border border-apple-gray-200 object-cover opacity-60" />
           )}
@@ -186,7 +217,8 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
       {mode === 'paste' && (
         <div className="space-y-2">
           <p className="text-xs text-apple-gray-500">
-            Copy the rows from your brokerage's positions page — messy is fine — and paste them here.
+            Copy the rows from your brokerage's positions page — messy is fine — then paste them
+            in the box ({pasteHint}).
           </p>
           <textarea value={text} onChange={e => setText(e.target.value)} rows={6}
             placeholder={'e.g.\nApple Inc AAPL  25 shares  avg $148.50\nVanguard S&P 500 ETF  12 shares'}
