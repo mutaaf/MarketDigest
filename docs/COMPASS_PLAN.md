@@ -195,6 +195,36 @@ numbers — the Retrace pattern (track recommendations against reality) keeps us
 
 ---
 
+## PRD Coverage (evaluated July 28, 2026)
+
+**Done** — portfolio tracking (manual/CSV/screenshot/paste import), health grade +
+diversification score, buy-next recommendations with reasons, target vs actual
+allocation with presets, ETF universe (~110) with scores/grades, stock quality scores,
+two-ticker comparison with verdict, watchlist with buy-price alerts, retirement planner
+with Monte Carlo, AI assistant, education center, onboarding wizard, Telegram alerts,
+PWA home-screen app, all PRD MVP-v1 success criteria except accounts.
+
+**Remaining from the PRD, prioritized:**
+1. **Browse pages for the ETF/stock databases** — the data + APIs exist
+   (`/api/etf/list`, scorecards) but Compass has no "explore funds" page. High value,
+   low effort.
+2. **Richer portfolio analytics** — weighted beta, weighted dividend yield, country %,
+   market-cap %, style % breakdowns. yfinance has the inputs.
+3. **Overlap analysis** — stock-level overlap between held ETFs (top-10 holdings
+   intersection). Medium effort.
+4. **Stock universe expansion** — ~50 stocks today vs PRD's ~250. Config work + sector
+   tagging.
+5. **Watchlist news** — headlines per watched symbol (NewsAPI fetcher already exists).
+6. **ETF "Pros/Cons/Best For/Similar"** — LLM-generated, cached; fits existing patterns.
+7. **Performance over time** — portfolio value history chart (needs daily value
+   snapshots — start recording now, chart later).
+8. **Fair value / intrinsic value / DCF and moat ratings** — deliberately deferred;
+   analyst targets serve as the value signal until the core proves out.
+9. **Accounts** — Phase 5 (per-family auth on hosted deployment).
+
+**Deliberately not building:** confidence percentages, licensed data feeds,
+Next.js/Supabase stack.
+
 ## Phase 5 — Ten Families (multi-household expansion)
 
 *Everything before this phase assumes one household on one Mac. Serving 10 families

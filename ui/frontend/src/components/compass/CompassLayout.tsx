@@ -1,6 +1,6 @@
 // Compass standalone shell — a calm, focused app for a long-term investor.
 // No trading terminals, no jargon: its own header, nav, and bottom tabs.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import {
   Home, Compass, Sparkles, MessageCircleQuestion, MoreHorizontal, X,
@@ -30,6 +30,29 @@ const moreTabs: Tab[] = [
 
 export default function CompassLayout() {
   const [showMore, setShowMore] = useState(false)
+
+  // While inside Compass, the browser tab / home-screen identity is Compass:
+  // its own title, icon, and PWA manifest (so "Add to Home Screen" installs
+  // Compass at /compass, not the trading Command Center).
+  useEffect(() => {
+    const prevTitle = document.title
+    document.title = 'Compass'
+
+    const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]')
+    const prevManifest = manifest?.href ?? null
+    if (manifest) manifest.href = '/compass-manifest.json'
+
+    const touchIcon = document.createElement('link')
+    touchIcon.rel = 'apple-touch-icon'
+    touchIcon.href = '/compass-icon-180.png'
+    document.head.appendChild(touchIcon)
+
+    return () => {
+      document.title = prevTitle
+      if (manifest && prevManifest) manifest.href = prevManifest
+      touchIcon.remove()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-apple-gray-100">
