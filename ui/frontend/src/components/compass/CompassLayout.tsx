@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import {
   Home, Compass, Sparkles, MessageCircleQuestion, MoreHorizontal, X,
-  Eye, PiggyBank, ArrowLeftRight, GraduationCap, TerminalSquare,
+  Eye, PiggyBank, ArrowLeftRight, GraduationCap, TerminalSquare, Telescope,
 } from 'lucide-react'
 
 interface Tab {
@@ -22,6 +22,7 @@ const mainTabs: Tab[] = [
 ]
 
 const moreTabs: Tab[] = [
+  { to: '/compass/explore', icon: Telescope, label: 'Explore' },
   { to: '/compass/watchlist', icon: Eye, label: 'Watchlist' },
   { to: '/compass/retire', icon: PiggyBank, label: 'Retirement' },
   { to: '/compass/compare', icon: ArrowLeftRight, label: 'Compare' },

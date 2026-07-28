@@ -1,5 +1,6 @@
 // Compass — Compare any two ETFs or stocks side by side.
 import { FormEvent, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ArrowLeftRight } from 'lucide-react'
 import api from '../api/client'
 import { CompareResult, CompareSide, SearchResult } from '../api/compass-types'
@@ -36,8 +37,9 @@ function fmt(key: string, v: number | null): string {
 }
 
 export default function CompassCompare() {
-  const [a, setA] = useState('VOO')
-  const [b, setB] = useState('VTI')
+  const [params] = useSearchParams()
+  const [a, setA] = useState(params.get('a')?.toUpperCase() || 'VOO')
+  const [b, setB] = useState(params.get('b')?.toUpperCase() || 'VTI')
   const [result, setResult] = useState<CompareResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
