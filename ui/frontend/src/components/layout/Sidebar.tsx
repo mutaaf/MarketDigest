@@ -3,7 +3,15 @@ import {
   LayoutDashboard, List, MessageSquare, Database,
   Sliders, Play, Settings, Target, Award, Activity,
   Zap, Shield, FileText, BarChart3, Code, Brain,
+  Compass, Sparkles, ArrowLeftRight, PiggyBank,
 } from 'lucide-react'
+
+const compassItems = [
+  { to: '/compass', icon: Compass, label: 'Compass Home' },
+  { to: '/compass/portfolio', icon: Sparkles, label: 'Portfolio & Ideas' },
+  { to: '/compass/compare', icon: ArrowLeftRight, label: 'Compare' },
+  { to: '/compass/retire', icon: PiggyBank, label: 'Retirement' },
+]
 
 const tradingItems = [
   { to: '/', icon: Zap, label: 'Signal Terminal' },
@@ -38,6 +46,26 @@ export default function Sidebar() {
       </div>
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-apple-gray-400">
+          Compass
+        </div>
+        {compassItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/compass'}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-apple-blue text-white'
+                  : 'text-apple-gray-600 hover:bg-apple-gray-100'
+              }`
+            }
+          >
+            <Icon size={18} />
+            {label}
+          </NavLink>
+        ))}
+        <div className="px-3 py-1.5 mt-3 text-[10px] font-bold uppercase tracking-widest text-apple-gray-400">
           Signal Forge
         </div>
         {tradingItems.map(({ to, icon: Icon, label }) => (

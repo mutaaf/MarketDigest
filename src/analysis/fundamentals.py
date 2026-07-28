@@ -20,7 +20,7 @@ def fetch_fundamentals(symbol: str, yf_symbol: str) -> dict | None:
     Returns:
         dict with 'metrics' and 'highlights' keys, or None on failure.
     """
-    cache_key = f"fundamentals:{symbol}"
+    cache_key = f"fundamentals:v2:{symbol}"
     cached = _cache.get(cache_key, max_age_seconds=_CACHE_TTL)
     if cached is not None:
         return cached
@@ -59,6 +59,13 @@ def _fetch_yfinance(yf_symbol: str) -> dict | None:
             "net_margin": _safe(info.get("profitMargins"), pct=True),
             "roe": _safe(info.get("returnOnEquity"), pct=True),
             "roa": _safe(info.get("returnOnAssets"), pct=True),
+            "peg_ratio": _safe(info.get("trailingPegRatio")),
+            "dividend_yield": _safe_yield(info.get("dividendYield")),
+            "payout_ratio": _safe(info.get("payoutRatio"), pct=True),
+            "beta": _safe(info.get("beta")),
+            "analyst_target": _safe(info.get("targetMeanPrice")),
+            "analyst_rating": info.get("recommendationKey"),
+            "current_price": _safe(info.get("regularMarketPrice") or info.get("currentPrice")),
         }
 
         highlights = {
@@ -145,6 +152,14 @@ def _fetch_finnhub(symbol: str) -> dict | None:
     except Exception as e:
         logger.debug(f"Finnhub fundamentals failed for {symbol}: {e}")
         return None
+
+
+def _safe_yield(val) -> float | None:
+    """Dividend yield in percent — yfinance has shipped both 0.0065 and 0.65 forms."""
+    f = _safe(val)
+    if f is None:
+        return None
+    return round(f * 100, 2) if f < 0.5 else round(f, 2)
 
 
 def _safe(val, divisor: float = 1, pct: bool = False, scale: float = 1) -> float | None:

@@ -4,17 +4,19 @@ import {
   LayoutDashboard, List, Play, Database, Settings,
   MoreHorizontal, MessageSquare, Sliders, X, Target, Award, Activity,
   Zap, Shield, FileText, BarChart3, Code,
+  Compass,
 } from 'lucide-react'
 
 const mainTabs = [
+  { to: '/compass', icon: Compass, label: 'Compass' },
   { to: '/', icon: Zap, label: 'Signals' },
   { to: '/risk', icon: Shield, label: 'Risk' },
   { to: '/paper', icon: FileText, label: 'Paper' },
-  { to: '/backtest', icon: BarChart3, label: 'Backtest' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 const moreTabs = [
+  { to: '/backtest', icon: BarChart3, label: 'Backtesting' },
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/pine', icon: Code, label: 'Pine Scripts' },
   { to: '/instruments', icon: List, label: 'Instruments' },
@@ -69,7 +71,7 @@ export default function BottomNav() {
             <NavLink
               key={to}
               to={to}
-              end={to === '/'}
+              end={to === '/' || to === '/compass'}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-2 py-1 min-w-[3.5rem] transition-colors ${
                   isActive ? 'text-apple-blue' : 'text-apple-gray-400 active:text-apple-gray-600'

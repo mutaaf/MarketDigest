@@ -182,6 +182,28 @@ def get_all_yfinance_tickers() -> list[dict[str, str]]:
     return tickers
 
 
+def get_etf_universe() -> list[dict[str, Any]]:
+    """Enabled ETFs from instruments.yaml. Kept out of get_all_yfinance_tickers
+    so digests and day-trade scoring never pick them up."""
+    settings = get_settings()
+    return [e for e in settings.instruments.get("etfs", []) if e.get("enabled", True)]
+
+
+def get_compass_universe() -> list[dict[str, Any]]:
+    """Long-term investing universe: enabled US stocks + ETFs, each with
+    instrument_type, asset_class, and sector (stocks only) attached."""
+    settings = get_settings()
+    universe = []
+    for item in settings.instruments.get("us_stocks", []):
+        if item.get("enabled", True):
+            universe.append({**item, "instrument_type": "stock",
+                             "asset_class": item.get("asset_class", "us_stock")})
+    for item in settings.instruments.get("etfs", []):
+        if item.get("enabled", True):
+            universe.append({**item, "instrument_type": "etf"})
+    return universe
+
+
 # ── Write-back helpers ──────────────────────────────────────────
 
 

@@ -42,3 +42,10 @@ Thumbs.db
 
 # Docker overrides
 docker-compose.override.yml
+logs/compass_recs/*
+
+# Compass user data (personal financial info — never commit)
+data/portfolios/*
+data/watchlists/*
+!data/portfolios/.gitkeep
+!data/watchlists/.gitkeep

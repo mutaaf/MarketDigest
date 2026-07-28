@@ -5,6 +5,30 @@ All notable changes to Market Digest.
 ## [Unreleased]
 
 ### Added
+- **Compass Investing** — a standalone long-term investor app at `/compass` with its own
+  mobile-first layout (Home, Portfolio, Ideas, Ask, Watchlist, Retirement, Compare, Learn).
+  Built for a non-technical user; reachable from any device on the home network.
+  - Portfolio tracking: per-person JSON portfolios (`data/portfolios/`), manual entry +
+    tolerant CSV import, live valuation, gain/loss, allocation by asset class and sector
+    (with ETF look-through), weighted expense ratio
+  - Portfolio health: A–F grade from five plain-English diversification checks
+    (`src/portfolio/health.py`)
+  - "What should I buy next?": gap-aware recommendation engine ranking graded ETFs/stocks
+    against target allocation, every pick with explained reasons; each result set
+    snapshotted to `logs/compass_recs/` for later grading
+  - ETF database: ~110 ETFs in `instruments.yaml` with category/asset-class metadata,
+    profiles via yfinance (expense ratio, yield, AUM, holdings, 1/3/5/10y returns,
+    volatility) cached 24h, scored A–F (`src/analysis/etf_scorer.py`)
+  - Two-ticker comparison (any mix of ETF/stock) with winner-highlighted metric table and
+    deterministic plain-English verdict
+  - Target allocation editor (must sum to 100%) feeding the recommender; watchlist with
+    buy-price alerts; retirement planner with Monte Carlo probability of success
+  - Ask Compass: portfolio-aware multi-turn assistant using the existing 3-provider LLM
+    fallback chain (`ui/routes/assistant.py`); Learn page with 12 beginner explainers
+  - Stocks in `instruments.yaml` now carry `sector` and `asset_class`; fundamentals
+    gained PEG, dividend yield, payout ratio, beta, analyst target (cache key bumped to v2)
+- **CI fixed**: `unusualwhales-python` pre-release specifier resolved + repo-wide ruff
+  cleanup; first green backend run since March
 - **Multi-timeframe scoring**: Day Trade (daily), Swing (weekly), Long Term (monthly) — each with separate configurable weights in `config/scoring.yaml`
 - **Equity fundamentals analysis**: Fetches financial data (yfinance + Finnhub fallback, 6h cache), scores valuation/profitability/growth/health (0-100 each)
 - **Weekly/monthly technical analysis**: `weekly_full_analysis()`, `monthly_full_analysis()`, `compute_monthly_pivots()`, `compute_monthly_atr()` in `src/analysis/technicals.py`

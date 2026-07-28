@@ -17,6 +17,15 @@ import PaperTrading from './pages/PaperTrading'
 import Backtesting from './pages/Backtesting'
 import PineScripts from './pages/PineScripts'
 import InnovationDashboard from './pages/InnovationDashboard'
+import CompassLayout from './components/compass/CompassLayout'
+import CompassHome from './pages/CompassHome'
+import CompassPortfolio from './pages/CompassPortfolio'
+import CompassIdeas from './pages/CompassIdeas'
+import CompassCompare from './pages/CompassCompare'
+import CompassWatchlist from './pages/CompassWatchlist'
+import CompassRetire from './pages/CompassRetire'
+import CompassAsk from './pages/CompassAsk'
+import CompassLearn from './pages/CompassLearn'
 
 export default function App() {
   return (
@@ -39,6 +48,16 @@ export default function App() {
         <Route path="/scorecard" element={<ScoreCard />} />
         <Route path="/options" element={<OptionsFlow />} />
         <Route path="/settings" element={<Settings />} />
+      </Route>
+      <Route path="/compass" element={<CompassLayout />}>
+        <Route index element={<CompassHome />} />
+        <Route path="portfolio" element={<CompassPortfolio />} />
+        <Route path="ideas" element={<CompassIdeas />} />
+        <Route path="compare" element={<CompassCompare />} />
+        <Route path="watchlist" element={<CompassWatchlist />} />
+        <Route path="retire" element={<CompassRetire />} />
+        <Route path="ask" element={<CompassAsk />} />
+        <Route path="learn" element={<CompassLearn />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -13,14 +13,17 @@ from fastapi.responses import FileResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
 from ui.routes import (  # noqa: E402
+    assistant,
     cache,
     digests,
+    etf,
     history,
     innovation,
     instruments,
     onboarding,
     options,
     pine,
+    portfolio,
     prompts,
     retrace,
     risk,
@@ -61,6 +64,10 @@ app.include_router(trading.router)
 app.include_router(risk.router)
 app.include_router(pine.router)
 app.include_router(innovation.router)
+app.include_router(etf.router)
+app.include_router(portfolio.router)
+app.include_router(portfolio.compass_router)
+app.include_router(assistant.router)
 
 # Serve built React frontend
 FRONTEND_DIST = Path(__file__).parent / "frontend" / "dist"

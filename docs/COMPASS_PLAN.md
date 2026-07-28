@@ -1,0 +1,224 @@
+# Compass Investing — Implementation Plan
+
+> **Status (July 28, 2026):** Phases 0–3 are built and verified. The Compass app lives at
+> `/compass` (own layout, mobile-first). Remaining/deferred: optional PIN gate for LAN
+> access, recommendation-performance dashboard (snapshots are already being written),
+> ETF overlap matrix, weekly Compass digest to Telegram (Phase 4 items).
+
+> "Know exactly what to buy next." A long-term investor advisor built inside Market Digest,
+> designed for a non-technical user. Based on the Compass Investing PRD (July 2026).
+
+**Strategy:** Reuse Market Digest's analysis engines (fundamentals, long-term A–F scoring,
+LLM layer, fetcher/cache infra). Skip the PRD's Next.js/Supabase/Vercel stack entirely —
+single household, file-based persistence, no auth. Ship in phases where each phase is
+independently usable.
+
+**Scope guardrail:** The PRD's own "MVP v1" cut is the target for Phase 1. Everything else
+is deliberately later. We surface **grades and reasons**, not fabricated "94% confidence"
+numbers — the Retrace pattern (track recommendations against reality) keeps us honest.
+
+## UX Principles (apply to every Compass surface)
+
+1. **Mobile-first.** Every page is designed at 390px width first, then enhanced for
+   desktop. Touch targets ≥ 44px, bottom-sheet patterns over modals, no hover-only
+   affordances, `env(safe-area-inset-*)` respected.
+2. **Graceful in failure.** Every data view has four explicit states: loading (skeleton,
+   not spinner-on-white), empty (friendly guidance on what to do next), error (plain
+   words — "We couldn't reach the market data service. Your portfolio is safe; pull to
+   retry." — never a stack trace or "Error 500"), and stale (banner: "Prices as of
+   2:04 PM — showing last saved data"). Stale cached data is always preferred over a
+   blank screen (the cache layer's `get_stale` exists for exactly this).
+3. **Partial results over all-or-nothing.** If 2 of 30 symbols fail to fetch, show 28
+   with a note — never fail the whole page. API responses carry a `warnings` list.
+4. **Plain English everywhere.** No jargon without an inline explanation. Numbers get
+   context ("0.03% — that's $3/year per $10,000 invested").
+5. **Nothing destructive without undo or confirm.** Deleting a holding asks once, in
+   words that say what happens.
+
+---
+
+## Phase 0 — Data Foundations
+
+*Everything later depends on instrument metadata and ETF data that don't exist yet.*
+
+### Work items
+1. **ETF universe** — new `etfs` group in `config/instruments.yaml` (~100 ETFs: broad US,
+   international, bonds, sectors, dividend, REIT, growth/value). Each entry: `symbol`,
+   `name`, `category` (us_broad / intl / bond / sector:tech / dividend / reit / ...),
+   `enabled`.
+2. **Sector/type taxonomy** — add `sector` and `asset_class` fields to each stock entry in
+   `instruments.yaml` (backfill once from yfinance `info.sector`, then it's static config).
+   Extend `get_all_yfinance_tickers()` in `config/settings.py` to carry the new fields.
+3. **ETF data fetcher** — new `src/fetchers/etf_data.py` using yfinance `funds_data` +
+   price history: expense ratio, dividend yield, AUM, top-10 holdings, sector weights,
+   1/3/5/10-year returns, since-inception return, volatility (annualized stdev). Cached
+   24h via existing `CacheManager` (pattern: `src/analysis/fundamentals.py`).
+4. **ETF scorer** — new `src/analysis/etf_scorer.py`: Risk / Safety / Growth / Income /
+   Diversification sub-scores (0–100) + overall score + A–F grade via the shared
+   `score_to_grade()`. Config-backed weights in `config/scoring.yaml` (new `etf` block).
+5. **Fundamentals gaps** — extend `src/analysis/fundamentals.py` with PEG, ROIC, dividend
+   yield, payout ratio, analyst mean target (`info.targetMeanPrice`), beta. Widen
+   `is_equity_symbol()` handling so ETFs route to the ETF scorer instead of returning None.
+
+### Outcomes (done when)
+- [ ] `instruments.yaml` has ~100 ETFs and every stock has sector + asset_class
+- [ ] `/api/etf/{symbol}` returns full ETF profile with scores in < 2s (cached)
+- [ ] Fundamentals payload includes PEG, ROIC, dividend yield, analyst target
+- [ ] Existing digests/scorecards unaffected (ETFs excluded from daytrade scoring)
+
+**Estimate:** 1–2 working sessions. No UI work in this phase.
+
+---
+
+## Phase 1 — Portfolio Core + "What Should I Buy Next?" (PRD MVP v1)
+
+*The feature that makes her say "I need this."*
+
+### Data model
+`data/portfolios/{name}.json` (new dir, one file per person — no DB, no auth):
+```json
+{
+  "name": "her-name",
+  "cash": 5000.00,
+  "holdings": [
+    {"symbol": "VOO", "shares": 40, "cost_basis": 380.50, "acquired": "2024-03-01", "account": "brokerage"}
+  ],
+  "targets": {},
+  "updated": "2026-07-28T10:00:00"
+}
+```
+
+### Work items
+1. **Portfolio module** — new `src/portfolio/`:
+   - `store.py` — load/save/validate portfolio JSON, CSV import (broker-export-tolerant:
+     map common column names, skip junk rows)
+   - `valuation.py` — current value, day change, total gain/loss per holding + total,
+     using existing yfinance fetcher (2-min cache)
+   - `analyzer.py` — allocation breakdown by asset class / sector / market cap / US-vs-intl.
+     For ETF holdings, look through via sector weights from the ETF fetcher. Weighted
+     expense ratio, weighted dividend yield, weighted beta.
+   - `health.py` — Diversification Score (sector concentration via HHI, single-position
+     concentration, asset-class spread, US/intl split) + overall Portfolio Grade A–F with
+     per-factor plain-English explanations
+   - `recommender.py` — "what should I buy next": rank the enabled universe by
+     `long-term score (existing multi_tf_scorer / etf_scorer) × underweight-fit ×
+     valuation attractiveness`; exclude already-concentrated positions; return top N with
+     reasons ("You're underweight international; VXUS grade A-, expense ratio 0.07%")
+2. **API** — new `ui/routes/portfolio.py`: CRUD holdings, CSV upload, `GET /summary`,
+   `GET /health`, `GET /recommendations`, `GET /compare?a=VOO&b=VTI` (works for any mix of
+   ETF/stock — normalizes to a common metric table + LLM one-paragraph verdict via
+   existing `MarketAnalyzer` pattern)
+3. **UI** — new "Compass" nav group in `Sidebar.tsx` / `BottomNav.tsx` with three pages:
+   - `CompassPortfolio.tsx` — holdings table, add/edit/CSV import, value + P&L, allocation
+     donuts (sector / asset class / geography)
+   - `CompassIdeas.tsx` — health grade card with factor breakdown, then ranked buy
+     recommendations with reasons
+   - `CompassCompare.tsx` — two-ticker picker, side-by-side metric table with
+     better-value highlighting, plain-English verdict
+
+### Outcomes (done when)
+- [ ] A portfolio can be entered manually or via CSV in under 5 minutes
+- [ ] Portfolio page shows value, gain/loss, and 3 allocation breakdowns
+- [ ] Health page shows an A–F grade with ≥4 explained factors
+- [ ] ≥3 personalized recommendations, each with a why in plain English
+- [ ] Any two tickers comparable in under 1 minute (PRD success criterion)
+
+**Estimate:** 3–4 working sessions. This is the demo-to-wife milestone.
+
+---
+
+## Phase 2 — Targets, Watchlist, Retirement
+
+### Work items
+1. **Target allocation** — `targets` block in portfolio JSON (e.g. US 60 / Intl 20 /
+   Bonds 10 / REIT 10). Actual-vs-target bars with over/underweight flags; drift feeds
+   directly into the Phase 1 recommender (replaces its heuristic underweight-fit).
+   Editable in `CompassPortfolio.tsx` with must-sum-to-100 validation (same pattern as
+   scoring weights UI).
+2. **Watchlist** — `data/watchlists/{name}.json`: symbol, desired buy price, notes.
+   Page shows current price, % to buy price ("7% above your buy price"), current A–F
+   grade, and recent headlines via existing NewsAPI fetcher. New `CompassWatchlist.tsx`.
+3. **Retirement planner** — pure math, no new data: inputs (age, retirement age, assets
+   pre-filled from portfolio, monthly contribution, expected return, inflation) →
+   deterministic projection curve + Monte Carlo (1000 runs on historical-ish return/vol)
+   for probability of success + 4%-rule safe-withdrawal estimate. New
+   `src/portfolio/retirement.py` + `CompassRetire.tsx` with a projection chart.
+4. **Recommendation tracking (Retrace for Compass)** — snapshot each recommendation set
+   to `logs/compass_recs/`; a simple view later shows how past recommendations performed.
+   Cheap to add now, builds trust in the engine over time.
+
+### Outcomes (done when)
+- [ ] Targets editable; over/underweights visible and driving recommendations
+- [ ] Watchlist alerts visually when a symbol crosses its buy price
+- [ ] Retirement page answers "am I on track?" with a probability and a chart
+- [ ] Every recommendation set is snapshotted for later grading
+
+**Estimate:** 2–3 working sessions.
+
+---
+
+## Phase 3 — The Wife Experience (simple mode, assistant, access)
+
+*Compass stops being a tab in your trading app and becomes her app.*
+
+### Work items
+1. **Compass-only layout** — `/compass/*` route group with its own minimal layout: Home,
+   Portfolio, Ideas, Watchlist, Retire, Learn, Ask. None of the trader pages, no jargon,
+   larger type, mobile-first. Your existing full app stays at `/`. Her bookmark is
+   `http://<mac-hostname>.local:8550/compass`.
+2. **Compass Home** — the PRD dashboard: portfolio value, cash, today's change, grade,
+   diversification score, target-vs-actual mini-bars, retirement progress, top
+   recommendation of the day. One screen, no scrolling on desktop.
+3. **AI assistant ("Ask")** — new streaming multi-turn endpoint
+   `ui/routes/assistant.py` (`POST /api/assistant/chat`): reuses `llm_providers.py`
+   fallback chain but **bypasses the prompt-hash cache** (it would break conversation);
+   context = her portfolio summary + health factors + relevant scorecard/ETF data for any
+   tickers mentioned. System prompt: beginner-friendly, always explains terms, never gives
+   pressure-y advice, cites the numbers it used. Suggested-question chips ("Am I
+   diversified?", "Compare VOO and VTI", "What should I do with $5,000?").
+4. **Education ("Learn")** — ~15 static beginner explainers (ETF, expense ratio, beta,
+   drawdown, DCF, compounding...) as content, plus an "explain this like I'm new" button
+   that routes any term to the assistant. Glossary terms hyperlinked from Compass pages.
+5. **LAN access + guard** — uvicorn binds `0.0.0.0`, startup prints the LAN URL; optional
+   4-digit PIN gate on `/compass` (cookie, stored in `.env`) so it's not wide open on the
+   network. Profile switcher (your portfolio vs hers) as a simple dropdown — files, not
+   auth.
+
+### Outcomes (done when)
+- [ ] She can open Compass on her phone/laptop via the Mac's LAN address
+- [ ] Home answers "how am I doing / what should I buy next" in one glance
+- [ ] Assistant answers portfolio-aware questions in plain English, streaming
+- [ ] She completes add-holding → see grade → read recommendation → ask a question
+      without help (the real acceptance test)
+
+**Estimate:** 3–4 working sessions.
+
+---
+
+## Phase 4 — Later / Optional
+
+- ETF overlap matrix (top-10 holdings intersection weight between her ETFs)
+- Recommendation performance dashboard (grade past picks, like Retrace)
+- Weekly "Compass digest" to her own Telegram (reuses delivery layer)
+- Country/style (growth-value) allocation breakdowns
+- Fair-value / DCF estimates for stocks (PRD lists it; real modeling effort — punt until
+  the core loop proves out)
+- Broker import beyond CSV (Plaid etc. — only if manual upkeep becomes a real complaint)
+
+---
+
+## Explicitly out of scope (PRD items we're intentionally not building)
+
+- **Accounts/auth/multi-tenant** — one household, profile files instead
+- **Supabase/Postgres/Vercel** — file persistence, local hosting on the Mac
+- **Licensed market data** — yfinance covers everything Phase 0–3 needs, free
+- **Confidence percentages** — grades + reasons + tracked outcomes instead
+
+## Sequencing summary
+
+| Phase | Deliverable | Est. sessions | Demo moment |
+|-------|-------------|--------------|-------------|
+| 0 | ETF universe + metadata + scorers | 1–2 | `/api/etf/VOO` returns a graded profile |
+| 1 | Portfolio, health, buy-next, compare | 3–4 | **Show her the recommendations** |
+| 2 | Targets, watchlist, retirement | 2–3 | "Am I on track?" answered |
+| 3 | Compass app, assistant, LAN access | 3–4 | **She uses it on her own phone** |
