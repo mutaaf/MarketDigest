@@ -27,6 +27,13 @@ export default function CompassPortfolio() {
   }
   useEffect(loadSummary, [selected])
 
+  // Prices refresh quietly every 2 minutes while the page is open
+  useEffect(() => {
+    if (!selected) return
+    const timer = window.setInterval(loadSummary, 120000)
+    return () => window.clearInterval(timer)
+  }, [selected])
+
   const deleteHolding = async (symbol: string) => {
     try {
       await api.delete(`/portfolio/${selected}/holding/${symbol}`)
@@ -44,14 +51,13 @@ export default function CompassPortfolio() {
       <div className="mx-auto max-w-xl">
         <EmptyState
           title="Welcome to Compass"
-          hint="Start by creating a portfolio — then add what you own, and Compass will show your health score and what to buy next."
+          hint="Start with the guided setup — it walks you through adding what you own and picking a plan."
           action={
-            <button onClick={() => setSheet('create')} className="min-h-[44px] rounded-xl bg-apple-blue px-6 text-sm font-semibold text-white active:opacity-80">
-              Create my portfolio
-            </button>
+            <a href="/compass/welcome" className="flex min-h-[44px] items-center rounded-xl bg-apple-blue px-6 text-sm font-semibold text-white active:opacity-80">
+              Get set up
+            </a>
           }
         />
-        {sheet === 'create' && <CreateSheet onClose={() => setSheet(null)} onCreated={slug => { setSheet(null); refreshList(); setSelected(slug) }} />}
       </div>
     )
   }

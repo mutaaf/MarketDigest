@@ -26,6 +26,7 @@ import CompassWatchlist from './pages/CompassWatchlist'
 import CompassRetire from './pages/CompassRetire'
 import CompassAsk from './pages/CompassAsk'
 import CompassLearn from './pages/CompassLearn'
+import CompassWelcome from './pages/CompassWelcome'
 
 export default function App() {
   return (
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="retire" element={<CompassRetire />} />
         <Route path="ask" element={<CompassAsk />} />
         <Route path="learn" element={<CompassLearn />} />
+        <Route path="welcome" element={<CompassWelcome />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

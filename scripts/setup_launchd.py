@@ -78,8 +78,14 @@ def _parse_schedule(schedule_str: str) -> tuple[int, int, list[int]]:
 
 
 def _generate_plist(label: str, digest_type: str, python_path: str,
-                    hour: int, minute: int, weekdays: list[int]) -> str:
-    """Generate a launchd plist XML string."""
+                    hour: int, minute: int, weekdays: list[int],
+                    script_args: list[str] | None = None,
+                    log_name: str | None = None) -> str:
+    """Generate a launchd plist XML string.
+
+    script_args overrides the default run_digest invocation; log_name
+    overrides the log file basename (defaults to digest_type).
+    """
     # Build calendar interval entries
     intervals = []
     for day in weekdays:
@@ -92,6 +98,10 @@ def _generate_plist(label: str, digest_type: str, python_path: str,
         )
     intervals_xml = "\n".join(intervals)
 
+    args = script_args or [f"{PROJECT_ROOT}/scripts/run_digest.py", "--type", digest_type]
+    args_xml = "\n".join(f"        <string>{a}</string>" for a in args)
+    log_base = log_name or digest_type
+
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -102,9 +112,7 @@ def _generate_plist(label: str, digest_type: str, python_path: str,
     <key>ProgramArguments</key>
     <array>
         <string>{python_path}</string>
-        <string>{PROJECT_ROOT}/scripts/run_digest.py</string>
-        <string>--type</string>
-        <string>{digest_type}</string>
+{args_xml}
     </array>
 
     <key>WorkingDirectory</key>
@@ -124,9 +132,9 @@ def _generate_plist(label: str, digest_type: str, python_path: str,
     </array>
 
     <key>StandardOutPath</key>
-    <string>{PROJECT_ROOT}/logs/{digest_type}_stdout.log</string>
+    <string>{PROJECT_ROOT}/logs/{log_base}_stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>{PROJECT_ROOT}/logs/{digest_type}_stderr.log</string>
+    <string>{PROJECT_ROOT}/logs/{log_base}_stderr.log</string>
 </dict>
 </plist>
 """
@@ -191,6 +199,29 @@ def install():
         day_names = {1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat", 7: "Sun"}
         day_str = ",".join(day_names[d] for d in weekdays)
         schedule_summary.append(f"  {dtype.title():12s} {day_str} {hour:02d}:{minute:02d}")
+
+    # Compass alert jobs (watchlist price alerts + weekly family summary)
+    compass_jobs = [
+        ("compass-daily", ["--mode", "daily"], "15:15"),        # Mon-Fri after close
+        ("compass-weekly", ["--mode", "weekly"], "sun 17:00"),
+    ]
+    for job_name, mode_args, schedule_str in compass_jobs:
+        label = f"com.{_USERNAME}.market-digest-{job_name}"
+        dst = LAUNCH_AGENTS / f"{label}.plist"
+        hour, minute, weekdays = _parse_schedule(schedule_str)
+        plist_content = _generate_plist(
+            label, job_name, python_path, hour, minute, weekdays,
+            script_args=[f"{PROJECT_ROOT}/scripts/compass_alerts.py", *mode_args],
+            log_name=job_name,
+        )
+        subprocess.run(["launchctl", "unload", str(dst)], capture_output=True)
+        dst.write_text(plist_content)
+        result = subprocess.run(["launchctl", "load", str(dst)], capture_output=True, text=True)
+        status = "Loaded" if result.returncode == 0 else f"WARNING: {result.stderr}"
+        print(f"\n  Installed: {dst}\n  {status}")
+        day_names = {1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat", 7: "Sun"}
+        day_str = ",".join(day_names[d] for d in weekdays)
+        schedule_summary.append(f"  {job_name.title():12s} {day_str} {hour:02d}:{minute:02d}")
 
     print("\n" + "=" * 50)
     print("Installation complete!")

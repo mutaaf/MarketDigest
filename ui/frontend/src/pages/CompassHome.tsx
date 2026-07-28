@@ -16,18 +16,30 @@ export default function CompassHome() {
   const [recs, setRecs] = useState<Recommendations | null>(null)
   const [retire, setRetire] = useState<{ projection: { success_probability: number | null } | null } | null>(null)
 
-  useEffect(() => {
+  const loadSummary = () => {
     if (!selected) return
-    setSummary(null); setRecs(null); setError(null)
     api.get<PortfolioSummary>(`/portfolio/${selected}/summary`)
       .then(res => setSummary(res.data))
       .catch(err => setError(err.response?.data?.detail || err.message))
+  }
+
+  useEffect(() => {
+    if (!selected) return
+    setSummary(null); setRecs(null); setError(null)
+    loadSummary()
     api.get<Recommendations>(`/portfolio/${selected}/recommendations`, { timeout: 180000 })
       .then(res => setRecs(res.data))
       .catch(() => setRecs(null))
     api.get(`/portfolio/${selected}/retirement`, { timeout: 60000 })
       .then(res => setRetire(res.data))
       .catch(() => setRetire(null))
+  }, [selected])
+
+  // Values refresh quietly every 2 minutes while the page is open
+  useEffect(() => {
+    if (!selected) return
+    const timer = window.setInterval(loadSummary, 120000)
+    return () => window.clearInterval(timer)
   }, [selected])
 
   const hour = new Date().getHours()
@@ -38,10 +50,10 @@ export default function CompassHome() {
     return (
       <EmptyState
         title="Welcome to Compass"
-        hint="Your investing home base. Create a portfolio, add what you own, and Compass will show how you're doing and what to buy next."
+        hint="Your investing home base. Three quick steps and you'll see how your investments are doing — and what to buy next."
         action={
-          <Link to="/compass/portfolio" className="flex min-h-[44px] items-center rounded-xl bg-apple-blue px-6 text-sm font-semibold text-white active:opacity-80">
-            Get started
+          <Link to="/compass/welcome" className="flex min-h-[44px] items-center rounded-xl bg-apple-blue px-6 text-sm font-semibold text-white active:opacity-80">
+            Get set up
           </Link>
         }
       />
