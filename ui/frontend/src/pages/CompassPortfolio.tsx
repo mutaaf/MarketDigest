@@ -191,22 +191,55 @@ export default function CompassPortfolio() {
 
           {/* Allocation */}
           {v.holdings.length > 0 && (
-            <section className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
-                <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">What you own, by type</h3>
-                <AllocationBars slices={summary.allocation.asset_classes} />
-              </div>
-              <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
-                <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">By industry</h3>
-                <AllocationBars slices={summary.allocation.sectors} />
-                {summary.allocation.weighted_expense_ratio !== null && (
-                  <p className="mt-3 border-t border-apple-gray-100 pt-2 text-xs text-apple-gray-500">
-                    Your funds cost {summary.allocation.weighted_expense_ratio.toFixed(2)}% a year on average —
-                    about ${Math.round(summary.allocation.weighted_expense_ratio * 100)} per $10,000 invested.
-                  </p>
-                )}
-              </div>
-            </section>
+            <>
+              <section className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">What you own, by type</h3>
+                  <AllocationBars slices={summary.allocation.asset_classes} />
+                </div>
+                <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">By industry</h3>
+                  <AllocationBars slices={summary.allocation.sectors} />
+                </div>
+                <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">Where in the world</h3>
+                  <AllocationBars slices={summary.allocation.geography} />
+                </div>
+                <div className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-apple-gray-700">Company size</h3>
+                  <AllocationBars slices={summary.allocation.market_caps.filter(s => s.key !== 'Not stocks')} />
+                </div>
+              </section>
+              <section className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                <h3 className="mb-2 text-sm font-semibold text-apple-gray-700">Portfolio character</h3>
+                <div className="space-y-1.5 text-xs leading-relaxed text-apple-gray-500">
+                  {summary.allocation.weighted_beta !== null && (
+                    <p>
+                      <strong className="text-apple-gray-700">Choppiness (beta): {summary.allocation.weighted_beta.toFixed(2)}</strong>
+                      {' — '}
+                      {summary.allocation.weighted_beta > 1.15
+                        ? 'your portfolio swings harder than the overall market.'
+                        : summary.allocation.weighted_beta < 0.85
+                          ? 'your portfolio moves more gently than the overall market.'
+                          : 'your portfolio roughly moves with the overall market.'}
+                    </p>
+                  )}
+                  {summary.allocation.weighted_yield !== null && (
+                    <p>
+                      <strong className="text-apple-gray-700">Dividends: ~{summary.allocation.weighted_yield.toFixed(1)}%/yr</strong>
+                      {' — '}about {money(v.invested_value * summary.allocation.weighted_yield / 100)} a year in
+                      dividend payments at today's rates.
+                    </p>
+                  )}
+                  {summary.allocation.weighted_expense_ratio !== null && (
+                    <p>
+                      <strong className="text-apple-gray-700">Fund costs: {summary.allocation.weighted_expense_ratio.toFixed(2)}%/yr</strong>
+                      {' — '}about ${Math.round(summary.allocation.weighted_expense_ratio * 100)} per $10,000 invested.
+                    </p>
+                  )}
+                </div>
+              </section>
+            </>
           )}
         </>
       )}

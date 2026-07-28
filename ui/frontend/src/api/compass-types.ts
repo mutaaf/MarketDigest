@@ -51,9 +51,26 @@ export interface AllocationHolding extends ValuedHolding {
 export interface Allocation {
   asset_classes: AllocationSlice[]
   sectors: AllocationSlice[]
+  geography: AllocationSlice[]
+  market_caps: AllocationSlice[]
+  styles: AllocationSlice[]
   by_holding: AllocationHolding[]
   weighted_expense_ratio: number | null
+  weighted_beta: number | null
+  weighted_yield: number | null
   unclassified: string[]
+}
+
+export interface OverlapFinding {
+  kind: 'stock_in_fund' | 'fund_pair'
+  symbols: string[]
+  overlap_pct?: number
+  text: string
+}
+
+export interface Overlap {
+  findings: OverlapFinding[]
+  note: string
 }
 
 export interface HealthFactor {
@@ -75,6 +92,7 @@ export interface PortfolioSummary {
   valuation: Valuation
   allocation: Allocation
   health: Health
+  overlap: Overlap
   targets: Record<string, number>
 }
 

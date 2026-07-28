@@ -70,6 +70,8 @@ async def summary(name: str):
     from src.portfolio.health import assess_health
     from src.portfolio.valuation import value_portfolio
 
+    from src.portfolio.overlap import analyze_overlap
+
     portfolio = _load_or_404(name)
     valuation = value_portfolio(portfolio)
     allocation = analyze_allocation(valuation)
@@ -79,8 +81,16 @@ async def summary(name: str):
         "valuation": valuation,
         "allocation": allocation,
         "health": health,
+        "overlap": analyze_overlap(allocation),
         "targets": portfolio.get("targets") or {},
     }
+
+
+@router.get("/{name}/history")
+async def history(name: str):
+    from src.portfolio.history import get_history
+    _load_or_404(name)
+    return {"history": get_history(name)}
 
 
 @router.post("/{name}/holding")

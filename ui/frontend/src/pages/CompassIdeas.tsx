@@ -1,6 +1,6 @@
 // Compass — Ideas: portfolio health check + "what should I buy next?"
 import { FormEvent, useEffect, useState } from 'react'
-import { CheckCircle2, AlertCircle, MinusCircle, RefreshCw, Sparkles, SlidersHorizontal } from 'lucide-react'
+import { CheckCircle2, AlertCircle, MinusCircle, RefreshCw, Sparkles, SlidersHorizontal, Copy } from 'lucide-react'
 import api from '../api/client'
 import { PortfolioSummary, Recommendations } from '../api/compass-types'
 import {
@@ -84,6 +84,29 @@ export default function CompassIdeas() {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {/* Overlap check */}
+      {summary && summary.overlap && summary.overlap.findings.length > 0 && (
+        <section className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+          <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-apple-gray-700">
+            <Copy size={14} className="text-apple-orange" /> Owning the same thing twice
+          </h3>
+          <div className="space-y-2">
+            {summary.overlap.findings.map((f, i) => (
+              <p key={i} className="text-xs leading-relaxed text-apple-gray-600">
+                {f.text}
+                {f.overlap_pct !== undefined && (
+                  <span className="text-apple-gray-400"> (~{f.overlap_pct.toFixed(0)}% overlap)</span>
+                )}
+              </p>
+            ))}
+          </div>
+          <p className="mt-2 border-t border-apple-gray-100 pt-2 text-[10px] text-apple-gray-400">
+            {summary.overlap.note} Overlap isn't automatically bad — it just means less variety than the
+            number of holdings suggests.
+          </p>
         </section>
       )}
 

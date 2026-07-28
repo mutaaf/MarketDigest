@@ -129,6 +129,12 @@ def main() -> None:
 
     state = None
     if args.mode == "daily":
+        # Record today's portfolio values first — powers the performance chart
+        try:
+            from src.portfolio.history import record_all
+            print(f"[daily] Recorded value history for {record_all()} portfolio(s).")
+        except Exception as e:
+            print(f"[daily] History snapshot failed: {e}")
         content, state = build_daily_alerts()
     else:
         content = build_weekly_summary()

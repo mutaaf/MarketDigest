@@ -205,22 +205,22 @@ with Monte Carlo, AI assistant, education center, onboarding wizard, Telegram al
 PWA home-screen app, all PRD MVP-v1 success criteria except accounts.
 
 **Remaining from the PRD, prioritized:**
-1. **Browse pages for the ETF/stock databases** — the data + APIs exist
-   (`/api/etf/list`, scorecards) but Compass has no "explore funds" page. High value,
-   low effort.
-2. **Richer portfolio analytics** — weighted beta, weighted dividend yield, country %,
-   market-cap %, style % breakdowns. yfinance has the inputs.
-3. **Overlap analysis** — stock-level overlap between held ETFs (top-10 holdings
-   intersection). Medium effort.
+1. ~~Browse pages for the ETF database~~ — DONE (/compass/explore with detail sheets).
+2. ~~Richer portfolio analytics~~ — DONE (weighted beta/yield, geography, market-cap,
+   style breakdowns; "Portfolio character" card).
+3. ~~Overlap analysis~~ — DONE (stock-in-fund + fund-pair via top-10 holdings, shown
+   on Ideas as "Owning the same thing twice").
 4. **Stock universe expansion** — ~50 stocks today vs PRD's ~250. Config work + sector
    tagging.
 5. **Watchlist news** — headlines per watched symbol (NewsAPI fetcher already exists).
 6. **ETF "Pros/Cons/Best For/Similar"** — LLM-generated, cached; fits existing patterns.
-7. **Performance over time** — portfolio value history chart (needs daily value
-   snapshots — start recording now, chart later).
+7. **Performance over time chart** — daily value snapshots now RECORDING (weekday
+   compass-daily job → data/history/, plus GET /{name}/history endpoint); chart UI
+   once a few weeks of data exist.
 8. **Fair value / intrinsic value / DCF and moat ratings** — deliberately deferred;
    analyst targets serve as the value signal until the core proves out.
-9. **Accounts** — Phase 5 (per-family auth on hosted deployment).
+9. **Accounts** — Phase 5 (per-family auth on hosted deployment). Note: the family
+   portal (separate repo) has since added its own passcode gate on port 80.
 
 **Deliberately not building:** confidence percentages, licensed data feeds,
 Next.js/Supabase stack.
