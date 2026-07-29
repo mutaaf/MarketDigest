@@ -24,6 +24,27 @@ interface ExtractResponse {
 
 type Mode = 'photo' | 'paste' | 'csv'
 
+interface Broker { name: string; url: string; tip: string }
+
+// Top domestic + worldwide brokers → their positions/export page + how to export
+const BROKERS: Broker[] = [
+  { name: 'Fidelity', url: 'https://digital.fidelity.com/ftgw/digital/portfolio/positions', tip: 'Log in → Positions → tap the download icon at the top-right of the table.' },
+  { name: 'Schwab', url: 'https://client.schwab.com/app/accounts/positions/', tip: 'Log in → Accounts → Positions → Export (upper-right).' },
+  { name: 'Vanguard', url: 'https://holdings.web.vanguard.com/', tip: 'Log in → Holdings → Download, choose CSV.' },
+  { name: 'Robinhood', url: 'https://robinhood.com/account/investing', tip: 'No CSV in the app — screenshot your positions list and use the Screenshot tab here instead.' },
+  { name: 'E*TRADE', url: 'https://us.etrade.com/etx/pxy/portfolios', tip: 'Log in → Portfolios → the download arrow above the table.' },
+  { name: 'Merrill', url: 'https://olui2.fs.ml.com/holdings', tip: 'Log in → Holdings → Export.' },
+  { name: 'J.P. Morgan', url: 'https://secure.chase.com/web/auth/dashboard', tip: 'Log in → Investments → Positions → download icon.' },
+  { name: 'Webull', url: 'https://app.webull.com', tip: 'Desktop site: Positions → export. On the phone app, screenshot your positions instead.' },
+  { name: 'IBKR', url: 'https://www.interactivebrokers.com/portal', tip: 'Client Portal → Portfolio → export, or Statements → Activity.' },
+  { name: 'SoFi', url: 'https://www.sofi.com/my/money', tip: 'No direct CSV — screenshot your holdings and use the Screenshot tab.' },
+  { name: 'Coinbase', url: 'https://accounts.coinbase.com/statements', tip: 'Statements → Generate → CSV (crypto imports fine — BTC, ETH, SOL…).' },
+  { name: 'Wealthsimple', url: 'https://my.wealthsimple.com', tip: 'Log in → your account → Statements/Export, or screenshot holdings.' },
+  { name: 'Questrade', url: 'https://login.questrade.com', tip: 'Log in → Accounts → Positions → export.' },
+  { name: 'Trading 212', url: 'https://app.trading212.com', tip: 'History → Export CSV, or screenshot your Portfolio tab.' },
+  { name: 'eToro', url: 'https://www.etoro.com/portfolio', tip: 'Portfolio → gear icon → export, or screenshot it.' },
+]
+
 export default function SmartImport({ slug, onDone }: { slug: string; onDone: (count: number) => void }) {
   const [mode, setMode] = useState<Mode>('photo')
   const [rows, setRows] = useState<DraftRow[] | null>(null)
@@ -32,6 +53,7 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
   const [err, setErr] = useState<string | null>(null)
   const [text, setText] = useState('')
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [brokerTip, setBrokerTip] = useState<Broker | null>(null)
 
   const extract = async (payload: { image_base64?: string; media_type?: string; text?: string }) => {
     setBusy(true)
@@ -232,14 +254,35 @@ export default function SmartImport({ slug, onDone }: { slug: string; onDone: (c
       {mode === 'csv' && (
         <div className="space-y-2">
           <p className="text-xs text-apple-gray-500">
-            Export positions from your broker as a CSV file (needs Symbol and Shares columns).
+            Tap your broker to open its positions page (log in there, download the CSV),
+            then choose the file below.
           </p>
+          <div className="grid grid-cols-3 gap-1.5">
+            {BROKERS.map(bk => (
+              <a key={bk.name} href={bk.url} target="_blank" rel="noopener noreferrer"
+                onClick={() => setBrokerTip(bk)}
+                className={`flex min-h-[44px] items-center justify-center rounded-xl border px-1 text-center text-[11px] font-medium leading-tight ${
+                  brokerTip?.name === bk.name ? 'border-apple-blue bg-apple-blue/5 text-apple-blue' : 'border-apple-gray-200 bg-white text-apple-gray-600 active:bg-apple-gray-100'
+                }`}>
+                {bk.name}
+              </a>
+            ))}
+          </div>
+          {brokerTip && (
+            <p className="animate-fadeUp rounded-xl bg-apple-blue/5 p-2.5 text-[11px] leading-relaxed text-apple-gray-600">
+              <strong className="text-apple-gray-800">{brokerTip.name}:</strong> {brokerTip.tip}
+            </p>
+          )}
           <label className="flex min-h-[80px] cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-apple-gray-300 text-sm font-medium text-apple-gray-600 active:bg-apple-gray-50">
             <Upload size={18} />
             {busy ? 'Reading…' : 'Choose CSV file'}
             <input type="file" accept=".csv,text/csv" className="hidden" disabled={busy}
               onChange={e => e.target.files?.[0]?.text().then(t => extract({ text: t }))} />
           </label>
+          <p className="text-[10px] text-apple-gray-400">
+            Tip: if your broker's app has no export, screenshot your positions and use the
+            Screenshot tab instead — it works everywhere.
+          </p>
         </div>
       )}
 

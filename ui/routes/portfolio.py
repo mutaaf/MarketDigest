@@ -209,17 +209,19 @@ async def remove_watch(name: str, symbol: str):
 
 @router.get("/{name}/retirement")
 async def get_retirement(name: str):
-    """Saved retirement plan (inputs + projection), with assets prefilled
-    from the portfolio when no plan is saved yet."""
+    """Saved retirement plan (inputs + projection) plus the LIVE portfolio
+    value (holdings + cash) so the plan can stay linked to reality."""
     from src.portfolio.retirement import project
     from src.portfolio.valuation import value_portfolio
 
     portfolio = _load_or_404(name)
+    valuation = value_portfolio(portfolio)
+    live = {"live_total_value": valuation["total_value"], "live_cash": valuation["cash"]}
     saved = portfolio.get("retirement")
     if not saved:
-        valuation = value_portfolio(portfolio)
-        return {"inputs": {"current_assets": valuation["total_value"]}, "projection": None}
-    return {"inputs": saved, "projection": project(**saved)}
+        return {"inputs": {"current_assets": valuation["total_value"]},
+                "projection": None, **live}
+    return {"inputs": saved, "projection": project(**saved), **live}
 
 
 @router.post("/{name}/retirement")
@@ -295,9 +297,9 @@ async def extract_holdings(body: ExtractRequest):
 
 
 @compass_router.get("/compare")
-async def compare_symbols(a: str, b: str):
+async def compare_symbols(a: str, b: str, portfolio: str | None = None):
     from src.portfolio.compare import compare
-    result = compare(a, b)
+    result = compare(a, b, portfolio)
     if "error" in result:
         raise HTTPException(status_code=422, detail=result["error"])
     return result

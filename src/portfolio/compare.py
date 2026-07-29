@@ -16,6 +16,30 @@ def _load_side(symbol: str) -> dict | None:
          for s in instruments.get(group, []) if s["symbol"] == symbol),
         None,
     )
+    crypto_cfg = next((c for c in instruments.get("crypto", [])
+                       if c["symbol"] == symbol), None)
+
+    if crypto_cfg:
+        # Crypto gets prices/returns/volatility but deliberately NO grade —
+        # our quality scores don't apply to it.
+        profile = fetch_etf_profile(symbol, crypto_cfg.get("yfinance", f"{symbol}-USD"))
+        if profile is None:
+            return None
+        return {
+            "symbol": symbol,
+            "name": crypto_cfg.get("name", symbol),
+            "type": "crypto",
+            "grade": None,
+            "score": None,
+            "risk_level": "Very High",
+            "sub_scores": {},
+            "metrics": {
+                "current_price": profile.get("price"),
+                "return_1y": profile.get("return_1y"),
+                "return_5y": profile.get("return_5y"),
+                "volatility_1y": profile.get("volatility_1y"),
+            },
+        }
 
     if etf_cfg or not stock_cfg:
         profile = fetch_etf_profile(symbol, (etf_cfg or {}).get("yfinance", symbol))
@@ -77,6 +101,13 @@ def _load_side(symbol: str) -> dict | None:
 
 def _verdict(a: dict, b: dict) -> str:
     """A short, honest comparison summary — no LLM, always available."""
+    if a.get("score") is None or b.get("score") is None:
+        crypto = a if a.get("type") == "crypto" else b
+        other = b if crypto is a else a
+        vol = crypto["metrics"].get("volatility_1y")
+        return (f"{crypto['symbol']} and {other['symbol']} play different roles: crypto is a "
+                f"high-risk satellite ({f'{vol:.0f}% volatility — several times a broad fund' if vol else 'far more volatile than funds'}), "
+                f"not a substitute for a portfolio's core. A common rule keeps crypto under ~5% of the total.")
     points = []
     if a["type"] == "etf" and b["type"] == "etf":
         ma, mb = a["metrics"], b["metrics"]
@@ -104,7 +135,87 @@ def _verdict(a: dict, b: dict) -> str:
     return f"{lead}. The better fit depends on what your portfolio is missing."
 
 
-def compare(symbol_a: str, symbol_b: str) -> dict:
+def _for_you(a: dict, b: dict, slug: str) -> dict | None:
+    """Personalized decision help: which side serves THIS portfolio better."""
+    from config.settings import get_compass_universe
+    from src.portfolio.analyzer import ASSET_CLASS_LABELS, analyze_allocation
+    from src.portfolio.recommender import DEFAULT_TARGETS
+    from src.portfolio.store import load_portfolio
+    from src.portfolio.valuation import value_portfolio
+
+    portfolio = load_portfolio(slug)
+    if portfolio is None:
+        return None
+    valuation = value_portfolio(portfolio)
+    if not valuation.get("total_value"):
+        return None
+    allocation = analyze_allocation(valuation)
+    held = {h["symbol"]: h.get("weight") or 0 for h in allocation["by_holding"]}
+    targets = {**DEFAULT_TARGETS, **(portfolio.get("targets") or {})}
+    actual = {c["key"]: c["weight"] for c in allocation["asset_classes"]}
+    universe = {u["symbol"]: u for u in get_compass_universe()}
+
+    def info(side: dict) -> dict:
+        sym = side["symbol"]
+        ac = (universe.get(sym) or {}).get("asset_class")
+        return {
+            "asset_class": ac,
+            "gap": round(targets.get(ac, 0) - actual.get(ac, 0), 1) if ac else 0.0,
+            "owned_pct": round(held.get(sym, 0), 1),
+        }
+
+    ia, ib = info(a), info(b)
+    points = []
+    for side, i in ((a, ia), (b, ib)):
+        if i["owned_pct"] > 0:
+            points.append(f"You already own {side['symbol']} — it's {i['owned_pct']:.0f}% "
+                          f"of your portfolio.")
+        dup = [h["symbol"] for h in side.get("top_holdings", []) if held.get(h["symbol"])]
+        if dup:
+            points.append(f"{side['symbol']}'s biggest holdings include "
+                          f"{', '.join(dup[:3])} — which you already own directly.")
+
+    # Pair overlap when both are funds with known holdings
+    near_dupes = False
+    if a.get("top_holdings") and b.get("top_holdings"):
+        ta = {h["symbol"]: h.get("weight") or 0 for h in a["top_holdings"]}
+        tb = {h["symbol"]: h.get("weight") or 0 for h in b["top_holdings"]}
+        pair_overlap = sum(min(ta[s], tb[s]) for s in set(ta) & set(tb))
+        if pair_overlap >= 15 and ia["asset_class"] == ib["asset_class"]:
+            near_dupes = True
+            points.append(f"These two overlap heavily (~{pair_overlap:.0f}% shared top "
+                          "holdings) — owning both adds little variety. Pick one.")
+
+    # The decision
+    pick, headline = None, ""
+    label = lambda ac: ASSET_CLASS_LABELS.get(ac or "", ac or "either")  # noqa: E731
+    if abs(ia["gap"] - ib["gap"]) > 3 and max(ia["gap"], ib["gap"]) > 2:
+        winner, wi = (a, ia) if ia["gap"] > ib["gap"] else (b, ib)
+        pick = winner["symbol"]
+        headline = (f"{pick} fits your portfolio better right now — you're "
+                    f"{wi['gap']:.0f} points under your {label(wi['asset_class'])} target "
+                    f"({actual.get(wi['asset_class'], 0):.0f}% vs {targets.get(wi['asset_class'], 0):.0f}%).")
+    elif near_dupes:
+        owned = a if ia["owned_pct"] > 0 else b if ib["owned_pct"] > 0 else None
+        if owned is not None:
+            pick = owned["symbol"]
+            headline = f"Near-duplicates — sticking with the {pick} you already own keeps things simple."
+        else:
+            best = a if a["score"] >= b["score"] else b
+            pick = best["symbol"]
+            headline = f"Near-duplicates — {pick} edges it on overall grade; you only need one."
+    elif a.get("score") is not None and b.get("score") is not None and abs(a["score"] - b["score"]) >= 3:
+        best = a if a["score"] > b["score"] else b
+        pick = best["symbol"]
+        headline = f"Neither fills a bigger gap for you, so quality decides: {pick} grades higher."
+    else:
+        headline = ("For your portfolio these are effectively interchangeable — "
+                    "either works; cost and taste can decide.")
+
+    return {"pick": pick, "headline": headline, "points": points[:4]}
+
+
+def compare(symbol_a: str, symbol_b: str, portfolio: str | None = None) -> dict:
     a = _load_side(symbol_a)
     b = _load_side(symbol_b)
     missing = [s for s, side in [(symbol_a, a), (symbol_b, b)] if side is None]
@@ -112,4 +223,10 @@ def compare(symbol_a: str, symbol_b: str) -> dict:
         return {"error": f"Couldn't load data for {' and '.join(m.upper() for m in missing)}. "
                          "Check the ticker symbol and try again.",
                 "a": a, "b": b}
-    return {"a": a, "b": b, "verdict": _verdict(a, b)}
+    result = {"a": a, "b": b, "verdict": _verdict(a, b)}
+    if portfolio:
+        try:
+            result["for_you"] = _for_you(a, b, portfolio)
+        except Exception:
+            result["for_you"] = None  # personalization is a bonus, never a blocker
+    return result

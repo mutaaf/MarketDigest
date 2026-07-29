@@ -4,7 +4,8 @@ import { useSearchParams } from 'react-router-dom'
 import { ArrowLeftRight } from 'lucide-react'
 import api from '../api/client'
 import { CompareResult, CompareSide, SearchResult } from '../api/compass-types'
-import { ErrorState, GradeChip, Skeleton } from '../components/compass/ui'
+import { ErrorState, GradeChip, Skeleton, usePortfolioSelection } from '../components/compass/ui'
+import { Target } from 'lucide-react'
 
 const METRIC_LABELS: Record<string, { label: string; suffix?: string; lowerBetter?: boolean }> = {
   expense_ratio: { label: 'Yearly cost (expense ratio)', suffix: '%', lowerBetter: true },
@@ -36,11 +37,18 @@ function fmt(key: string, v: number | null): string {
   return `${v.toLocaleString('en-US', { maximumFractionDigits: 2 })}${suffix}`
 }
 
+interface ForYou {
+  pick: string | null
+  headline: string
+  points: string[]
+}
+
 export default function CompassCompare() {
   const [params] = useSearchParams()
+  const { selected } = usePortfolioSelection()
   const [a, setA] = useState(params.get('a')?.toUpperCase() || 'VOO')
   const [b, setB] = useState(params.get('b')?.toUpperCase() || 'VTI')
-  const [result, setResult] = useState<CompareResult | null>(null)
+  const [result, setResult] = useState<(CompareResult & { for_you?: ForYou | null }) | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -50,8 +58,8 @@ export default function CompassCompare() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.get<CompareResult>('/compass/compare', {
-        params: { a: a.trim(), b: b.trim() }, timeout: 120000,
+      const res = await api.get<CompareResult & { for_you?: ForYou | null }>('/compass/compare', {
+        params: { a: a.trim(), b: b.trim(), portfolio: selected || undefined }, timeout: 120000,
       })
       setResult(res.data)
     } catch (err: any) {
@@ -104,6 +112,30 @@ export default function CompassCompare() {
               </div>
             ))}
           </div>
+
+          {/* For YOUR portfolio */}
+          {result.for_you && (
+            <div className="animate-fadeUp rounded-2xl border border-apple-green/30 bg-apple-green/5 p-4">
+              <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-green-700">
+                <Target size={13} /> For your portfolio
+                {result.for_you.pick && (
+                  <span className="ml-auto rounded-full bg-apple-green/15 px-2.5 py-0.5 text-[11px] font-bold normal-case text-green-700">
+                    Pick: {result.for_you.pick}
+                  </span>
+                )}
+              </p>
+              <p className="text-sm font-medium leading-relaxed text-apple-gray-800">{result.for_you.headline}</p>
+              {result.for_you.points.length > 0 && (
+                <ul className="mt-1.5 space-y-1">
+                  {result.for_you.points.map((p, i) => (
+                    <li key={i} className="flex gap-2 text-xs leading-relaxed text-apple-gray-600">
+                      <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-apple-green" />{p}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
 
           {/* Verdict */}
           <div className="rounded-2xl bg-apple-blue/5 p-4">

@@ -72,6 +72,8 @@ export default function CompassRetire() {
   const { portfolios, selected, error: listError, refresh: refreshList } = usePortfolioSelection()
   const [inputs, setInputs] = useState<Inputs | null>(null)
   const [assetsText, setAssetsText] = useState('')
+  const [liveTotal, setLiveTotal] = useState<number | null>(null)
+  const [liveCash, setLiveCash] = useState<number | null>(null)
   const [successProb, setSuccessProb] = useState<number | null>(null)
   const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -89,6 +91,9 @@ export default function CompassRetire() {
           ...DEFAULTS,
           ...Object.fromEntries(Object.entries(saved).filter(([, v]) => v !== null && v !== undefined)),
         }
+        const live = res.data.live_total_value != null ? Math.round(res.data.live_total_value) : null
+        setLiveTotal(live)
+        setLiveCash(res.data.live_cash != null ? Math.round(res.data.live_cash) : null)
         merged.current_assets = Math.round(merged.current_assets)
         setInputs(merged)
         setAssetsText(String(merged.current_assets || ''))
@@ -182,6 +187,19 @@ export default function CompassRetire() {
           <label className="mb-1 block text-sm text-apple-gray-600">Invested so far</label>
           <MoneyInput value={assetsText} placeholder="58,000"
             onChange={raw => { setAssetsText(raw); set({ current_assets: parseFloat(raw) || 0 }) }} />
+          {liveTotal !== null && Math.abs(liveTotal - inputs.current_assets) > Math.max(1, liveTotal * 0.005) ? (
+            <button
+              onClick={() => { setAssetsText(String(liveTotal)); set({ current_assets: liveTotal }) }}
+              className="mt-1.5 flex min-h-[36px] items-center gap-1.5 rounded-full bg-apple-blue/5 px-3 text-xs font-medium text-apple-blue active:bg-apple-blue/10"
+            >
+              Your portfolio is {money(liveTotal)}
+              {liveCash ? ` (incl. ${money(liveCash)} cash)` : ''} — tap to use it
+            </button>
+          ) : liveTotal !== null && (
+            <p className="mt-1 text-[11px] text-apple-gray-400">
+              Matched to your portfolio{liveCash ? ` — includes your ${money(liveCash)} cash` : ''}.
+            </p>
+          )}
         </div>
       </div>
 
@@ -236,11 +254,12 @@ export default function CompassRetire() {
 
       <RulesOfThumb
         invested={inputs.current_assets}
-        cash={0}
+        cash={liveCash ?? 0}
         stockPct={null}
         age={inputs.current_age}
         monthlySpending={inputs.monthly_spending}
         expectedReturnPct={inputs.expected_return_pct}
+        monthlyContribution={inputs.monthly_contribution}
       />
 
       <Link

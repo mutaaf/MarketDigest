@@ -170,6 +170,9 @@ export default function CompassIdeas() {
           age={retireInputs?.current_age ?? null}
           monthlySpending={retireInputs?.monthly_spending ?? null}
           expectedReturnPct={retireInputs?.expected_return_pct ?? null}
+          monthlyContribution={retireInputs?.monthly_contribution ?? null}
+          expenseRatioPct={summary.allocation.weighted_expense_ratio}
+          cryptoPct={summary.allocation.asset_classes.find(c => c.key === 'crypto')?.weight ?? null}
         />
       )}
 
