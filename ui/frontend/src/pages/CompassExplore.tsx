@@ -365,9 +365,18 @@ function StockDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => 
   )
 }
 
+interface EtfInsights {
+  pros: string[]
+  cons: string[]
+  best_for: string | null
+  similar: { symbol: string; name: string }[]
+  note?: string
+}
+
 function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => void }) {
   const { selected } = usePortfolioSelection()
   const [data, setData] = useState<EtfDetail | null>(null)
+  const [insights, setInsights] = useState<EtfInsights | null>(null)
   const [err, setErr] = useState<string | null>(null)
   const [buying, setBuying] = useState(false)
   const [shares, setShares] = useState('')
@@ -379,6 +388,9 @@ function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => vo
     api.get<EtfDetail>(`/etf/${symbol}`, { timeout: 60000 })
       .then(res => setData(res.data))
       .catch(e => setErr(e.response?.data?.detail || e.message))
+    api.get<EtfInsights>(`/etf/${symbol}/insights`, { timeout: 60000 })
+      .then(res => setInsights(res.data))
+      .catch(() => setInsights(null))
   }, [symbol])
 
   const addToPortfolio = async () => {
@@ -446,6 +458,53 @@ function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => vo
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Pros / cons / best for */}
+          {insights && (insights.pros.length > 0 || insights.best_for) && (
+            <div className="animate-fadeUp space-y-2 rounded-xl bg-apple-gray-50 p-3">
+              {insights.best_for && (
+                <p className="text-xs font-medium leading-relaxed text-apple-gray-700">
+                  <span className="font-semibold">Best for:</span> {insights.best_for}
+                </p>
+              )}
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {insights.pros.length > 0 && (
+                  <ul className="space-y-1">
+                    {insights.pros.map((p, i) => (
+                      <li key={i} className="flex gap-1.5 text-xs leading-snug text-apple-gray-600">
+                        <span className="font-bold text-green-600">+</span>{p}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {insights.cons.length > 0 && (
+                  <ul className="space-y-1">
+                    {insights.cons.map((c, i) => (
+                      <li key={i} className="flex gap-1.5 text-xs leading-snug text-apple-gray-600">
+                        <span className="font-bold text-apple-orange">–</span>{c}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Similar funds */}
+          {(insights?.similar?.length ?? 0) > 0 && (
+            <div>
+              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-apple-gray-400">Similar funds</p>
+              <div className="flex flex-wrap gap-1.5">
+                {insights!.similar.map(s => (
+                  <Link key={s.symbol} to={`/compass/compare?a=${symbol}&b=${s.symbol}`}
+                    className="rounded-full border border-apple-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-apple-gray-600 active:bg-apple-gray-100"
+                    title={s.name}>
+                    {s.symbol} <span className="text-apple-gray-400">vs</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 

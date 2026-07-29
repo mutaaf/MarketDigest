@@ -217,9 +217,9 @@ PWA home-screen app, all PRD MVP-v1 success criteria except accounts.
    on Ideas as "Owning the same thing twice").
 4. **Stock universe expansion** — ~50 stocks today vs PRD's ~250. Config work + sector
    tagging.
-5. **Watchlist news** — headlines per watched symbol (NewsAPI fetcher already exists).
-6. **ETF "Pros/Cons/Best For/Similar"** — LLM-generated, cached; fits existing patterns.
-7. **Performance over time chart** — daily value snapshots now RECORDING (weekday
+5. ~~Watchlist news~~ — DONE (tap a watchlist item → recent financial headlines).
+6. ~~ETF "Pros/Cons/Best For/Similar"~~ — DONE (LLM-written, 7-day cache, similar funds grade-ranked with compare links).
+7. ~~Performance over time chart~~ — DONE ("Your journey" card on Portfolio; grows from daily snapshots (weekday
    compass-daily job → data/history/, plus GET /{name}/history endpoint); chart UI
    once a few weeks of data exist.
 8. **Fair value / intrinsic value / DCF and moat ratings** — deliberately deferred;

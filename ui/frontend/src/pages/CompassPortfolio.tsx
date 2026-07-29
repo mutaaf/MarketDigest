@@ -253,6 +253,8 @@ export default function CompassPortfolio() {
         </>
       )}
 
+      {summary && v && v.holdings.length > 0 && <JourneyCard slug={selected} />}
+
       {sheet === 'add' && selected && (
         <AddHoldingSheet slug={selected} onClose={() => setSheet(null)} onSaved={() => { setSheet(null); loadSummary() }} />
       )}
@@ -324,6 +326,63 @@ function DeletePortfolioSheet({ slug, name, holdingsCount, onClose, onDeleted }:
         </div>
       </div>
     </Sheet>
+  )
+}
+
+interface HistoryRow { date: string; total_value: number }
+
+/** Portfolio value over time — grows richer every market day. */
+function JourneyCard({ slug }: { slug: string }) {
+  const [rows, setRows] = useState<HistoryRow[] | null>(null)
+  const [picked, setPicked] = useState<HistoryRow | null>(null)
+
+  useEffect(() => {
+    api.get<{ history: HistoryRow[] }>(`/portfolio/${slug}/history`)
+      .then(res => setRows(res.data.history.filter(r => r.total_value)))
+      .catch(() => setRows([]))
+  }, [slug])
+
+  if (rows === null || rows.length === 0) return null
+  const maxV = Math.max(...rows.map(r => r.total_value))
+  const minV = Math.min(...rows.map(r => r.total_value))
+  const span = Math.max(1, maxV - minV)
+  const first = rows[0], last = rows[rows.length - 1]
+  const change = last.total_value - first.total_value
+
+  return (
+    <section className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+      <div className="mb-2 flex items-baseline justify-between">
+        <h3 className="text-sm font-semibold text-apple-gray-700">Your journey</h3>
+        {rows.length > 1 && (
+          <span className={`text-xs font-medium tabular-nums ${change >= 0 ? 'text-green-600' : 'text-apple-red'}`}>
+            {signed(Math.round(change))} since {new Date(first.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          </span>
+        )}
+      </div>
+      {rows.length < 5 ? (
+        <p className="text-xs leading-relaxed text-apple-gray-500">
+          Compass records your portfolio's value every market day — {rows.length === 1
+            ? `tracking started ${new Date(first.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}. `
+            : `${rows.length} days recorded so far. `}
+          A growth chart appears here as history builds.
+        </p>
+      ) : (
+        <>
+          <div className="flex h-24 items-end gap-[2px]">
+            {rows.slice(-90).map(r => (
+              <button key={r.date} onClick={() => setPicked(r)}
+                className={`flex-1 rounded-t ${picked?.date === r.date ? 'bg-apple-blue' : 'bg-apple-blue/50'}`}
+                style={{ height: `${10 + ((r.total_value - minV) / span) * 90}%` }} />
+            ))}
+          </div>
+          <div className="mt-1 flex justify-between text-[10px] text-apple-gray-400">
+            <span>{new Date(rows.slice(-90)[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            {picked && <span className="font-semibold text-apple-gray-700">{new Date(picked.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: {money(picked.total_value)}</span>}
+            <span>today</span>
+          </div>
+        </>
+      )}
+    </section>
   )
 }
 

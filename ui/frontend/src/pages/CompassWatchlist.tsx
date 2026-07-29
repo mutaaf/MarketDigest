@@ -1,6 +1,6 @@
 // Compass — Watchlist: things to buy when the price is right.
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { Plus, Trash2, BellRing } from 'lucide-react'
+import { Plus, Trash2, BellRing, Newspaper, ExternalLink } from 'lucide-react'
 import api from '../api/client'
 import { SearchResult } from '../api/compass-types'
 import {
@@ -28,6 +28,7 @@ export default function CompassWatchlist() {
   const [error, setError] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState<string | null>(null)
 
   const load = () => {
     if (!selected) return
@@ -87,7 +88,8 @@ export default function CompassWatchlist() {
               {data.items.map(item => (
                 <div key={item.symbol} className={`rounded-2xl border bg-white p-4 ${item.at_buy_price ? 'border-apple-green/50' : 'border-apple-gray-200'}`}>
                   <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
+                    <button onClick={() => setExpanded(expanded === item.symbol ? null : item.symbol)}
+                      className="min-w-0 flex-1 text-left active:opacity-70">
                       <p className="font-semibold text-apple-gray-800">
                         {item.symbol}
                         {item.at_buy_price && (
@@ -98,7 +100,7 @@ export default function CompassWatchlist() {
                       </p>
                       <p className="truncate text-xs text-apple-gray-500">{item.name || ''}</p>
                       {item.notes && <p className="mt-1 text-xs italic text-apple-gray-400">"{item.notes}"</p>}
-                    </div>
+                    </button>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <p className="font-semibold tabular-nums text-apple-gray-800">{money(item.price)}</p>
@@ -118,6 +120,7 @@ export default function CompassWatchlist() {
                       </button>
                     </div>
                   </div>
+                  {expanded === item.symbol && <NewsBlock symbol={item.symbol} />}
                   {confirmRemove === item.symbol && (
                     <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-apple-red/5 px-3 py-2.5">
                       <p className="text-xs text-apple-gray-700">Remove {item.symbol} from your watchlist?</p>
@@ -140,6 +143,41 @@ export default function CompassWatchlist() {
       {showAdd && selected && (
         <AddWatchSheet slug={selected} onClose={() => setShowAdd(false)} onSaved={() => { setShowAdd(false); load() }} />
       )}
+    </div>
+  )
+}
+
+interface Article { title: string; source: string; url: string; published: string }
+
+function NewsBlock({ symbol }: { symbol: string }) {
+  const [articles, setArticles] = useState<Article[] | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+
+  useEffect(() => {
+    api.get<{ articles: Article[]; note?: string }>(`/compass/news/${symbol}`, { timeout: 30000 })
+      .then(res => { setArticles(res.data.articles); setNote(res.data.note ?? null) })
+      .catch(() => { setArticles([]); setNote("Couldn't load news right now.") })
+  }, [symbol])
+
+  return (
+    <div className="animate-fadeUp mt-3 border-t border-apple-gray-100 pt-2.5">
+      <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-apple-gray-400">
+        <Newspaper size={11} /> Recent news
+      </p>
+      {articles === null && <p className="text-xs text-apple-gray-400">Checking the news…</p>}
+      {articles !== null && articles.length === 0 && (
+        <p className="text-xs text-apple-gray-400">{note || `Nothing notable about ${symbol} lately.`}</p>
+      )}
+      {articles?.map((a, i) => (
+        <a key={i} href={a.url} target="_blank" rel="noopener noreferrer"
+          className="flex items-start gap-2 rounded-lg px-1 py-1.5 active:bg-apple-gray-50">
+          <ExternalLink size={11} className="mt-0.5 shrink-0 text-apple-gray-300" />
+          <span className="text-xs leading-snug text-apple-gray-600">
+            {a.title}
+            <span className="text-apple-gray-400"> — {a.source}{a.published ? ` · ${new Date(a.published).toLocaleDateString()}` : ''}</span>
+          </span>
+        </a>
+      ))}
     </div>
   )
 }

@@ -320,6 +320,46 @@ async def teach_topic(body: TeachRequest):
     return result
 
 
+@compass_router.get("/news/{symbol}")
+async def symbol_news(symbol: str):
+    """Recent headlines for one symbol — used by watchlist expansion.
+    Cached 1h; friendly empty result when the NewsAPI key is missing."""
+    from config.settings import get_compass_universe, get_settings
+    from src.cache.manager import CacheManager
+
+    symbol = symbol.upper()
+    if not get_settings().has_api_key("newsapi"):
+        return {"articles": [], "note": "News needs a NewsAPI key — add one on Settings."}
+
+    cache = CacheManager()
+    cache_key = f"compass_news:{symbol}"
+    cached = cache.get(cache_key, max_age_seconds=3600)
+    if cached is not None:
+        return {"articles": cached}
+
+    name = next((u.get("name") for u in get_compass_universe()
+                 if u["symbol"] == symbol), None)
+    try:
+        from src.fetchers.newsapi_fetcher import NewsAPIFetcher
+        # Query the client directly — the fetcher's own cache keys by method,
+        # not query, so per-symbol results would collide there.
+        base = f'"{name}"' if name else symbol
+        query = f"{base} AND (stock OR shares OR earnings OR investors)"
+        data = NewsAPIFetcher().client.get_everything(
+            q=query, language="en", sort_by="publishedAt", page_size=5)
+        articles = [{"title": a.get("title"), "source": (a.get("source") or {}).get("name", ""),
+                     "url": a.get("url"), "published": a.get("publishedAt", "")}
+                    for a in data.get("articles", [])
+                    if a.get("title") and a["title"] != "[Removed]"][:4]
+        cache.set(cache_key, articles)
+        return {"articles": articles}
+    except Exception:
+        stale = cache.get_stale(cache_key)
+        if stale:
+            return {"articles": stale, "stale": True}
+        return {"articles": [], "note": "Couldn't reach the news service right now."}
+
+
 class RefreshRequest(BaseModel):
     portfolio: str | None = None
 
