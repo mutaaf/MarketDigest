@@ -52,12 +52,15 @@ _failed = {}  # ip -> [timestamps of failed logins]
 
 DEFAULT_USERS = [
     {"id": "family", "name": "Aziz Family", "passcode": "bliss",
-     "role": "parent", "avatar": "avatar", "theme": "day"},
-    {"id": "astro", "name": "Astro", "passcode": "comet",
-     "role": "kid", "avatar": "astro", "theme": "sunset"},
-    {"id": "robo", "name": "Robo", "passcode": "beep",
-     "role": "kid", "avatar": "robo", "theme": "spring"},
+     "role": "parent", "avatar": "avatar", "theme": "day", "onboarded": True},
+    {"id": "astro", "name": "Astro", "passcode": "",
+     "role": "kid", "avatar": "astro", "theme": "sunset", "onboarded": False},
+    {"id": "robo", "name": "Robo", "passcode": "",
+     "role": "kid", "avatar": "robo", "theme": "spring", "onboarded": False},
 ]
+
+AVATAR_CHOICES = {"astro", "robo", "cat", "dino"}
+THEME_CHOICES = {"day", "sunset", "spring", "night"}
 
 
 def load_config():
@@ -78,12 +81,22 @@ def load_config():
         if cfg.get("passcode"):
             cfg["users"][0]["passcode"] = cfg["passcode"]
         changed = True
+    for u in cfg["users"]:
+        if "onboarded" not in u:
+            # kids run the setup wizard on first sign-in; parents don't
+            u["onboarded"] = u.get("role") == "parent"
+            changed = True
     if changed:
         CONFIG_PATH.write_text(json.dumps(cfg, indent=2) + "\n")
     return cfg
 
 
 CFG = load_config()
+
+
+def save_users():
+    """Persist CFG to disk after in-place user edits."""
+    CONFIG_PATH.write_text(json.dumps(CFG, indent=2) + "\n")
 
 
 def users():
@@ -531,7 +544,22 @@ class PortalHandler(SimpleHTTPRequestHandler):
         if path == "/api/users":   # login tiles (no passcodes!)
             return self._json({"users": [
                 {"id": u["id"], "name": u["name"], "role": u["role"],
-                 "avatar": u.get("avatar", "avatar")} for u in users()]})
+                 "avatar": u.get("avatar", "avatar"),
+                 "onboarded": bool(u.get("onboarded", True))} for u in users()]})
+
+        if path == "/api/admin/config":
+            if not user or user["role"] != "parent":
+                return self._json({"error": "parents only"}, 403)
+            return self._json({
+                "users": [{k: u.get(k) for k in
+                           ("id", "name", "role", "avatar", "theme",
+                            "passcode", "onboarded")} for u in users()],
+                "missions_raw": MISSIONS_PATH.read_text()
+                    if MISSIONS_PATH.exists() else "{}",
+                "registry_raw": REGISTRY_PATH.read_text()
+                    if REGISTRY_PATH.exists() else "{}",
+                "avatars": sorted(AVATAR_CHOICES | {"avatar"}),
+                "themes": sorted(THEME_CHOICES)})
 
         if path.startswith("/compass") or path.rstrip("/") == "/marketdigest":
             if not user:
@@ -663,7 +691,8 @@ class PortalHandler(SimpleHTTPRequestHandler):
             code = str(data.get("passcode", ""))
             uid = str(data.get("user", ""))
             u = user_by_id(uid)
-            if u and code and code == str(u.get("passcode")):
+            fresh_kid = u and u.get("role") == "kid" and not u.get("onboarded")
+            if u and (fresh_kid or (code and code == str(u.get("passcode")))):
                 _failed.pop(ip, None)
                 value = f"{now + SESSION_SECONDS}|{u['id']}"
                 cookie = (f"{COOKIE}={quote(sign(value))}; "
@@ -715,6 +744,64 @@ class PortalHandler(SimpleHTTPRequestHandler):
                 title=title, owner=(owner or {}).get("name", "me")))
             return self._json({"ok": True, "name": proj,
                                "url": f"/kids/{kid}/{proj}/"})
+
+        if path == "/api/onboard":
+            if user["role"] != "kid":
+                return self._json({"error": "only kids run the setup wizard"}, 403)
+            name = str(data.get("name", "")).strip()[:24]
+            avatar = str(data.get("avatar", ""))
+            theme = str(data.get("theme", ""))
+            passcode = str(data.get("passcode", "")).strip()
+            if len(name) < 1:
+                return self._json({"error": "tell us your name!"}, 400)
+            if avatar not in AVATAR_CHOICES or theme not in THEME_CHOICES:
+                return self._json({"error": "pick a look and a world"}, 400)
+            if not (3 <= len(passcode) <= 30):
+                return self._json({"error": "passcode needs at least 3 letters"}, 400)
+            u = user_by_id(user["id"])
+            u.update(name=name, avatar=avatar, theme=theme,
+                     passcode=passcode, onboarded=True)
+            save_users()
+            return self._json({"ok": True})
+
+        if path == "/api/admin/user":
+            if user["role"] != "parent":
+                return self._json({"error": "parents only"}, 403)
+            u = user_by_id(str(data.get("id", "")))
+            if not u:
+                return self._json({"error": "no such user"}, 404)
+            if data.get("reset"):
+                u.update(passcode="", onboarded=False)
+            else:
+                name = str(data.get("name", "")).strip()[:24]
+                if name:
+                    u["name"] = name
+                if data.get("avatar") in AVATAR_CHOICES | {"avatar"}:
+                    u["avatar"] = data["avatar"]
+                if data.get("theme") in THEME_CHOICES:
+                    u["theme"] = data["theme"]
+                pc = str(data.get("passcode", "")).strip()
+                if pc:
+                    u["passcode"] = pc
+                    u["onboarded"] = True
+            save_users()
+            return self._json({"ok": True})
+
+        if path == "/api/admin/save":
+            if user["role"] != "parent":
+                return self._json({"error": "parents only"}, 403)
+            which = str(data.get("which", ""))
+            content = str(data.get("content", ""))
+            target = {"missions": MISSIONS_PATH,
+                      "registry": REGISTRY_PATH}.get(which)
+            if not target:
+                return self._json({"error": "unknown config"}, 404)
+            try:
+                json.loads(content)
+            except json.JSONDecodeError as e:
+                return self._json({"error": f"Not valid JSON: {e}"}, 400)
+            target.write_text(content if content.endswith("\n") else content + "\n")
+            return self._json({"ok": True})
 
         if path == "/api/quests/check":
             kid = user["id"] if user["role"] != "parent" else \
