@@ -30,18 +30,28 @@ const GLOSSARY: Record<string, string> = {
   'crypto': "Digital assets like Bitcoin. Can rise fast and drop 50%+ in months — treat it as the spiciest slice of a portfolio, not the base.",
 }
 
-const DEFS_KEY = 'compass.defs'
+const DEFS_KEY = 'compass.defs.v2'
 
-function loadLocal(): Record<string, string> {
-  try { return JSON.parse(localStorage.getItem(DEFS_KEY) || '{}') } catch { return {} }
+// Timestamped entries so the storage GC can evict least-recently-used defs
+function loadLocal(term: string): string | null {
+  try {
+    const defs = JSON.parse(localStorage.getItem(DEFS_KEY) || '{}')
+    const entry = defs[term]
+    if (entry?.t) {
+      entry.ts = Date.now()  // touch for LRU
+      localStorage.setItem(DEFS_KEY, JSON.stringify(defs))
+      return entry.t
+    }
+  } catch { /* fine */ }
+  return null
 }
 
 function saveLocal(term: string, text: string) {
   try {
-    const defs = loadLocal()
-    defs[term] = text
+    const defs = JSON.parse(localStorage.getItem(DEFS_KEY) || '{}')
+    defs[term] = { t: text, ts: Date.now() }
     localStorage.setItem(DEFS_KEY, JSON.stringify(defs))
-  } catch { /* storage full — fine */ }
+  } catch { /* storage full — GC runs elsewhere */ }
 }
 
 // One definition open per page: context carries the setter down.
@@ -61,7 +71,7 @@ export function TermProvider({ children }: { children: ReactNode }) {
     setActive(term)
     const builtin = GLOSSARY[key]
     if (builtin) { setText(builtin); return }
-    const local = loadLocal()[key]
+    const local = loadLocal(key)
     if (local) { setText(local); return }
     setLoading(true)
     setText('')

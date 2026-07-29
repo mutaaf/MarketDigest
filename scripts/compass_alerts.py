@@ -135,6 +135,16 @@ def main() -> None:
             print(f"[daily] Recorded value history for {record_all()} portfolio(s).")
         except Exception as e:
             print(f"[daily] History snapshot failed: {e}")
+        # Server-side garbage collection: keep the newest 200 rec snapshots
+        try:
+            recs_dir = PROJECT_ROOT / "logs" / "compass_recs"
+            snaps = sorted(recs_dir.glob("*.json"))
+            for old in snaps[:-200]:
+                old.unlink(missing_ok=True)
+            if len(snaps) > 200:
+                print(f"[daily] Pruned {len(snaps) - 200} old recommendation snapshots.")
+        except OSError:
+            pass
         content, state = build_daily_alerts()
     else:
         content = build_weekly_summary()

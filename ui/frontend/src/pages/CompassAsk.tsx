@@ -1,15 +1,12 @@
 // Compass — Ask: a portfolio-aware assistant that explains, in plain English.
+// Conversations persist per portfolio and answers keep arriving even if you
+// navigate away mid-question (see chatStore).
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Send, Compass, BookOpen, Plus, Check } from 'lucide-react'
+import { Send, Compass, BookOpen, Plus, Check, Trash2 } from 'lucide-react'
 import api from '../api/client'
 import { usePortfolioSelection } from '../components/compass/ui'
-
-interface Msg {
-  role: 'user' | 'assistant'
-  content: string
-  topics?: string[]
-}
+import { clearChat, sendMessage, useChat } from '../components/compass/chatStore'
 
 const SUGGESTIONS = [
   'How is my portfolio doing?',
@@ -22,13 +19,25 @@ const SUGGESTIONS = [
 export default function CompassAsk() {
   const { portfolios, selected } = usePortfolioSelection()
   const [params] = useSearchParams()
-  const [messages, setMessages] = useState<Msg[]>([])
+  const { messages, busy, error } = useChat(selected)
   const [input, setInput] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [savedTopics, setSavedTopics] = useState<Set<string>>(new Set())
+  const [confirmClear, setConfirmClear] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const autoSent = useRef(false)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages.length, busy])
+
+  // Deep links (?q=...) fire once the portfolio selection settles
+  useEffect(() => {
+    const q = params.get('q')
+    if (q && !autoSent.current && portfolios !== null) {
+      autoSent.current = true
+      sendMessage(selected, q)
+    }
+  }, [params, portfolios, selected])
 
   const saveTopic = async (term: string, context: string) => {
     if (!selected) return
@@ -37,43 +46,6 @@ export default function CompassAsk() {
       await api.post(`/portfolio/${selected}/learn`, { term, context: context.slice(0, 500) }, { timeout: 60000 })
     } catch {
       setSavedTopics(prev => { const next = new Set(prev); next.delete(term); return next })
-    }
-  }
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, busy])
-
-  // Other pages deep-link here with a ready-made question (?q=...) —
-  // fire it once the portfolio selection has settled.
-  useEffect(() => {
-    const q = params.get('q')
-    if (q && !autoSent.current && portfolios !== null) {
-      autoSent.current = true
-      send(q)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, portfolios, selected])
-
-  const send = async (text: string) => {
-    const question = text.trim()
-    if (!question || busy) return
-    const next: Msg[] = [...messages, { role: 'user', content: question }]
-    setMessages(next)
-    setInput('')
-    setBusy(true)
-    setError(null)
-    try {
-      const res = await api.post<{ reply: string; suggested_topics?: string[] }>('/assistant/chat', {
-        portfolio: selected || null,
-        messages: next.slice(-12),
-      }, { timeout: 120000 })
-      setMessages([...next, { role: 'assistant', content: res.data.reply, topics: res.data.suggested_topics }])
-    } catch (err: any) {
-      setError(err.response?.data?.detail ||
-        "Compass couldn't answer just now. Check your connection and try again.")
-    } finally {
-      setBusy(false)
     }
   }
 
@@ -90,7 +62,7 @@ export default function CompassAsk() {
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             {SUGGESTIONS.map(s => (
-              <button key={s} onClick={() => send(s)}
+              <button key={s} onClick={() => sendMessage(selected, s)}
                 className="min-h-[40px] rounded-full border border-apple-gray-200 bg-white px-4 text-sm text-apple-gray-600 active:bg-apple-gray-100">
                 {s}
               </button>
@@ -101,6 +73,21 @@ export default function CompassAsk() {
 
       {messages.length > 0 && (
         <div className="flex-1 space-y-3 pb-4">
+          <div className="flex justify-end">
+            {confirmClear ? (
+              <span className="flex items-center gap-2 text-xs text-apple-gray-500">
+                Clear this conversation?
+                <button onClick={() => setConfirmClear(false)} className="min-h-[36px] rounded-lg px-2 font-medium">Keep</button>
+                <button onClick={() => { clearChat(selected); setConfirmClear(false) }}
+                  className="min-h-[36px] rounded-lg bg-apple-red px-3 font-semibold text-white">Clear</button>
+              </span>
+            ) : (
+              <button onClick={() => setConfirmClear(true)}
+                className="flex min-h-[36px] items-center gap-1.5 rounded-lg px-2 text-xs text-apple-gray-400 active:text-apple-red">
+                <Trash2 size={12} /> New chat
+              </button>
+            )}
+          </div>
           {messages.map((m, i) => (
             <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
@@ -151,7 +138,7 @@ export default function CompassAsk() {
 
       {/* Input bar */}
       <form
-        onSubmit={(e: FormEvent) => { e.preventDefault(); send(input) }}
+        onSubmit={(e: FormEvent) => { e.preventDefault(); sendMessage(selected, input); setInput('') }}
         className="sticky flex gap-2 border-t border-apple-gray-200 bg-apple-gray-100 py-3 md:bottom-0"
         style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
       >

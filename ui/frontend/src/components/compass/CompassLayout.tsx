@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import api from '../../api/client'
 import { TermProvider } from './Term'
+import { gcStorage } from './storage'
 
 /** Family "pull the latest" — server enforces a 5-minute global cooldown. */
 function RefreshButton() {
@@ -75,6 +76,8 @@ export default function CompassLayout() {
   // its own title, icon, and PWA manifest (so "Add to Home Screen" installs
   // Compass at /compass, not the trading Command Center).
   useEffect(() => {
+    gcStorage()  // keep compass.* localStorage under its 10MB budget
+    localStorage.removeItem('compass.defs')  // pre-v2 definitions format
     const prevTitle = document.title
     document.title = 'Compass'
 
