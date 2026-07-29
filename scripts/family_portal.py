@@ -247,9 +247,214 @@ function party() {{
   }}
 }}
 </script>
+<script src="/guestbook.js" defer></script>
 </body>
 </html>
 """
+
+# ---- curriculum: missions, progress, guestbook, visits ---------------------
+MISSIONS_PATH = Path.home() / ".config" / "azizfamily-missions.json"
+
+DEFAULT_MISSIONS = {
+    "_help": ("Quest Log missions. Tracks are assigned per kid in 'assign'. "
+              "check types: claim (honor button), contains {pattern,n?}, "
+              "not_contains {pattern}, projects {n}, visits {n}, "
+              "gb_given {n}, robot {level}. Patterns are regexes matched "
+              "against the kid's pages. Edit freely; restart the portal."),
+    "assign": {"astro": "builder", "robo": "explorer"},
+    "tracks": {
+        "explorer": [
+            {"id": "e1", "title": "Secret Agent Sign-In", "xp": 20,
+             "story": "Sign in all by yourself. Your passcode is a SECRET — that's rule one of computers.",
+             "std": "Digital citizenship: passwords",
+             "check": {"type": "claim"}},
+            {"id": "e2", "title": "Word Wizard", "xp": 25,
+             "story": "Open the Code Editor and change what your button says. Words on pages are just code you can edit!",
+             "std": "HTML: text", "check": {"type": "not_contains", "pattern": "Press me!"}},
+            {"id": "e3", "title": "Color Changer", "xp": 25,
+             "story": "Find the sky color #7ec8ff in your code and change it to a new color. Try 'hotpink'!",
+             "std": "CSS: properties", "check": {"type": "not_contains", "pattern": "#7ec8ff"}},
+            {"id": "e4", "title": "Robot Steps", "xp": 30,
+             "story": "Open the Robot Playground and beat level 2. Robots only do EXACTLY what you tell them.",
+             "std": "Sequences (CSTA 1A-AP-10)", "check": {"type": "robot", "level": 2}},
+            {"id": "e5", "title": "Loop-de-Loop", "xp": 40, "badge": "refresh",
+             "story": "Beat the Robot Playground level that needs the repeat block. Loops save so much tapping!",
+             "std": "Loops (CSTA 1A-AP-10)", "check": {"type": "robot", "level": 5}},
+            {"id": "e6", "title": "Master Builder", "xp": 30,
+             "story": "Use 'Build Something New!' to make a second project about anything you love.",
+             "std": "Creating digital artifacts", "check": {"type": "projects", "n": 2}},
+            {"id": "e7", "title": "Famous!", "xp": 25,
+             "story": "Get 5 visits on your pages. Every visit is a computer asking our server for your page!",
+             "std": "How the web works", "check": {"type": "visits", "n": 5}},
+            {"id": "e8", "title": "Kind Visitor", "xp": 25, "badge": "heart",
+             "story": "Sign someone else's guestbook with something NICE. The internet remembers what we write.",
+             "std": "Digital citizenship: kindness", "check": {"type": "gb_given", "n": 1}},
+            {"id": "e9", "title": "Wifi Detective", "xp": 20,
+             "story": "Find 5 things in our house that use wifi and tell a parent. (Hint: some are hiding!)",
+             "std": "Networks (CSTA 1A-NI-04)", "check": {"type": "claim"}},
+            {"id": "e10", "title": "Demo Star", "xp": 50, "badge": "star",
+             "story": "Show your page to everyone at Family Demo Day and tell us how you built it!",
+             "std": "Communicating about computing", "check": {"type": "claim"}},
+        ],
+        "builder": [
+            {"id": "b1", "title": "Make It Yours", "xp": 20,
+             "story": "Open the Code Editor and change what your button says.",
+             "std": "HTML: text", "check": {"type": "not_contains", "pattern": "Press me!"}},
+            {"id": "b2", "title": "Style Master", "xp": 25,
+             "story": "Your heading color is #1446a0. Find it in the CSS and pick your own color.",
+             "std": "CSS (CSTA 1B-AP-12: modify programs)",
+             "check": {"type": "not_contains", "pattern": "color:\\s*#1446a0"}},
+            {"id": "b3", "title": "Headline Act", "xp": 25,
+             "story": "Add a brand-new <h2> headline anywhere on a page.",
+             "std": "HTML structure", "check": {"type": "contains", "pattern": "<h2"}},
+            {"id": "b4", "title": "Picture Perfect", "xp": 30,
+             "story": "Add a picture with an <img> tag. Ask a parent to help find an image address.",
+             "std": "HTML media", "check": {"type": "contains", "pattern": "<img"}},
+            {"id": "b5", "title": "Button Boss", "xp": 35,
+             "story": "Add a SECOND button that does something different when clicked.",
+             "std": "Events (CSTA 1B-AP-15)",
+             "check": {"type": "contains", "pattern": "onclick", "n": 2}},
+            {"id": "b6", "title": "List Legend", "xp": 25,
+             "story": "Add a list (<ul> and <li>) of your top 3 anythings.",
+             "std": "HTML structure", "check": {"type": "contains", "pattern": "<[uo]l"}},
+            {"id": "b7", "title": "Serial Builder", "xp": 25,
+             "story": "Ship a second project with 'Build Something New!'",
+             "std": "Creating digital artifacts", "check": {"type": "projects", "n": 2}},
+            {"id": "b8", "title": "Linked Up", "xp": 30,
+             "story": "Make a link (<a href=\"...\">) from one of your pages to any other kid page.",
+             "std": "Hyperlinks + networks",
+             "check": {"type": "contains", "pattern": "href=[\"']/kids/"}},
+            {"id": "b9", "title": "Robot Navigator", "xp": 35,
+             "story": "Beat Robot Playground level 5 — you'll need the repeat block.",
+             "std": "Loops (CSTA 1B-AP-10)", "check": {"type": "robot", "level": 5}},
+            {"id": "b10", "title": "Robot Coder", "xp": 45, "badge": "robo",
+             "story": "Beat a code-mode level by TYPING the commands. That's real programming syntax.",
+             "std": "Programming (CSTA 1B-AP-11)", "check": {"type": "robot", "level": 8}},
+            {"id": "b11", "title": "Crowd Pleaser", "xp": 30,
+             "story": "Get 10 visits across your pages. Tell the family at dinner!",
+             "std": "How the web works", "check": {"type": "visits", "n": 10}},
+            {"id": "b12", "title": "Good Neighbor", "xp": 25, "badge": "heart",
+             "story": "Sign 2 guestbooks with kind, helpful comments.",
+             "std": "Digital citizenship", "check": {"type": "gb_given", "n": 2}},
+            {"id": "b13", "title": "The Teacher", "xp": 40,
+             "story": "Help your sibling finish one of THEIR missions. Teaching is the final boss of learning.",
+             "std": "Collaboration (CSTA 1B-IC-22)", "check": {"type": "claim"}},
+            {"id": "b14", "title": "Demo Star", "xp": 50, "badge": "star",
+             "story": "Present a project at Family Demo Day: what it does, and one thing that was hard.",
+             "std": "Communicating about computing", "check": {"type": "claim"}},
+        ],
+    },
+}
+
+
+def missions_cfg():
+    if not MISSIONS_PATH.exists():
+        MISSIONS_PATH.write_text(json.dumps(DEFAULT_MISSIONS, indent=2) + "\n")
+    try:
+        return json.loads(MISSIONS_PATH.read_text())
+    except (OSError, json.JSONDecodeError):
+        return DEFAULT_MISSIONS
+
+
+def _read_json(path, default):
+    try:
+        return json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return default
+
+
+def _write_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2) + "\n")
+
+
+def progress_path(kid):
+    return KIDS_DIR / kid / ".progress.json"
+
+
+def stats_path(kid):
+    return KIDS_DIR / kid / ".stats.json"
+
+
+def guestbook_path(kid):
+    return KIDS_DIR / kid / ".guestbook.json"
+
+
+def kid_pages_text(kid):
+    out = []
+    for p in kid_projects(kid):
+        f = kid_file(kid, p["name"])
+        if f and f.exists():
+            out.append(f.read_text(errors="replace"))
+    return out
+
+
+def run_check(kid, check):
+    ctype = check.get("type")
+    if ctype == "claim":
+        return False   # only completes via explicit claim
+    if ctype == "contains":
+        n = int(check.get("n", 1))
+        pat = re.compile(check.get("pattern", ""), re.I)
+        return any(len(pat.findall(text)) >= n for text in kid_pages_text(kid))
+    if ctype == "not_contains":
+        pat = re.compile(check.get("pattern", ""), re.I)
+        pages = kid_pages_text(kid)
+        return bool(pages) and any(not pat.search(t) for t in pages)
+    if ctype == "projects":
+        return len(kid_projects(kid)) >= int(check.get("n", 2))
+    if ctype == "visits":
+        stats = _read_json(stats_path(kid), {})
+        return sum(stats.values()) >= int(check.get("n", 5))
+    if ctype == "gb_given":
+        count = 0
+        for other in kid_ids():
+            if other == kid:
+                continue
+            for entry in _read_json(guestbook_path(other), []):
+                if entry.get("from_id") == kid:
+                    count += 1
+        return count >= int(check.get("n", 1))
+    if ctype == "robot":
+        prog = _read_json(progress_path(kid), {})
+        return int(prog.get("robot", 0)) >= int(check.get("level", 1))
+    return False
+
+
+def kid_track(kid):
+    cfg = missions_cfg()
+    track = cfg.get("assign", {}).get(kid, "explorer")
+    return track, cfg.get("tracks", {}).get(track, [])
+
+
+def quest_state(kid, claim_id=None):
+    """Evaluate all missions; auto-award newly passed ones. Returns state."""
+    _, missions = kid_track(kid)
+    prog = _read_json(progress_path(kid), {})
+    done = prog.setdefault("done", {})
+    changed = False
+    for m in missions:
+        if m["id"] in done:
+            continue
+        passed = run_check(kid, m.get("check", {}))
+        if not passed and claim_id == m["id"] and \
+                m.get("check", {}).get("type") == "claim":
+            passed = True
+        if passed:
+            done[m["id"]] = time.time()
+            changed = True
+    prog["xp"] = sum(m["xp"] for m in missions if m["id"] in done)
+    if changed or not progress_path(kid).exists():
+        _write_json(progress_path(kid), prog)
+    return {
+        "track": kid_track(kid)[0],
+        "xp": prog["xp"],
+        "level": prog["xp"] // 100 + 1,
+        "robot": int(prog.get("robot", 0)),
+        "missions": [{**m, "done": m["id"] in done} for m in missions],
+        "badges": [m["badge"] for m in missions
+                   if m["id"] in done and m.get("badge")],
+    }
 
 
 def kid_ids():
@@ -347,8 +552,8 @@ class PortalHandler(SimpleHTTPRequestHandler):
                              "live": port_alive(a["port"]),
                              "startedByPortal": app_pid(a["id"]) is not None})
             links = []
-            for l in reg.get("links", []):
-                links.append({**l, "live": port_alive(l.get("port", 0))})
+            for link in reg.get("links", []):
+                links.append({**link, "live": port_alive(link.get("port", 0))})
             kids = {k: kid_projects(k) for k in kid_ids()}
             return self._json({"links": links, "apps": apps, "kids": kids,
                                "role": user["role"]})
@@ -388,9 +593,52 @@ class PortalHandler(SimpleHTTPRequestHandler):
                 return self._json({"error": "that's not your project"}, 403)
             return self._json({"content": f.read_text(errors="replace")})
 
+        if path == "/api/quests":
+            if not user:
+                return self._json({"error": "sign in first"}, 401)
+            q = parse_qs(parsed.query)
+            kid = (q.get("kid") or [user["id"]])[0]
+            if user["role"] != "parent" and user["id"] != kid:
+                return self._json({"error": "not your quest log"}, 403)
+            if kid not in kid_ids():
+                return self._json({"error": "not a kid account"}, 404)
+            return self._json(quest_state(kid))
+
+        if path == "/api/guestbook":
+            if not user:
+                return self._json({"error": "sign in first"}, 401)
+            q = parse_qs(parsed.query)
+            kid = (q.get("kid") or [""])[0]
+            proj = (q.get("proj") or [""])[0]
+            if not kid_file(kid, proj):
+                return self._json({"error": "not found"}, 404)
+            entries = [e for e in _read_json(guestbook_path(kid), [])
+                       if e.get("proj") == proj]
+            visits = _read_json(stats_path(kid), {}).get(proj, 0)
+            return self._json({"entries": entries[-30:], "visits": visits,
+                               "me": user["name"]})
+
+        if path == "/api/demo":
+            if not user:
+                return self._json({"error": "sign in first"}, 401)
+            pages = []
+            for kid in kid_ids():
+                owner = user_by_id(kid)
+                for p in kid_projects(kid):
+                    pages.append({"kid": kid,
+                                  "owner": (owner or {}).get("name", kid),
+                                  "name": p["name"], "url": p["url"]})
+            return self._json({"pages": pages})
+
         # kids' pages require sign-in; everything else static is the shell
-        if path.startswith("/kids/") and not user:
-            return self._go("/")
+        if path.startswith("/kids/"):
+            if not user:
+                return self._go("/")
+            m = re.match(r"^/kids/([^/]+)/([^/]+)/(index\.html)?$", path)
+            if m and kid_file(m.group(1), m.group(2)):
+                stats = _read_json(stats_path(m.group(1)), {})
+                stats[m.group(2)] = stats.get(m.group(2), 0) + 1
+                _write_json(stats_path(m.group(1)), stats)
         if any(seg.startswith(".") for seg in path.split("/") if seg):
             return self._json({"error": "not found"}, 404)
         return super().do_GET()
@@ -467,6 +715,41 @@ class PortalHandler(SimpleHTTPRequestHandler):
                 title=title, owner=(owner or {}).get("name", "me")))
             return self._json({"ok": True, "name": proj,
                                "url": f"/kids/{kid}/{proj}/"})
+
+        if path == "/api/quests/check":
+            kid = user["id"] if user["role"] != "parent" else \
+                str(data.get("kid", ""))
+            if kid not in kid_ids():
+                return self._json({"error": "not a kid account"}, 404)
+            before = {m["id"] for m in quest_state(kid)["missions"] if m["done"]}
+            state = quest_state(kid, claim_id=str(data.get("mission", "")))
+            after = {m["id"] for m in state["missions"] if m["done"]}
+            return self._json({**state, "new": sorted(after - before)})
+
+        if path == "/api/robot":
+            if user["role"] != "kid":
+                return self._json({"ok": True, "note": "parents play for fun"})
+            level = max(0, min(20, int(data.get("level", 0) or 0)))
+            prog = _read_json(progress_path(user["id"]), {})
+            if level > int(prog.get("robot", 0)):
+                prog["robot"] = level
+                _write_json(progress_path(user["id"]), prog)
+            return self._json({"ok": True, "robot": prog.get("robot", 0)})
+
+        if path == "/api/guestbook":
+            kid = str(data.get("kid", ""))
+            proj = str(data.get("proj", ""))
+            msg = str(data.get("msg", "")).strip()[:300]
+            if not kid_file(kid, proj):
+                return self._json({"error": "not found"}, 404)
+            if not msg:
+                return self._json({"error": "write something first!"}, 400)
+            entries = _read_json(guestbook_path(kid), [])
+            entries.append({"proj": proj, "from_id": user["id"],
+                            "from": user["name"], "msg": msg,
+                            "ts": time.time()})
+            _write_json(guestbook_path(kid), entries[-200:])
+            return self._json({"ok": True})
 
         if path == "/api/kids/file":
             kid = str(data.get("kid", ""))
