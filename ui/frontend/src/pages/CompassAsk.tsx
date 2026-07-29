@@ -1,13 +1,14 @@
 // Compass — Ask: a portfolio-aware assistant that explains, in plain English.
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Send, Compass } from 'lucide-react'
+import { Send, Compass, BookOpen, Plus, Check } from 'lucide-react'
 import api from '../api/client'
 import { usePortfolioSelection } from '../components/compass/ui'
 
 interface Msg {
   role: 'user' | 'assistant'
   content: string
+  topics?: string[]
 }
 
 const SUGGESTIONS = [
@@ -25,8 +26,19 @@ export default function CompassAsk() {
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [savedTopics, setSavedTopics] = useState<Set<string>>(new Set())
   const bottomRef = useRef<HTMLDivElement>(null)
   const autoSent = useRef(false)
+
+  const saveTopic = async (term: string, context: string) => {
+    if (!selected) return
+    setSavedTopics(prev => new Set(prev).add(term))
+    try {
+      await api.post(`/portfolio/${selected}/learn`, { term, context: context.slice(0, 500) }, { timeout: 60000 })
+    } catch {
+      setSavedTopics(prev => { const next = new Set(prev); next.delete(term); return next })
+    }
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -52,11 +64,11 @@ export default function CompassAsk() {
     setBusy(true)
     setError(null)
     try {
-      const res = await api.post<{ reply: string }>('/assistant/chat', {
+      const res = await api.post<{ reply: string; suggested_topics?: string[] }>('/assistant/chat', {
         portfolio: selected || null,
         messages: next.slice(-12),
       }, { timeout: 120000 })
-      setMessages([...next, { role: 'assistant', content: res.data.reply }])
+      setMessages([...next, { role: 'assistant', content: res.data.reply, topics: res.data.suggested_topics }])
     } catch (err: any) {
       setError(err.response?.data?.detail ||
         "Compass couldn't answer just now. Check your connection and try again.")
@@ -90,7 +102,7 @@ export default function CompassAsk() {
       {messages.length > 0 && (
         <div className="flex-1 space-y-3 pb-4">
           {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 m.role === 'user'
                   ? 'rounded-br-md bg-apple-blue text-white'
@@ -98,6 +110,22 @@ export default function CompassAsk() {
               }`}>
                 {m.content}
               </div>
+              {m.role === 'assistant' && (m.topics?.length ?? 0) > 0 && (
+                <div className="mt-1.5 flex max-w-[85%] flex-wrap items-center gap-1.5">
+                  <BookOpen size={12} className="text-apple-gray-300" />
+                  {m.topics!.map(t => (
+                    <button key={t} onClick={() => saveTopic(t, m.content)} disabled={savedTopics.has(t)}
+                      className={`flex min-h-[32px] items-center gap-1 rounded-full px-2.5 text-[11px] font-medium ${
+                        savedTopics.has(t)
+                          ? 'bg-apple-green/10 text-green-700'
+                          : 'border border-apple-gray-200 bg-white text-apple-gray-500 active:bg-apple-gray-100'
+                      }`}>
+                      {savedTopics.has(t) ? <Check size={10} /> : <Plus size={10} />}
+                      {savedTopics.has(t) ? `In Learn: ${t}` : `Learn: ${t}`}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
           {busy && (

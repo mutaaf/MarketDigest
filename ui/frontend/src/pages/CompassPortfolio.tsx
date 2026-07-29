@@ -5,7 +5,7 @@ import { Plus, Trash2, Upload, Wallet, MessageCircleQuestion, Pencil } from 'luc
 import api from '../api/client'
 import { AllocationHolding, PortfolioSummary, SearchResult } from '../api/compass-types'
 import {
-  AllocationBars, EmptyState, ErrorState, GradeChip, PageSkeleton, Sheet,
+  AllocationBars, EmptyState, ErrorState, GradeChip, MoneyInput, PageSkeleton, Sheet,
   WarningsBanner, inputCls, money, primaryBtn, signed, usePortfolioSelection,
 } from '../components/compass/ui'
 import SmartImport from '../components/compass/SmartImport'
@@ -378,7 +378,7 @@ function EditHoldingSheet({ slug, holding, onClose, onSaved }: {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-apple-gray-500">Price paid per share</label>
-            <input value={cost} onChange={e => setCost(e.target.value)} inputMode="decimal" placeholder="unknown" className={inputCls} />
+            <MoneyInput value={cost} onChange={setCost} placeholder="unknown" />
           </div>
         </div>
         {err && <p className="text-xs text-apple-red">{err}</p>}
@@ -458,7 +458,7 @@ function AddHoldingSheet({ slug, onClose, onSaved }: { slug: string; onClose: ()
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-apple-gray-500">Price paid per share <span className="text-apple-gray-300">(optional)</span></label>
-            <input value={cost} onChange={e => setCost(e.target.value)} placeholder="380.50" inputMode="decimal" className={inputCls} />
+            <MoneyInput value={cost} onChange={setCost} placeholder="380.50" />
           </div>
         </div>
         {err && <p className="text-xs text-apple-red">{err}</p>}
@@ -495,7 +495,7 @@ function CashSheet({ slug, current, onClose, onSaved }: { slug: string; current:
           <Wallet size={13} className="mr-1 inline" />
           Money sitting in your brokerage account waiting to be invested. Compass uses this for its recommendations.
         </p>
-        <input value={amount} onChange={e => setAmount(e.target.value)} inputMode="decimal" placeholder="5000" autoFocus className={inputCls} />
+        <MoneyInput value={amount} onChange={setAmount} placeholder="5,000" autoFocus />
         {err && <p className="text-xs text-apple-red">{err}</p>}
         <button type="submit" disabled={saving} className={primaryBtn}>{saving ? 'Saving…' : 'Save'}</button>
       </form>

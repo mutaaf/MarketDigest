@@ -1,10 +1,14 @@
 // Compass — Ideas: portfolio health check + "what should I buy next?"
 import { FormEvent, useEffect, useState } from 'react'
-import { CheckCircle2, AlertCircle, MinusCircle, RefreshCw, Sparkles, SlidersHorizontal, Copy } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import {
+  CheckCircle2, AlertCircle, MinusCircle, RefreshCw, Sparkles, SlidersHorizontal,
+  Copy, ChevronDown, Eye, ArrowLeftRight, MessageCircleQuestion, Check,
+} from 'lucide-react'
 import api from '../api/client'
 import { PortfolioSummary, Recommendations } from '../api/compass-types'
 import {
-  EmptyState, ErrorState, GradeChip, PageSkeleton, Sheet, Skeleton,
+  EmptyState, ErrorState, GradeChip, PageSkeleton, ScoreRing, Sheet, Skeleton,
   WarningsBanner, inputCls, money, primaryBtn, usePortfolioSelection,
 } from '../components/compass/ui'
 
@@ -30,6 +34,15 @@ export default function CompassIdeas() {
   const [recsLoading, setRecsLoading] = useState(false)
   const [recsError, setRecsError] = useState<string | null>(null)
   const [showTargets, setShowTargets] = useState(false)
+  const [openFactor, setOpenFactor] = useState<string | null>(null)
+  const [watched, setWatched] = useState<Set<string>>(new Set())
+
+  const addToWatchlist = async (symbol: string) => {
+    try {
+      await api.post(`/portfolio/${selected}/watchlist`, { symbol })
+      setWatched(prev => new Set(prev).add(symbol))
+    } catch { /* non-fatal */ }
+  }
 
   const loadSummary = () => {
     if (!selected) return
@@ -63,25 +76,45 @@ export default function CompassIdeas() {
       {summaryError ? (
         <ErrorState message={summaryError} onRetry={loadSummary} />
       ) : summary && (
-        <section className="rounded-2xl border border-apple-gray-200 bg-white p-5">
+        <section className="animate-fadeUp rounded-2xl border border-apple-gray-200 bg-white p-5">
           <div className="flex items-center gap-4">
-            <GradeChip grade={summary.health.grade} size="lg" />
+            <ScoreRing score={summary.health.score ?? 0}>
+              <GradeChip grade={summary.health.grade} size="lg" />
+            </ScoreRing>
             <div>
               <h2 className="text-base font-semibold text-apple-gray-800">Portfolio health</h2>
               <p className="mt-0.5 text-sm text-apple-gray-500">{summary.health.summary}</p>
+              {summary.health.score !== null && (
+                <p className="mt-0.5 text-xs tabular-nums text-apple-gray-400">{summary.health.score.toFixed(0)} / 100</p>
+              )}
             </div>
           </div>
           {summary.health.factors.length > 0 && (
-            <div className="mt-4 space-y-3 border-t border-apple-gray-100 pt-4">
-              {summary.health.factors.map(f => (
-                <div key={f.name} className="flex gap-3">
-                  <div className="mt-0.5 shrink-0">{statusIcon[f.status]}</div>
-                  <div>
-                    <p className="text-sm font-medium text-apple-gray-800">{f.name}</p>
-                    <p className="text-xs leading-relaxed text-apple-gray-500">{f.detail}</p>
+            <div className="mt-4 space-y-1 border-t border-apple-gray-100 pt-3">
+              {summary.health.factors.map((f, i) => {
+                const open = openFactor === f.name
+                return (
+                  <div key={f.name} className="animate-fadeUp" style={{ animationDelay: `${i * 60}ms` }}>
+                    <button onClick={() => setOpenFactor(open ? null : f.name)}
+                      className="flex w-full items-start gap-3 rounded-xl px-1 py-2 text-left active:bg-apple-gray-50">
+                      <div className="mt-0.5 shrink-0">{statusIcon[f.status]}</div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-apple-gray-800">{f.name}</p>
+                        <p className="text-xs leading-relaxed text-apple-gray-500">{f.detail}</p>
+                      </div>
+                      <ChevronDown size={14} className={`mt-1 shrink-0 text-apple-gray-300 transition-transform ${open ? 'rotate-180' : ''}`} />
+                    </button>
+                    {open && (
+                      <Link
+                        to={`/compass/ask?q=${encodeURIComponent(`My portfolio health check flagged "${f.name}": ${f.detail} What are simple ways to improve this?`)}`}
+                        className="mb-2 ml-8 flex min-h-[40px] items-center gap-2 rounded-xl bg-apple-blue/5 px-3 text-xs font-medium text-apple-blue active:bg-apple-blue/10"
+                      >
+                        <MessageCircleQuestion size={13} /> Ask Compass how to improve this
+                      </Link>
+                    )}
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>
@@ -192,7 +225,7 @@ export default function CompassIdeas() {
             {recs.note && <EmptyState title="Nothing to recommend yet" hint={recs.note} />}
             <div className="mt-2 space-y-3">
               {recs.recommendations.map((r, i) => (
-                <div key={r.symbol} className="rounded-2xl border border-apple-gray-200 bg-white p-4">
+                <div key={r.symbol} className="animate-fadeUp rounded-2xl border border-apple-gray-200 bg-white p-4" style={{ animationDelay: `${i * 80}ms` }}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-medium text-apple-gray-400">#{i + 1} pick · {r.type === 'etf' ? 'Fund' : 'Stock'}</p>
@@ -209,6 +242,25 @@ export default function CompassIdeas() {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-apple-gray-100 pt-3">
+                    <button onClick={() => addToWatchlist(r.symbol)} disabled={watched.has(r.symbol)}
+                      className={`flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl text-xs font-medium ${
+                        watched.has(r.symbol)
+                          ? 'bg-apple-green/10 text-green-700'
+                          : 'border border-apple-gray-200 bg-white text-apple-gray-600 active:bg-apple-gray-100'
+                      }`}>
+                      {watched.has(r.symbol) ? <Check size={13} /> : <Eye size={13} />}
+                      {watched.has(r.symbol) ? 'Watching' : 'Watch'}
+                    </button>
+                    <Link to={`/compass/compare?a=${r.symbol}`}
+                      className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-apple-gray-200 bg-white text-xs font-medium text-apple-gray-600 active:bg-apple-gray-100">
+                      <ArrowLeftRight size={13} /> Compare
+                    </Link>
+                    <Link to={`/compass/ask?q=${encodeURIComponent(`Compass recommended ${r.symbol} for me. Walk me through whether it makes sense.`)}`}
+                      className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-apple-gray-200 bg-white text-xs font-medium text-apple-gray-600 active:bg-apple-gray-100">
+                      <MessageCircleQuestion size={13} /> Ask
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

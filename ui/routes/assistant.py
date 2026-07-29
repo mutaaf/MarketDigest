@@ -22,7 +22,10 @@ Rules:
 - You are not a licensed financial advisor: frame guidance as education and things to
   consider, not directives. For big decisions, suggest they take their time.
 - Keep answers short: 2-4 short paragraphs max, no bullet-point walls.
-- Long-term, low-cost, diversified investing is your default philosophy."""
+- Long-term, low-cost, diversified investing is your default philosophy.
+- End every reply with one final line exactly like: TOPICS: concept one; concept two
+  listing 1-3 core investing concepts from your answer worth studying later
+  (e.g. "expense ratio", "diversification"). No other text on that line."""
 
 
 class ChatMessage(BaseModel):
@@ -152,4 +155,13 @@ async def chat(body: ChatRequest):
             status_code=502,
             detail="The assistant couldn't reach any AI service right now. Try again in a minute.",
         )
-    return {"reply": result.text, "provider": result.provider}
+
+    # Peel off the trailing TOPICS line into structured suggestions for Learn
+    reply = result.text.strip()
+    topics: list[str] = []
+    match = re.search(r"\n?TOPICS:\s*(.+)\s*$", reply)
+    if match:
+        topics = [t.strip().rstrip(".") for t in re.split(r"[;,]", match.group(1))
+                  if t.strip() and len(t.strip()) <= 40][:3]
+        reply = reply[:match.start()].rstrip()
+    return {"reply": reply, "provider": result.provider, "suggested_topics": topics}

@@ -4,7 +4,7 @@ import { Plus, Trash2, BellRing } from 'lucide-react'
 import api from '../api/client'
 import { SearchResult } from '../api/compass-types'
 import {
-  EmptyState, ErrorState, GradeChip, PageSkeleton, Sheet, WarningsBanner,
+  EmptyState, ErrorState, GradeChip, MoneyInput, PageSkeleton, Sheet, WarningsBanner,
   inputCls, money, primaryBtn, usePortfolioSelection,
 } from '../components/compass/ui'
 
@@ -204,7 +204,7 @@ function AddWatchSheet({ slug, onClose, onSaved }: { slug: string; onClose: () =
           <label className="mb-1 block text-xs font-medium text-apple-gray-500">
             Price you'd buy at <span className="text-apple-gray-300">(optional)</span>
           </label>
-          <input value={buyPrice} onChange={e => setBuyPrice(e.target.value)} placeholder="25.00" inputMode="decimal" className={inputCls} />
+          <MoneyInput value={buyPrice} onChange={setBuyPrice} placeholder="25.00" />
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-apple-gray-500">Note to self <span className="text-apple-gray-300">(optional)</span></label>

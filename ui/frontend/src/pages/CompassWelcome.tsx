@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Compass, Plus, Check, Upload, Trash2 } from 'lucide-react'
 import api from '../api/client'
 import { SearchResult } from '../api/compass-types'
-import { inputCls, primaryBtn } from '../components/compass/ui'
+import { MoneyInput, inputCls, primaryBtn } from '../components/compass/ui'
 import SmartImport from '../components/compass/SmartImport'
 
 type Step = 'name' | 'holdings' | 'targets' | 'done'
@@ -295,7 +295,7 @@ function HoldingsStep({ slug, holdings, setHoldings, cash, setCash, busy, err, o
           </div>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <input value={shares} onChange={e => setShares(e.target.value)} placeholder="Shares" inputMode="decimal" className={inputCls} />
-            <input value={cost} onChange={e => setCost(e.target.value)} placeholder="Paid per share (opt.)" inputMode="decimal" className={inputCls} />
+            <MoneyInput value={cost} onChange={setCost} placeholder="Paid per share" />
           </div>
           {rowErr && <p className="mt-2 text-xs text-apple-red">{rowErr}</p>}
           <button onClick={addRow} disabled={adding || !symbol.trim() || !parseFloat(shares)}
@@ -318,7 +318,7 @@ function HoldingsStep({ slug, holdings, setHoldings, cash, setCash, busy, err, o
 
       <div>
         <label className="mb-1 block text-xs font-medium text-apple-gray-500">Cash waiting to be invested <span className="text-apple-gray-300">(optional)</span></label>
-        <input value={cash} onChange={e => setCash(e.target.value)} placeholder="5000" inputMode="decimal" className={inputCls} />
+        <MoneyInput value={cash} onChange={setCash} placeholder="5,000" />
       </div>
 
       {err && <p className="text-xs text-apple-red">{err}</p>}

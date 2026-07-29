@@ -146,6 +146,104 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
 export const inputCls = 'w-full min-h-[44px] rounded-xl border border-apple-gray-200 bg-apple-gray-50 px-3 text-sm text-apple-gray-800 focus:border-apple-blue focus:outline-none'
 export const primaryBtn = 'w-full min-h-[48px] rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40'
 
+// ── Formatted inputs ────────────────────────────────────────────
+// Value in/out is a plain numeric string ("1234.5"); display adds $ and commas.
+
+function cleanNumeric(text: string): string {
+  let raw = text.replace(/[^0-9.]/g, '')
+  const firstDot = raw.indexOf('.')
+  if (firstDot !== -1) raw = raw.slice(0, firstDot + 1) + raw.slice(firstDot + 1).replace(/\./g, '')
+  return raw
+}
+
+export function withCommas(raw: string): string {
+  if (!raw) return ''
+  const [int, dec] = raw.split('.')
+  const grouped = (int || '0').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return dec !== undefined ? `${grouped}.${dec}` : grouped
+}
+
+export function MoneyInput({ value, onChange, placeholder, autoFocus }: {
+  value: string; onChange: (raw: string) => void; placeholder?: string; autoFocus?: boolean
+}) {
+  return (
+    <div className="relative">
+      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-apple-gray-400">$</span>
+      <input
+        value={withCommas(value)}
+        onChange={e => onChange(cleanNumeric(e.target.value))}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        inputMode="decimal"
+        className={`${inputCls} pl-7`}
+      />
+    </div>
+  )
+}
+
+export function UnitInput({ value, onChange, suffix, placeholder, autoFocus }: {
+  value: string; onChange: (raw: string) => void; suffix: string; placeholder?: string; autoFocus?: boolean
+}) {
+  return (
+    <div className="relative">
+      <input
+        value={withCommas(value)}
+        onChange={e => onChange(cleanNumeric(e.target.value))}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        inputMode="decimal"
+        className={`${inputCls} pr-14`}
+      />
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-apple-gray-400">{suffix}</span>
+    </div>
+  )
+}
+
+/** Animated number — eases toward the target so results feel alive. */
+export function useCountUp(target: number, duration = 700): number {
+  const [shown, setShown] = useState(target)
+  useEffect(() => {
+    const from = shown
+    if (from === target) return
+    const start = performance.now()
+    let raf: number
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setShown(from + (target - from) * eased)
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target, duration])
+  return shown
+}
+
+/** Animated ring around content (e.g. a grade chip), fills to score/100. */
+export function ScoreRing({ score, children, size = 84 }: { score: number; children: ReactNode; size?: number }) {
+  const [drawn, setDrawn] = useState(0)
+  useEffect(() => {
+    const t = setTimeout(() => setDrawn(score), 80)
+    return () => clearTimeout(t)
+  }, [score])
+  const r = (size - 8) / 2
+  const c = 2 * Math.PI * r
+  const color = score >= 70 ? '#34c759' : score >= 45 ? '#ffcc00' : '#ff9500'
+  return (
+    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90 absolute inset-0">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e8e8ed" strokeWidth="5" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="5"
+          strokeLinecap="round" strokeDasharray={c}
+          strokeDashoffset={c * (1 - drawn / 100)}
+          style={{ transition: 'stroke-dashoffset 900ms cubic-bezier(.22,1,.36,1)' }} />
+      </svg>
+      {children}
+    </div>
+  )
+}
+
 /** Selected-portfolio state shared across Compass pages via localStorage.
  *
  * `selected` stays empty until the portfolio list has loaded and the stored

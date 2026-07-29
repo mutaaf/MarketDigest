@@ -237,6 +237,36 @@ async def save_retirement(name: str, body: RetirementInputs):
     return {"inputs": inputs, "projection": project(**inputs)}
 
 
+class LearnAdd(BaseModel):
+    term: str = Field(min_length=1, max_length=80)
+    context: str = ""
+
+
+@router.get("/{name}/learn")
+async def get_learn(name: str):
+    from src.portfolio.learn import get_topics
+    _load_or_404(name)
+    return {"topics": get_topics(name)}
+
+
+@router.post("/{name}/learn")
+async def add_learn(name: str, body: LearnAdd):
+    from src.portfolio.learn import add_topic
+    _load_or_404(name)
+    result = add_topic(name, body.term, body.context)
+    if "error" in result:
+        raise HTTPException(status_code=422, detail=result["error"])
+    return result
+
+
+@router.delete("/{name}/learn/{tid}")
+async def remove_learn(name: str, tid: str):
+    from src.portfolio.learn import remove_topic
+    _load_or_404(name)
+    remove_topic(name, tid)
+    return {"ok": True}
+
+
 # ── Comparison + symbol search (portfolio-independent) ──────────
 
 compass_router = APIRouter(prefix="/api/compass", tags=["compass"])
@@ -270,6 +300,21 @@ async def compare_symbols(a: str, b: str):
     result = compare(a, b)
     if "error" in result:
         raise HTTPException(status_code=422, detail=result["error"])
+    return result
+
+
+class TeachRequest(BaseModel):
+    term: str = Field(min_length=1, max_length=80)
+    audience: str = Field(pattern="^(kid|adult)$")
+    portfolio: str | None = None
+
+
+@compass_router.post("/teach")
+async def teach_topic(body: TeachRequest):
+    from src.portfolio.learn import teach
+    result = teach(body.term, body.audience, body.portfolio)
+    if "error" in result:
+        raise HTTPException(status_code=503, detail=result["error"])
     return result
 
 
