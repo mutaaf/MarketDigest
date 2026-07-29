@@ -66,12 +66,12 @@ export default function CompassLayout() {
             <span className="text-base font-bold tracking-tight text-apple-gray-800">Compass</span>
           </NavLink>
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-0.5 md:flex">
             {[...mainTabs, ...moreTabs].map(({ to, label, end }) => (
               <NavLink key={to} to={to} end={end}
                 className={({ isActive }) =>
-                  `rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                    isActive ? 'bg-apple-blue/10 text-apple-blue' : 'text-apple-gray-500 hover:bg-apple-gray-100'
+                  `flex min-h-[44px] items-center rounded-lg px-3 text-sm font-medium transition-colors ${
+                    isActive ? 'bg-apple-blue/10 text-apple-blue' : 'text-apple-gray-500 hover:bg-apple-gray-100 active:bg-apple-gray-100'
                   }`}>
                 {label}
               </NavLink>
