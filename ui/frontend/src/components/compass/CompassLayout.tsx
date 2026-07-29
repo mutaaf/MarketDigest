@@ -5,8 +5,46 @@ import { NavLink, Outlet, Link } from 'react-router-dom'
 import {
   Home, Compass, Sparkles, MessageCircleQuestion, MoreHorizontal, X,
   Eye, PiggyBank, ArrowLeftRight, GraduationCap, TerminalSquare, Telescope,
+  RefreshCw,
 } from 'lucide-react'
+import api from '../../api/client'
 import { TermProvider } from './Term'
+
+/** Family "pull the latest" — server enforces a 5-minute global cooldown. */
+function RefreshButton() {
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<string | null>(null)
+
+  const refresh = async () => {
+    if (busy) return
+    setBusy(true)
+    setNote('Pulling the latest prices and fund data…')
+    try {
+      const slug = localStorage.getItem('compass.selectedPortfolio')
+      await api.post('/compass/refresh-data', { portfolio: slug || null }, { timeout: 180000 })
+      setNote('Everything is fresh — reloading…')
+      setTimeout(() => window.location.reload(), 900)
+    } catch (err: any) {
+      setNote(err.response?.data?.detail || "Couldn't refresh just now — try again in a minute.")
+      setBusy(false)
+      setTimeout(() => setNote(null), 5000)
+    }
+  }
+
+  return (
+    <>
+      <button onClick={refresh} title="Pull the latest market data"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-apple-gray-400 active:text-apple-blue">
+        <RefreshCw size={17} className={busy ? 'animate-spin text-apple-blue' : ''} />
+      </button>
+      {note && (
+        <div className="fixed inset-x-3 top-16 z-[80] animate-fadeUp rounded-xl border border-apple-gray-200 bg-white px-4 py-2.5 text-center text-xs text-apple-gray-600 shadow-lg md:left-auto md:right-6 md:w-80">
+          {note}
+        </div>
+      )}
+    </>
+  )
+}
 
 interface Tab {
   to: string
@@ -61,10 +99,13 @@ export default function CompassLayout() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-apple-gray-200 bg-white/80 backdrop-blur-lg">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-          <NavLink to="/compass" end className="flex items-center gap-2">
-            <Compass size={20} className="text-apple-blue" />
-            <span className="text-base font-bold tracking-tight text-apple-gray-800">Compass</span>
-          </NavLink>
+          <div className="flex items-center gap-1">
+            <NavLink to="/compass" end className="flex items-center gap-2">
+              <Compass size={20} className="text-apple-blue" />
+              <span className="text-base font-bold tracking-tight text-apple-gray-800">Compass</span>
+            </NavLink>
+            <RefreshButton />
+          </div>
           {/* Desktop nav */}
           <nav className="hidden items-center gap-0.5 md:flex">
             {[...mainTabs, ...moreTabs].map(({ to, label, end }) => (

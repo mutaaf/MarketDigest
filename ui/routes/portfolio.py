@@ -320,6 +320,25 @@ async def teach_topic(body: TeachRequest):
     return result
 
 
+class RefreshRequest(BaseModel):
+    portfolio: str | None = None
+
+
+@compass_router.post("/refresh-data")
+async def refresh_data(body: RefreshRequest):
+    """Family 'pull the latest' button — 5-minute global cooldown."""
+    from src.portfolio.market_refresh import family_refresh
+    result = family_refresh(body.portfolio)
+    if not result["ok"]:
+        mins = max(1, round(result["seconds_until_next"] / 60))
+        raise HTTPException(
+            status_code=429,
+            detail=f"Everything was refreshed less than 5 minutes ago — it's still fresh. "
+                   f"Try again in about {mins} minute{'s' if mins != 1 else ''}.",
+        )
+    return result
+
+
 @compass_router.get("/stocks")
 async def list_stocks():
     """Browsable stock database — config + grades for cached fundamentals only.

@@ -26,10 +26,25 @@ logger = get_logger("cache")
 
 
 class CacheManager:
+    _instances: list["CacheManager"] = []  # for cross-module memory invalidation
+
     def __init__(self):
         self._memory: dict[str, dict[str, Any]] = {}
         self._cache_dir = get_settings().cache_dir
         self._cache_dir.mkdir(exist_ok=True)
+        CacheManager._instances.append(self)
+
+    @classmethod
+    def clear_memory_prefixes(cls, prefixes: tuple[str, ...]) -> int:
+        """Drop matching in-memory entries across every CacheManager instance
+        in this process (file deletion alone can't invalidate a running server)."""
+        removed = 0
+        for inst in cls._instances:
+            doomed = [k for k in inst._memory if k.startswith(prefixes)]
+            for k in doomed:
+                del inst._memory[k]
+            removed += len(doomed)
+        return removed
 
     def get(self, key: str, max_age_seconds: int = 300) -> Any | None:
         """Get cached value. Check memory first, then file."""
