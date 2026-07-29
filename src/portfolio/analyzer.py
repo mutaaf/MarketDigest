@@ -22,13 +22,14 @@ def _universe_index() -> dict[str, dict]:
     """symbol -> {instrument_type, asset_class, sector, name} for stocks + ETFs."""
     instruments = get_settings().instruments
     index = {}
-    for s in instruments.get("us_stocks", []):
-        index[s["symbol"]] = {
-            "instrument_type": "stock",
-            "asset_class": s.get("asset_class", "us_stock"),
-            "sector": s.get("sector"),
-            "name": s.get("name", s["symbol"]),
-        }
+    for group in ("us_stocks", "compass_stocks"):
+        for s in instruments.get(group, []):
+            index[s["symbol"]] = {
+                "instrument_type": "stock",
+                "asset_class": s.get("asset_class", "us_stock"),
+                "sector": s.get("sector"),
+                "name": s.get("name", s["symbol"]),
+            }
     for e in instruments.get("etfs", []):
         index[e["symbol"]] = {
             "instrument_type": "etf",

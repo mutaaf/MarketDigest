@@ -1,9 +1,18 @@
 # Market Digest - AI Knowledge Base
 
-> Automated financial market digest platform — fetches market data, runs technical analysis, generates Telegram digests with optional LLM commentary, and tracks day trade pick performance.
+> Automated financial market digest platform — fetches market data, runs technical analysis, generates Telegram digests with optional LLM commentary, and tracks day trade pick performance. **Now also home to Compass**, a mobile-first family investing app at `/compass`, and the port-80 Family Portal gateway.
+
+**READ FIRST — [docs/AGENTS.md](./docs/AGENTS.md)** is the indexed entry point for any
+agent or human: full system map (Market Digest / Compass / Family Portal), code index,
+non-negotiable conventions, run/verify/deploy workflows, and the multi-session
+coordination rules (multiple Claude sessions share this checkout — never `git add -A`
+blindly). Sections below describe the original digest platform; Compass specifics live
+in AGENTS.md and docs/COMPASS_PLAN.md.
 
 **See Also:**
-- [KNOWLEDGE_BASE.md](./KNOWLEDGE_BASE.md) - Detailed technical reference
+- [docs/AGENTS.md](./docs/AGENTS.md) - START HERE: indexed context for agents & humans
+- [docs/COMPASS_PLAN.md](./docs/COMPASS_PLAN.md) - Compass roadmap, UX principles, PRD coverage
+- [KNOWLEDGE_BASE.md](./KNOWLEDGE_BASE.md) - Detailed technical reference (digest platform)
 - [docs/DECISIONS.md](./docs/DECISIONS.md) - Architecture decision records
 - [docs/CHANGELOG.md](./docs/CHANGELOG.md) - Version history and changes
 

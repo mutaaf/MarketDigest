@@ -11,7 +11,11 @@ def _load_side(symbol: str) -> dict | None:
     symbol = symbol.upper()
     instruments = get_settings().instruments
     etf_cfg = next((e for e in instruments.get("etfs", []) if e["symbol"] == symbol), None)
-    stock_cfg = next((s for s in instruments.get("us_stocks", []) if s["symbol"] == symbol), None)
+    stock_cfg = next(
+        (s for group in ("us_stocks", "compass_stocks")
+         for s in instruments.get(group, []) if s["symbol"] == symbol),
+        None,
+    )
 
     if etf_cfg or not stock_cfg:
         profile = fetch_etf_profile(symbol, (etf_cfg or {}).get("yfinance", symbol))

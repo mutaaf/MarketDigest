@@ -318,6 +318,51 @@ async def teach_topic(body: TeachRequest):
     return result
 
 
+@compass_router.get("/stocks")
+async def list_stocks():
+    """Browsable stock database — config + grades for cached fundamentals only.
+    Never triggers live fetches; stays fast at any universe size."""
+    from config.settings import get_compass_universe
+    from src.analysis.daytrade_scorer import score_to_grade
+    from src.analysis.fundamentals import score_fundamentals
+    from src.cache.manager import CacheManager
+
+    cache = CacheManager()
+    out = []
+    for item in get_compass_universe():
+        if item["instrument_type"] != "stock":
+            continue
+        entry = {"symbol": item["symbol"], "name": item.get("name"),
+                 "sector": item.get("sector"), "asset_class": item.get("asset_class"),
+                 "cached": False}
+        fnd = cache.get(f"fundamentals:v2:{item['symbol']}", max_age_seconds=6 * 3600)
+        if fnd:
+            scores = score_fundamentals(fnd)
+            m = fnd.get("metrics", {})
+            entry.update({
+                "cached": True,
+                "grade": score_to_grade(scores["composite"]),
+                "overall": scores["composite"],
+                "pe_ratio": m.get("pe_ratio"),
+                "dividend_yield": m.get("dividend_yield"),
+                "revenue_growth": m.get("revenue_growth"),
+            })
+        out.append(entry)
+    return {"stocks": out}
+
+
+@compass_router.get("/stock/{symbol}")
+async def stock_detail(symbol: str):
+    """Full stock quality profile (fetches fundamentals live, 6h-cached)."""
+    from src.portfolio.compare import _load_side
+
+    side = _load_side(symbol.upper())
+    if side is None or side.get("type") != "stock":
+        raise HTTPException(status_code=404,
+                            detail=f"Couldn't load data for {symbol.upper()} right now.")
+    return side
+
+
 @compass_router.get("/search")
 async def search(q: str = ""):
     """Symbol/name autocomplete over the Compass universe (stocks + ETFs)."""

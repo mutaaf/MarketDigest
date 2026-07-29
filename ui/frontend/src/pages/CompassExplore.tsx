@@ -44,20 +44,54 @@ const GROUPS: { key: string; label: string; match: (c: string) => boolean }[] = 
   { key: 'other', label: 'Gold & more', match: c => ['gold', 'commodity', 'thematic'].includes(c) },
 ]
 
+interface StockRow {
+  symbol: string
+  name: string
+  sector: string | null
+  cached: boolean
+  grade?: string
+  overall?: number
+  pe_ratio?: number | null
+  dividend_yield?: number | null
+  revenue_growth?: number | null
+}
+
 export default function CompassExplore() {
+  const [kind, setKind] = useState<'funds' | 'stocks'>('funds')
   const [etfs, setEtfs] = useState<EtfRow[] | null>(null)
+  const [stocks, setStocks] = useState<StockRow[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [group, setGroup] = useState('all')
+  const [sector, setSector] = useState('All')
   const [query, setQuery] = useState('')
   const [detail, setDetail] = useState<string | null>(null)
+  const [stockDetail, setStockDetail] = useState<string | null>(null)
 
   const load = () => {
     setError(null)
     api.get<{ etfs: EtfRow[] }>('/etf/list')
       .then(res => setEtfs(res.data.etfs))
       .catch(err => setError(err.response?.data?.detail || err.message))
+    api.get<{ stocks: StockRow[] }>('/compass/stocks')
+      .then(res => setStocks(res.data.stocks))
+      .catch(() => setStocks([]))
   }
   useEffect(load, [])
+
+  const sectors = useMemo(() => {
+    const s = new Set<string>()
+    for (const st of stocks ?? []) if (st.sector) s.add(st.sector)
+    return ['All', ...[...s].sort()]
+  }, [stocks])
+
+  const shownStocks = useMemo(() => {
+    if (!stocks) return []
+    const q = query.trim().toUpperCase()
+    return stocks
+      .filter(s => sector === 'All' || s.sector === sector)
+      .filter(s => !q || s.symbol.includes(q) || (s.name || '').toUpperCase().includes(q))
+      .sort((a, b) => (b.overall ?? -1) - (a.overall ?? -1) || a.symbol.localeCompare(b.symbol))
+  }, [stocks, sector, query])
 
   const shown = useMemo(() => {
     if (!etfs) return []
@@ -75,10 +109,22 @@ export default function CompassExplore() {
   return (
     <div className="space-y-3 pb-6">
       <div>
-        <h1 className="text-lg font-bold text-apple-gray-800">Explore funds</h1>
+        <h1 className="text-lg font-bold text-apple-gray-800">Explore</h1>
         <p className="text-xs text-apple-gray-500">
-          {etfs.length} funds, graded A–F on safety, growth, income, spread, and cost.
+          {etfs.length} funds and {stocks?.length ?? '…'} companies, graded A–F.
         </p>
+      </div>
+
+      {/* Funds | Stocks toggle */}
+      <div className="grid grid-cols-2 gap-1 rounded-xl bg-apple-gray-200/60 p-1">
+        {(['funds', 'stocks'] as const).map(k => (
+          <button key={k} onClick={() => setKind(k)}
+            className={`min-h-[40px] rounded-lg text-sm font-semibold capitalize transition-colors ${
+              kind === k ? 'bg-white text-apple-gray-800 shadow-sm' : 'text-apple-gray-500'
+            }`}>
+            {k}
+          </button>
+        ))}
       </div>
 
       <div className="relative">
@@ -89,17 +135,54 @@ export default function CompassExplore() {
       </div>
 
       <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1" style={{ scrollbarWidth: 'none' }}>
-        {GROUPS.map(g => (
+        {kind === 'funds' ? GROUPS.map(g => (
           <button key={g.key} onClick={() => setGroup(g.key)}
             className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-medium ${
               group === g.key ? 'bg-apple-blue text-white' : 'border border-apple-gray-200 bg-white text-apple-gray-600'
             }`}>
             {g.label}
           </button>
+        )) : sectors.map(s => (
+          <button key={s} onClick={() => setSector(s)}
+            className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-medium ${
+              sector === s ? 'bg-apple-blue text-white' : 'border border-apple-gray-200 bg-white text-apple-gray-600'
+            }`}>
+            {s}
+          </button>
         ))}
       </div>
 
-      <div className="space-y-1.5">
+      {kind === 'stocks' && (
+        <div className="space-y-1.5">
+          {shownStocks.map(s => (
+            <button key={s.symbol} onClick={() => setStockDetail(s.symbol)}
+              className="flex w-full items-center justify-between gap-3 rounded-2xl border border-apple-gray-200 bg-white px-4 py-3 text-left active:bg-apple-gray-50">
+              <div className="min-w-0">
+                <p className="font-semibold text-apple-gray-800">{s.symbol}</p>
+                <p className="truncate text-xs text-apple-gray-500">{s.name}{s.sector ? ` · ${s.sector}` : ''}</p>
+                {s.cached && (
+                  <p className="mt-0.5 text-[11px] tabular-nums text-apple-gray-400">
+                    {s.pe_ratio != null && `P/E ${s.pe_ratio.toFixed(0)}`}
+                    {s.revenue_growth != null && ` · growing ${s.revenue_growth.toFixed(0)}%/yr`}
+                    {s.dividend_yield != null && s.dividend_yield > 0.1 && ` · yields ${s.dividend_yield.toFixed(1)}%`}
+                  </p>
+                )}
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                {s.grade
+                  ? <GradeChip grade={s.grade} />
+                  : <span className="text-[10px] text-apple-gray-300">tap to analyze</span>}
+                <ChevronRight size={15} className="text-apple-gray-300" />
+              </div>
+            </button>
+          ))}
+          {shownStocks.length === 0 && (
+            <p className="py-8 text-center text-sm text-apple-gray-400">No companies match that search.</p>
+          )}
+        </div>
+      )}
+
+      {kind === 'funds' && <div className="space-y-1.5">
         {shown.map(e => (
           <button key={e.symbol} onClick={() => setDetail(e.symbol)}
             className="flex w-full items-center justify-between gap-3 rounded-2xl border border-apple-gray-200 bg-white px-4 py-3 text-left active:bg-apple-gray-50">
@@ -125,10 +208,160 @@ export default function CompassExplore() {
         {shown.length === 0 && (
           <p className="py-8 text-center text-sm text-apple-gray-400">No funds match that search.</p>
         )}
-      </div>
+      </div>}
 
       {detail && <EtfDetailSheet symbol={detail} onClose={() => { setDetail(null); load() }} />}
+      {stockDetail && <StockDetailSheet symbol={stockDetail} onClose={() => { setStockDetail(null); load() }} />}
     </div>
+  )
+}
+
+interface StockDetail {
+  symbol: string
+  name: string
+  grade: string
+  score: number
+  sector?: string
+  sub_scores: Record<string, number | null>
+  metrics: Record<string, number | null>
+}
+
+function StockDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => void }) {
+  const { selected } = usePortfolioSelection()
+  const [data, setData] = useState<StockDetail | null>(null)
+  const [err, setErr] = useState<string | null>(null)
+  const [buying, setBuying] = useState(false)
+  const [shares, setShares] = useState('')
+  const [cost, setCost] = useState('')
+  const [addState, setAddState] = useState<'idle' | 'saving' | 'done'>('idle')
+  const [watchState, setWatchState] = useState<'idle' | 'done'>('idle')
+
+  useEffect(() => {
+    api.get<StockDetail>(`/compass/stock/${symbol}`, { timeout: 60000 })
+      .then(res => setData(res.data))
+      .catch(e => setErr(e.response?.data?.detail || e.message))
+  }, [symbol])
+
+  const addToPortfolio = async () => {
+    if (!selected || !parseFloat(shares)) return
+    setAddState('saving')
+    try {
+      await api.post(`/portfolio/${selected}/holding`, {
+        symbol, shares: parseFloat(shares), cost_basis: cost ? parseFloat(cost) : 0,
+      })
+      setAddState('done')
+    } catch {
+      setAddState('idle')
+    }
+  }
+
+  const watch = async () => {
+    if (!selected) return
+    try {
+      await api.post(`/portfolio/${selected}/watchlist`, { symbol })
+      setWatchState('done')
+    } catch { /* non-fatal */ }
+  }
+
+  const m = data?.metrics ?? {}
+  const stat = (v: number | null | undefined, suffix = '', digits = 1) =>
+    v == null ? '—' : `${v.toFixed(digits)}${suffix}`
+
+  return (
+    <Sheet title={symbol} onClose={onClose}>
+      {err && <p className="text-sm text-apple-red">{err}</p>}
+      {!data && !err && (
+        <div className="space-y-2">
+          <p className="text-xs text-apple-gray-400">Analyzing {symbol} — a few seconds on first look…</p>
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+      )}
+      {data && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <GradeChip grade={data.grade} size="lg" />
+            <div>
+              <p className="text-sm font-semibold text-apple-gray-800">{data.name}</p>
+              <p className="text-xs text-apple-gray-400">{data.sector || 'Stock'} · quality score {data.score.toFixed(0)}/100</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <MiniStat label="P/E" value={stat(m.pe_ratio, '', 0)} />
+            <MiniStat label="Growth" value={stat(m.revenue_growth, '%/yr', 0)} />
+            <MiniStat label="Yield" value={stat(m.dividend_yield, '%')} />
+          </div>
+
+          {m.analyst_target != null && m.current_price != null && m.current_price > 0 && (
+            <p className="rounded-xl bg-apple-gray-50 p-3 text-xs leading-relaxed text-apple-gray-600">
+              Trading at <strong>${m.current_price.toFixed(2)}</strong>; analysts' average target is{' '}
+              <strong>${m.analyst_target.toFixed(2)}</strong>{' '}
+              ({m.analyst_target > m.current_price ? '+' : ''}{((m.analyst_target / m.current_price - 1) * 100).toFixed(0)}%).
+              Targets are opinions, not promises.
+            </p>
+          )}
+
+          {data.sub_scores && (
+            <div className="space-y-1.5">
+              {Object.entries(data.sub_scores).filter(([, v]) => v !== null).map(([k, v]) => (
+                <div key={k}>
+                  <div className="mb-0.5 flex justify-between text-xs">
+                    <span className="capitalize text-apple-gray-600">{k}</span>
+                    <span className="tabular-nums text-apple-gray-400">{(v as number).toFixed(0)}</span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-apple-gray-100">
+                    <div className="h-full rounded-full bg-apple-blue" style={{ width: `${v}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {addState === 'done' ? (
+            <div className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-apple-green/10 text-sm font-semibold text-green-700">
+              <Check size={15} /> Added to your portfolio
+            </div>
+          ) : buying ? (
+            <div className="space-y-2 rounded-xl border border-apple-blue/30 bg-apple-blue/5 p-3">
+              <div className="grid grid-cols-2 gap-2">
+                <input value={shares} onChange={e => setShares(e.target.value)} placeholder="Shares"
+                  inputMode="decimal" autoFocus className={inputCls} />
+                <MoneyInput value={cost} onChange={setCost} placeholder="Paid each (opt.)" />
+              </div>
+              <button onClick={addToPortfolio} disabled={addState === 'saving' || !parseFloat(shares)}
+                className="flex min-h-[44px] w-full items-center justify-center rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40">
+                {addState === 'saving' ? 'Adding…' : `Add ${symbol} to my portfolio`}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => setBuying(true)} disabled={!selected}
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40">
+                <Plus size={15} /> I own this
+              </button>
+              <button onClick={watch} disabled={!selected || watchState === 'done'}
+                className={`flex min-h-[48px] items-center justify-center gap-2 rounded-xl text-sm font-semibold ${
+                  watchState === 'done' ? 'bg-apple-green/10 text-green-700'
+                    : 'border border-apple-gray-200 bg-white text-apple-gray-700 active:bg-apple-gray-100'
+                }`}>
+                {watchState === 'done' ? <Check size={15} /> : <Eye size={15} />}
+                {watchState === 'done' ? 'Watching' : 'Watch'}
+              </button>
+            </div>
+          )}
+
+          <Link to={`/compass/compare?a=${symbol}`}
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-apple-blue/30 bg-apple-blue/5 text-sm font-semibold text-apple-blue active:bg-apple-blue/10">
+            <ArrowLeftRight size={15} /> Compare {symbol} with something
+          </Link>
+          <Link to={`/compass/ask?q=${encodeURIComponent(`Is ${symbol} a good long-term investment for me?`)}`}
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-apple-gray-200 bg-white text-sm font-medium text-apple-gray-600 active:bg-apple-gray-100">
+            <MessageCircleQuestion size={15} className="text-apple-blue" /> Ask Compass about {symbol}
+          </Link>
+        </div>
+      )}
+    </Sheet>
   )
 }
 

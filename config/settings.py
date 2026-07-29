@@ -198,6 +198,10 @@ def get_compass_universe() -> list[dict[str, Any]]:
         if item.get("enabled", True):
             universe.append({**item, "instrument_type": "stock",
                              "asset_class": item.get("asset_class", "us_stock")})
+    for item in settings.instruments.get("compass_stocks", []):
+        if item.get("enabled", True):
+            universe.append({**item, "instrument_type": "stock",
+                             "asset_class": item.get("asset_class", "us_stock")})
     for item in settings.instruments.get("etfs", []):
         if item.get("enabled", True):
             universe.append({**item, "instrument_type": "etf"})
