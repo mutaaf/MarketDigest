@@ -37,6 +37,13 @@ def _universe_index() -> dict[str, dict]:
             "sector": None,
             "name": e.get("name", e["symbol"]),
         }
+    for c in instruments.get("crypto", []):
+        index[c["symbol"]] = {
+            "instrument_type": "crypto",
+            "asset_class": "crypto",
+            "sector": None,
+            "name": c.get("name", c["symbol"]),
+        }
     return index
 
 
@@ -106,7 +113,9 @@ def analyze_allocation(valuation: dict) -> dict:
         geo = _geography(ac, meta.get("category"))
         geo_totals[geo] = geo_totals.get(geo, 0) + value
 
-        if meta["instrument_type"] == "stock":
+        if meta["instrument_type"] == "crypto":
+            cap_totals["Not stocks"] = cap_totals.get("Not stocks", 0) + value
+        elif meta["instrument_type"] == "stock":
             sector = meta.get("sector") or "Other"
             sector_totals[sector] = sector_totals.get(sector, 0) + value
             fnd = cache.get_stale(f"fundamentals:v2:{h['symbol']}") or {}
@@ -182,6 +191,8 @@ def _geography(asset_class: str, category: str | None) -> str:
         return "International mix"
     if asset_class == "bond":
         return "Bonds (mostly US)" if category != "bond_intl" else "International bonds"
+    if asset_class == "crypto":
+        return "Crypto (global)"
     return "Global / other"
 
 

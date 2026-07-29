@@ -11,12 +11,14 @@ import {
   EmptyState, ErrorState, GradeChip, PageSkeleton, ScoreRing, Sheet, Skeleton,
   WarningsBanner, inputCls, money, primaryBtn, usePortfolioSelection,
 } from '../components/compass/ui'
+import RulesOfThumb from '../components/compass/RulesOfThumb'
 
 const TARGET_CLASSES: { key: string; label: string; fallback: number }[] = [
   { key: 'us_stock', label: 'US stocks', fallback: 55 },
   { key: 'intl_stock', label: 'International', fallback: 20 },
   { key: 'bond', label: 'Bonds', fallback: 15 },
   { key: 'reit', label: 'Real estate', fallback: 5 },
+  { key: 'crypto', label: 'Crypto', fallback: 0 },
   { key: 'cash', label: 'Cash', fallback: 5 },
 ]
 
@@ -36,6 +38,14 @@ export default function CompassIdeas() {
   const [showTargets, setShowTargets] = useState(false)
   const [openFactor, setOpenFactor] = useState<string | null>(null)
   const [watched, setWatched] = useState<Set<string>>(new Set())
+  const [retireInputs, setRetireInputs] = useState<Record<string, number> | null>(null)
+
+  useEffect(() => {
+    if (!selected) return
+    api.get(`/portfolio/${selected}/retirement`, { timeout: 60000 })
+      .then(res => setRetireInputs(res.data.inputs || {}))
+      .catch(() => setRetireInputs({}))
+  }, [selected])
 
   const addToWatchlist = async (symbol: string) => {
     try {
@@ -141,6 +151,19 @@ export default function CompassIdeas() {
             number of holdings suggests.
           </p>
         </section>
+      )}
+
+      {/* Rules of thumb */}
+      {summary && summary.valuation.total_value > 0 && (
+        <RulesOfThumb
+          invested={summary.valuation.invested_value}
+          cash={summary.valuation.cash}
+          stockPct={(summary.allocation.asset_classes.find(c => c.key === 'us_stock')?.weight ?? 0)
+            + (summary.allocation.asset_classes.find(c => c.key === 'intl_stock')?.weight ?? 0)}
+          age={retireInputs?.current_age ?? null}
+          monthlySpending={retireInputs?.monthly_spending ?? null}
+          expectedReturnPct={retireInputs?.expected_return_pct ?? null}
+        />
       )}
 
       {/* Target vs actual */}

@@ -8,6 +8,8 @@ import {
   EmptyState, ErrorState, MoneyInput, PageSkeleton, ScoreRing, money,
   useCountUp, usePortfolioSelection, withCommas,
 } from '../components/compass/ui'
+import RulesOfThumb from '../components/compass/RulesOfThumb'
+import { Term } from '../components/compass/Term'
 
 interface Inputs {
   current_age: number
@@ -183,7 +185,7 @@ export default function CompassRetire() {
         <div className="min-w-0">
           <p className="text-sm font-semibold text-apple-gray-800">Chance your plan works</p>
           <p className="mt-0.5 text-xs leading-relaxed text-apple-gray-500">
-            {syncing ? 'Running 1,000 market simulations…'
+            {syncing ? <>Running a <Term t="monte carlo">Monte Carlo</Term> — 1,000 market simulations…</>
               : gap === 'good' ? "You're on track. Keep contributing and stay the course."
               : gap === 'close' ? 'Close — nudge the contribution slider up or retirement age later and watch this change.'
               : gap === 'short' ? 'The plan likely falls short — try moving the sliders and see what fixes it.'
@@ -221,6 +223,15 @@ export default function CompassRetire() {
           Green bars are millionaire territory. Amounts are in today's dollars, after {INFLATION}% inflation.
         </p>
       </div>
+
+      <RulesOfThumb
+        invested={inputs.current_assets}
+        cash={0}
+        stockPct={null}
+        age={inputs.current_age}
+        monthlySpending={inputs.monthly_spending}
+        expectedReturnPct={inputs.expected_return_pct}
+      />
 
       <Link
         to={`/compass/ask?q=${encodeURIComponent('Look at my retirement plan — what is the single best change I could make?')}`}

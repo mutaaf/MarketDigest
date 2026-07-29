@@ -9,6 +9,7 @@ import {
   WarningsBanner, inputCls, money, primaryBtn, signed, usePortfolioSelection,
 } from '../components/compass/ui'
 import SmartImport from '../components/compass/SmartImport'
+import { Term } from '../components/compass/Term'
 
 export default function CompassPortfolio() {
   const { portfolios, selected, setSelected, refresh: refreshList, error: listError } = usePortfolioSelection()
@@ -154,7 +155,9 @@ export default function CompassPortfolio() {
                           <p className="font-semibold text-apple-gray-800">
                             {h.symbol}
                             <span className="ml-2 text-xs font-normal text-apple-gray-400">
-                              {h.instrument_type === 'etf' ? 'Fund' : h.instrument_type === 'stock' ? 'Stock' : ''}
+                              {h.instrument_type === 'etf' ? 'Fund' : h.instrument_type === 'stock' ? 'Stock'
+                                : h.instrument_type === 'crypto' ? 'Crypto' : ''}
+                              {h.account ? ` · ${h.account}` : ''}
                             </span>
                             <Pencil size={11} className="ml-1.5 inline text-apple-gray-300" />
                           </p>
@@ -221,7 +224,7 @@ export default function CompassPortfolio() {
                 <div className="space-y-1.5 text-xs leading-relaxed text-apple-gray-500">
                   {summary.allocation.weighted_beta !== null && (
                     <p>
-                      <strong className="text-apple-gray-700">Choppiness (beta): {summary.allocation.weighted_beta.toFixed(2)}</strong>
+                      <strong className="text-apple-gray-700">Choppiness (<Term t="beta">beta</Term>): {summary.allocation.weighted_beta.toFixed(2)}</strong>
                       {' — '}
                       {summary.allocation.weighted_beta > 1.15
                         ? 'your portfolio swings harder than the overall market.'
@@ -232,14 +235,14 @@ export default function CompassPortfolio() {
                   )}
                   {summary.allocation.weighted_yield !== null && (
                     <p>
-                      <strong className="text-apple-gray-700">Dividends: ~{summary.allocation.weighted_yield.toFixed(1)}%/yr</strong>
+                      <strong className="text-apple-gray-700"><Term t="dividends">Dividends</Term>: ~{summary.allocation.weighted_yield.toFixed(1)}%/yr</strong>
                       {' — '}about {money(v.invested_value * summary.allocation.weighted_yield / 100)} a year in
                       dividend payments at today's rates.
                     </p>
                   )}
                   {summary.allocation.weighted_expense_ratio !== null && (
                     <p>
-                      <strong className="text-apple-gray-700">Fund costs: {summary.allocation.weighted_expense_ratio.toFixed(2)}%/yr</strong>
+                      <strong className="text-apple-gray-700">Fund costs (<Term t="expense ratio">expense ratio</Term>): {summary.allocation.weighted_expense_ratio.toFixed(2)}%/yr</strong>
                       {' — '}about ${Math.round(summary.allocation.weighted_expense_ratio * 100)} per $10,000 invested.
                     </p>
                   )}
@@ -338,11 +341,27 @@ function Stat({ label, value, tone, onClick }: { label: string; value: string; t
   return <div className="py-1">{inner}</div>
 }
 
+const ACCOUNT_TYPES = ['', 'Brokerage', '401(k)', 'IRA', 'Roth IRA', 'HSA', '529', 'Crypto wallet', 'Other']
+
+function AccountSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <label className="mb-1 block text-xs font-medium text-apple-gray-500">
+        Account <span className="text-apple-gray-300">(optional)</span>
+      </label>
+      <select value={value} onChange={e => onChange(e.target.value)} className={inputCls}>
+        {ACCOUNT_TYPES.map(a => <option key={a} value={a}>{a || 'Not set'}</option>)}
+      </select>
+    </div>
+  )
+}
+
 function EditHoldingSheet({ slug, holding, onClose, onSaved }: {
   slug: string; holding: AllocationHolding; onClose: () => void; onSaved: () => void
 }) {
   const [shares, setShares] = useState(String(holding.shares))
   const [cost, setCost] = useState(holding.cost_basis ? String(holding.cost_basis) : '')
+  const [account, setAccount] = useState(holding.account || '')
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
@@ -355,7 +374,7 @@ function EditHoldingSheet({ slug, holding, onClose, onSaved }: {
         symbol: holding.symbol,
         shares: parseFloat(shares),
         cost_basis: cost ? parseFloat(cost) : 0,
-        account: holding.account || '',
+        account,
       })
       onSaved()
     } catch (error: any) {
@@ -381,6 +400,7 @@ function EditHoldingSheet({ slug, holding, onClose, onSaved }: {
             <MoneyInput value={cost} onChange={setCost} placeholder="unknown" />
           </div>
         </div>
+        <AccountSelect value={account} onChange={setAccount} />
         {err && <p className="text-xs text-apple-red">{err}</p>}
         <button type="submit" disabled={saving || !parseFloat(shares)} className={primaryBtn}>
           {saving ? 'Saving…' : 'Save changes'}
@@ -400,6 +420,7 @@ function AddHoldingSheet({ slug, onClose, onSaved }: { slug: string; onClose: ()
   const [symbol, setSymbol] = useState('')
   const [shares, setShares] = useState('')
   const [cost, setCost] = useState('')
+  const [account, setAccount] = useState('')
   const [suggestions, setSuggestions] = useState<SearchResult[]>([])
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -422,7 +443,7 @@ function AddHoldingSheet({ slug, onClose, onSaved }: { slug: string; onClose: ()
     setErr(null)
     try {
       await api.post(`/portfolio/${slug}/holding`, {
-        symbol: symbol.trim(), shares: parseFloat(shares), cost_basis: cost ? parseFloat(cost) : 0,
+        symbol: symbol.trim(), shares: parseFloat(shares), cost_basis: cost ? parseFloat(cost) : 0, account,
       })
       onSaved()
     } catch (error: any) {
@@ -453,14 +474,15 @@ function AddHoldingSheet({ slug, onClose, onSaved }: { slug: string; onClose: ()
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Shares</label>
+            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Shares / units</label>
             <input value={shares} onChange={e => setShares(e.target.value)} placeholder="10" inputMode="decimal" className={inputCls} />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Price paid per share <span className="text-apple-gray-300">(optional)</span></label>
+            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Price paid each <span className="text-apple-gray-300">(optional)</span></label>
             <MoneyInput value={cost} onChange={setCost} placeholder="380.50" />
           </div>
         </div>
+        <AccountSelect value={account} onChange={setAccount} />
         {err && <p className="text-xs text-apple-red">{err}</p>}
         <button type="submit" disabled={saving || !symbol.trim() || !parseFloat(shares)} className={primaryBtn}>
           {saving ? 'Saving…' : 'Add holding'}

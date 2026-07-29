@@ -6,6 +6,7 @@ import {
   Home, Compass, Sparkles, MessageCircleQuestion, MoreHorizontal, X,
   Eye, PiggyBank, ArrowLeftRight, GraduationCap, TerminalSquare, Telescope,
 } from 'lucide-react'
+import { TermProvider } from './Term'
 
 interface Tab {
   to: string
@@ -87,7 +88,9 @@ export default function CompassLayout() {
         className="mx-auto max-w-3xl px-4 py-4 md:pb-8"
         style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}
       >
-        <Outlet />
+        <TermProvider>
+          <Outlet />
+        </TermProvider>
       </main>
 
       {/* Mobile more sheet */}

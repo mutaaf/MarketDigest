@@ -9,20 +9,29 @@ from src.fetchers.yfinance_fetcher import YFinanceFetcher
 _fetcher = YFinanceFetcher()
 
 
+def _yf_symbol_map() -> dict[str, str]:
+    """Compass symbol -> yfinance ticker (crypto differs: BTC -> BTC-USD)."""
+    from config.settings import get_compass_universe
+    return {u["symbol"]: u.get("yfinance", u["symbol"]) for u in get_compass_universe()}
+
+
 def value_portfolio(portfolio: dict) -> dict:
     holdings = portfolio.get("holdings", [])
     cash = float(portfolio.get("cash", 0) or 0)
-    symbols = [h["symbol"] for h in holdings]
+    yf_map = _yf_symbol_map()
+    tickers = {h["symbol"]: yf_map.get(h["symbol"], h["symbol"]) for h in holdings}
 
-    prices = _fetcher.get_batch_prices(symbols) if symbols else {}
+    prices_by_ticker = _fetcher.get_batch_prices(list(tickers.values())) if tickers else {}
     # Batch download misses symbols sometimes (and single-ticker responses parse
     # differently across yfinance versions) — fall back per symbol so one flaky
     # ticker never blanks a holding.
-    for sym in symbols:
-        if sym not in prices:
-            single = _fetcher.get_current_price(sym)
+    for sym, ticker in tickers.items():
+        if ticker not in prices_by_ticker:
+            single = _fetcher.get_current_price(ticker)
             if single:
-                prices[sym] = single
+                prices_by_ticker[ticker] = single
+    prices = {sym: prices_by_ticker[ticker]
+              for sym, ticker in tickers.items() if ticker in prices_by_ticker}
 
     valued, warnings = [], []
     total_value = 0.0

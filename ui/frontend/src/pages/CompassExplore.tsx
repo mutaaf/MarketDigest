@@ -1,10 +1,11 @@
 // Compass — Explore: browse the fund database. Filter, search, tap for detail.
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, ArrowLeftRight, ChevronRight, MessageCircleQuestion } from 'lucide-react'
+import { Search, ArrowLeftRight, ChevronRight, MessageCircleQuestion, Plus, Check, Eye } from 'lucide-react'
 import api from '../api/client'
 import {
-  ErrorState, GradeChip, PageSkeleton, Sheet, Skeleton, inputCls,
+  ErrorState, GradeChip, MoneyInput, PageSkeleton, Sheet, Skeleton, inputCls,
+  usePortfolioSelection,
 } from '../components/compass/ui'
 
 interface EtfRow {
@@ -132,14 +133,41 @@ export default function CompassExplore() {
 }
 
 function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => void }) {
+  const { selected } = usePortfolioSelection()
   const [data, setData] = useState<EtfDetail | null>(null)
   const [err, setErr] = useState<string | null>(null)
+  const [buying, setBuying] = useState(false)
+  const [shares, setShares] = useState('')
+  const [cost, setCost] = useState('')
+  const [addState, setAddState] = useState<'idle' | 'saving' | 'done'>('idle')
+  const [watchState, setWatchState] = useState<'idle' | 'done'>('idle')
 
   useEffect(() => {
     api.get<EtfDetail>(`/etf/${symbol}`, { timeout: 60000 })
       .then(res => setData(res.data))
       .catch(e => setErr(e.response?.data?.detail || e.message))
   }, [symbol])
+
+  const addToPortfolio = async () => {
+    if (!selected || !parseFloat(shares)) return
+    setAddState('saving')
+    try {
+      await api.post(`/portfolio/${selected}/holding`, {
+        symbol, shares: parseFloat(shares), cost_basis: cost ? parseFloat(cost) : 0,
+      })
+      setAddState('done')
+    } catch {
+      setAddState('idle')
+    }
+  }
+
+  const watch = async () => {
+    if (!selected) return
+    try {
+      await api.post(`/portfolio/${selected}/watchlist`, { symbol })
+      setWatchState('done')
+    } catch { /* non-fatal */ }
+  }
 
   const fmtAum = (v?: number | null) =>
     v == null ? '—' : v >= 1e12 ? `$${(v / 1e12).toFixed(1)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(0)}B` : `$${(v / 1e6).toFixed(0)}M`
@@ -197,6 +225,40 @@ function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => vo
                   <span className="tabular-nums">{h.weight.toFixed(1)}%</span>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Own it / watch it */}
+          {addState === 'done' ? (
+            <div className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-apple-green/10 text-sm font-semibold text-green-700">
+              <Check size={15} /> Added to your portfolio
+            </div>
+          ) : buying ? (
+            <div className="space-y-2 rounded-xl border border-apple-blue/30 bg-apple-blue/5 p-3">
+              <div className="grid grid-cols-2 gap-2">
+                <input value={shares} onChange={e => setShares(e.target.value)} placeholder="Shares"
+                  inputMode="decimal" autoFocus className={inputCls} />
+                <MoneyInput value={cost} onChange={setCost} placeholder="Paid each (opt.)" />
+              </div>
+              <button onClick={addToPortfolio} disabled={addState === 'saving' || !parseFloat(shares)}
+                className="flex min-h-[44px] w-full items-center justify-center rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40">
+                {addState === 'saving' ? 'Adding…' : `Add ${symbol} to my portfolio`}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => setBuying(true)} disabled={!selected}
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-apple-blue text-sm font-semibold text-white active:opacity-80 disabled:opacity-40">
+                <Plus size={15} /> I own this
+              </button>
+              <button onClick={watch} disabled={!selected || watchState === 'done'}
+                className={`flex min-h-[48px] items-center justify-center gap-2 rounded-xl text-sm font-semibold ${
+                  watchState === 'done' ? 'bg-apple-green/10 text-green-700'
+                    : 'border border-apple-gray-200 bg-white text-apple-gray-700 active:bg-apple-gray-100'
+                }`}>
+                {watchState === 'done' ? <Check size={15} /> : <Eye size={15} />}
+                {watchState === 'done' ? 'Watching' : 'Watch'}
+              </button>
             </div>
           )}
 

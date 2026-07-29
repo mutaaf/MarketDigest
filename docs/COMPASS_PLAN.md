@@ -34,6 +34,11 @@ numbers — the Retrace pattern (track recommendations against reality) keeps us
    context ("0.03% — that's $3/year per $10,000 invested").
 5. **Nothing destructive without undo or confirm.** Deleting a holding asks once, in
    words that say what happens.
+6. **Every element earns its place; every term is definable.** Modals sit above all
+   chrome, contrast meets WCAG on every state, interactive elements react to touch.
+   Any jargon anywhere is wrapped in `<Term>` — tap for a plain-English definition,
+   served instantly from the built-in glossary, then localStorage, then the AI teach
+   endpoint (each layer caching for the next).
 
 ---
 

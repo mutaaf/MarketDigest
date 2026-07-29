@@ -118,6 +118,25 @@ def _effective_holdings(allocation: dict) -> dict:
                    "index fund instantly diversifies you across hundreds of companies.")
 
 
+def _crypto_exposure(allocation: dict) -> dict | None:
+    """Only appears when crypto is held — keeps the checklist relevant."""
+    classes = {c["key"]: c["weight"] for c in allocation.get("asset_classes", [])}
+    crypto = classes.get("crypto", 0)
+    if crypto <= 0:
+        return None
+    if crypto <= 5:
+        return _factor("Crypto exposure", 85,
+                       f"Crypto is {crypto:.0f}% of your portfolio — small enough that a "
+                       "crash wouldn't change your life.")
+    if crypto <= 15:
+        return _factor("Crypto exposure", 55,
+                       f"Crypto is {crypto:.0f}% of your portfolio. It can drop 50%+ in "
+                       "months — make sure you'd be okay with that.")
+    return _factor("Crypto exposure", 25,
+                   f"Crypto is {crypto:.0f}% of your portfolio — that's a lot riding on "
+                   "the most volatile asset class there is.")
+
+
 def assess_health(allocation: dict, valuation: dict) -> dict:
     """Overall portfolio health: factor list, diversification score, letter grade."""
     if not valuation.get("holdings") and not valuation.get("cash"):
@@ -135,6 +154,9 @@ def assess_health(allocation: dict, valuation: dict) -> dict:
         _international_exposure(allocation),
         _effective_holdings(allocation),
     ]
+    crypto_factor = _crypto_exposure(allocation)
+    if crypto_factor:
+        factors.append(crypto_factor)
     score = round(sum(f["score"] for f in factors) / len(factors), 1)
     grade = score_to_grade(score)
 
