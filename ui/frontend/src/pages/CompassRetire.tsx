@@ -11,49 +11,59 @@ import {
 import RulesOfThumb from '../components/compass/RulesOfThumb'
 import { Term } from '../components/compass/Term'
 
-interface Inputs {
-  current_age: number
-  retire_age: number
-  current_assets: number
-  monthly_contribution: number
-  monthly_spending: number
-  expected_return_pct: number
-}
+import { INFLATION, RetireInputs as Inputs, projectLocal } from '../components/compass/retirementMath'
 
 const DEFAULTS: Inputs = {
   current_age: 35, retire_age: 65, current_assets: 0,
   monthly_contribution: 500, monthly_spending: 4000, expected_return_pct: 7,
 }
-const INFLATION = 2.5
 
-/** Mirror of the server's deterministic math — instant slider feedback. */
-function projectLocal(inp: Inputs) {
-  const years = Math.max(0, inp.retire_age - inp.current_age)
-  const realReturn = (1 + inp.expected_return_pct / 100) / (1 + INFLATION / 100) - 1
-  const path: { age: number; balance: number }[] = []
-  let balance = inp.current_assets
-  let millionAge: number | null = null
-  for (let y = 0; y <= years; y++) {
-    path.push({ age: inp.current_age + y, balance: Math.round(balance) })
-    if (millionAge === null && balance >= 1_000_000) millionAge = inp.current_age + y
-    balance = balance * (1 + realReturn) + inp.monthly_contribution * 12
-  }
-  const projected = path[path.length - 1]?.balance ?? inp.current_assets
-  return { path, projected, safeMonthly: Math.round(projected * 0.04 / 12), millionAge }
-}
-
-function SliderRow({ label, value, display, min, max, step, onChange }: {
+/** Slider with a tappable value — tap the number to type any amount,
+ * including beyond the slider's range. */
+function SliderRow({ label, value, display, min, max, step, onChange, unit = '' }: {
   label: string; value: number; display: string
   min: number; max: number; step: number; onChange: (v: number) => void
+  unit?: string
 }) {
+  const [editing, setEditing] = useState(false)
+  const [text, setText] = useState('')
+
+  const commit = () => {
+    const parsed = parseFloat(text.replace(/[^0-9.]/g, ''))
+    if (!isNaN(parsed) && parsed >= 0) onChange(parsed)
+    setEditing(false)
+  }
+
   return (
     <div>
-      <div className="mb-1.5 flex items-baseline justify-between">
+      <div className="mb-1.5 flex items-baseline justify-between gap-3">
         <span className="text-sm text-apple-gray-600">{label}</span>
-        <span className="text-sm font-semibold tabular-nums text-apple-gray-800">{display}</span>
+        {editing ? (
+          <span className="flex items-center gap-1">
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              onBlur={commit}
+              onKeyDown={e => { if (e.key === 'Enter') commit() }}
+              inputMode="decimal"
+              autoFocus
+              className="w-24 rounded-lg border border-apple-blue bg-white px-2 py-1 text-right text-sm font-semibold tabular-nums text-apple-gray-800 focus:outline-none"
+            />
+            {unit && <span className="text-xs text-apple-gray-400">{unit}</span>}
+          </span>
+        ) : (
+          <button onClick={() => { setText(String(value)); setEditing(true) }}
+            className="rounded-lg border-b border-dotted border-apple-gray-300 text-sm font-semibold tabular-nums text-apple-gray-800 active:text-apple-blue"
+            title="Tap to type an exact amount">
+            {display}
+          </button>
+        )}
       </div>
       <input type="range" className="compass-slider" min={min} max={max} step={step}
-        value={value} onChange={e => onChange(parseFloat(e.target.value))} />
+        value={Math.min(Math.max(value, min), max)} onChange={e => onChange(parseFloat(e.target.value))} />
+      {value > max && (
+        <p className="mt-0.5 text-[10px] text-apple-gray-400">Beyond the slider — typed value {display} is being used.</p>
+      )}
     </div>
   )
 }

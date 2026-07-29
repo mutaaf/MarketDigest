@@ -12,6 +12,8 @@ import {
   WarningsBanner, inputCls, money, primaryBtn, usePortfolioSelection,
 } from '../components/compass/ui'
 import RulesOfThumb from '../components/compass/RulesOfThumb'
+import { projectLocal, RetireInputs } from '../components/compass/retirementMath'
+import { PiggyBank, ArrowRight } from 'lucide-react'
 
 const TARGET_CLASSES: { key: string; label: string; fallback: number }[] = [
   { key: 'us_stock', label: 'US stocks', fallback: 55 },
@@ -151,6 +153,11 @@ export default function CompassIdeas() {
             number of holdings suggests.
           </p>
         </section>
+      )}
+
+      {/* Retirement goal bridge */}
+      {summary && retireInputs && summary.valuation.total_value > 0 && (
+        <RetirementGoalCard inputs={retireInputs} liveAssets={summary.valuation.total_value} />
       )}
 
       {/* Rules of thumb */}
@@ -306,6 +313,76 @@ export default function CompassIdeas() {
         />
       )}
     </div>
+  )
+}
+
+function RetirementGoalCard({ inputs, liveAssets }: { inputs: Record<string, number>; liveAssets: number }) {
+  const ready = inputs.current_age && inputs.retire_age && inputs.monthly_spending
+  if (!ready) {
+    return (
+      <section className="animate-fadeUp rounded-2xl border border-apple-gray-200 bg-white p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <PiggyBank size={16} className="text-apple-blue" />
+            <p className="text-sm text-apple-gray-600">Set a retirement goal and these picks start working toward it.</p>
+          </div>
+          <Link to="/compass/retire" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-apple-blue">
+            Set up <ArrowRight size={12} />
+          </Link>
+        </div>
+      </section>
+    )
+  }
+
+  // Use the LIVE portfolio value as the starting assets — the plan follows the money
+  const base: RetireInputs = {
+    current_age: inputs.current_age,
+    retire_age: inputs.retire_age,
+    current_assets: liveAssets,
+    monthly_contribution: inputs.monthly_contribution ?? 0,
+    monthly_spending: inputs.monthly_spending,
+    expected_return_pct: inputs.expected_return_pct ?? 7,
+  }
+  const now = projectLocal(base)
+  const needed = inputs.monthly_spending * 12 * 25
+  const pct = Math.min(100, now.projected / needed * 100)
+  const plus100 = projectLocal({ ...base, monthly_contribution: base.monthly_contribution + 100 }).projected - now.projected
+  const plus2yr = projectLocal({ ...base, retire_age: base.retire_age + 2 }).projected - now.projected
+
+  return (
+    <section className="animate-fadeUp rounded-2xl border border-apple-gray-200 bg-white p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold text-apple-gray-700">
+          <PiggyBank size={14} className="text-apple-blue" /> Your retirement goal
+        </h3>
+        <Link to="/compass/retire" className="flex items-center gap-1 text-xs font-medium text-apple-blue">
+          Adjust <ArrowRight size={12} />
+        </Link>
+      </div>
+      <p className="text-sm text-apple-gray-600">
+        On track for <strong className="text-apple-gray-800">{money(now.projected)}</strong> at {base.retire_age} —{' '}
+        {pct >= 100 ? 'past' : `${pct.toFixed(0)}% of`} the <strong className="text-apple-gray-800">{money(needed)}</strong>{' '}
+        that supports {money(inputs.monthly_spending)}/month forever.
+      </p>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-apple-gray-100">
+        <div className={`h-full rounded-full transition-all duration-700 ${pct >= 100 ? 'bg-apple-green' : 'bg-apple-blue'}`}
+          style={{ width: `${pct}%` }} />
+      </div>
+      {pct < 100 && (
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          <Link to="/compass/retire" className="rounded-full border border-apple-gray-200 bg-white px-3 py-1.5 text-[11px] font-medium text-apple-gray-600 active:bg-apple-gray-100">
+            +$100/mo → {money(plus100)} more
+          </Link>
+          <Link to="/compass/retire" className="rounded-full border border-apple-gray-200 bg-white px-3 py-1.5 text-[11px] font-medium text-apple-gray-600 active:bg-apple-gray-100">
+            Retire 2 yrs later → {money(plus2yr)} more
+          </Link>
+        </div>
+      )}
+      <p className="mt-2 text-[10px] text-apple-gray-400">
+        Uses your live portfolio value ({money(liveAssets)}) as the starting point. The picks below close your
+        target-mix gaps — the engine that gets you there.
+      </p>
+    </section>
   )
 }
 
