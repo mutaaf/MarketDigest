@@ -1,5 +1,6 @@
 // Compass — Ask: a portfolio-aware assistant that explains, in plain English.
 import { FormEvent, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Send, Compass } from 'lucide-react'
 import api from '../api/client'
 import { usePortfolioSelection } from '../components/compass/ui'
@@ -18,16 +19,29 @@ const SUGGESTIONS = [
 ]
 
 export default function CompassAsk() {
-  const { selected } = usePortfolioSelection()
+  const { portfolios, selected } = usePortfolioSelection()
+  const [params] = useSearchParams()
   const [messages, setMessages] = useState<Msg[]>([])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const autoSent = useRef(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, busy])
+
+  // Other pages deep-link here with a ready-made question (?q=...) —
+  // fire it once the portfolio selection has settled.
+  useEffect(() => {
+    const q = params.get('q')
+    if (q && !autoSent.current && portfolios !== null) {
+      autoSent.current = true
+      send(q)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, portfolios, selected])
 
   const send = async (text: string) => {
     const question = text.trim()

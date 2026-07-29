@@ -1,7 +1,7 @@
 // Compass — Explore: browse the fund database. Filter, search, tap for detail.
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, ArrowLeftRight, ChevronRight } from 'lucide-react'
+import { Search, ArrowLeftRight, ChevronRight, MessageCircleQuestion } from 'lucide-react'
 import api from '../api/client'
 import {
   ErrorState, GradeChip, PageSkeleton, Sheet, Skeleton, inputCls,
@@ -203,6 +203,10 @@ function EtfDetailSheet({ symbol, onClose }: { symbol: string; onClose: () => vo
           <Link to={`/compass/compare?a=${symbol}`}
             className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-apple-blue/30 bg-apple-blue/5 text-sm font-semibold text-apple-blue active:bg-apple-blue/10">
             <ArrowLeftRight size={15} /> Compare {symbol} with something
+          </Link>
+          <Link to={`/compass/ask?q=${encodeURIComponent(`Is ${symbol} a good fit for my portfolio?`)}`}
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-apple-gray-200 bg-white text-sm font-medium text-apple-gray-600 active:bg-apple-gray-100">
+            <MessageCircleQuestion size={15} className="text-apple-blue" /> Ask Compass about {symbol}
           </Link>
         </div>
       )}

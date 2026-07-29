@@ -1,8 +1,9 @@
 // Compass — Portfolio: holdings, value, allocation. Mobile-first.
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { Plus, Trash2, Upload, Wallet } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Plus, Trash2, Upload, Wallet, MessageCircleQuestion, Pencil } from 'lucide-react'
 import api from '../api/client'
-import { PortfolioSummary, SearchResult } from '../api/compass-types'
+import { AllocationHolding, PortfolioSummary, SearchResult } from '../api/compass-types'
 import {
   AllocationBars, EmptyState, ErrorState, GradeChip, PageSkeleton, Sheet,
   WarningsBanner, inputCls, money, primaryBtn, signed, usePortfolioSelection,
@@ -15,6 +16,7 @@ export default function CompassPortfolio() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sheet, setSheet] = useState<'add' | 'cash' | 'import' | 'create' | 'deletePortfolio' | null>(null)
+  const [editHolding, setEditHolding] = useState<AllocationHolding | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const loadSummary = () => {
@@ -146,27 +148,31 @@ export default function CompassPortfolio() {
                 {summary.allocation.by_holding.map(h => (
                   <div key={h.symbol} className="rounded-2xl border border-apple-gray-200 bg-white p-4">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="font-semibold text-apple-gray-800">
-                          {h.symbol}
-                          <span className="ml-2 text-xs font-normal text-apple-gray-400">
-                            {h.instrument_type === 'etf' ? 'Fund' : h.instrument_type === 'stock' ? 'Stock' : ''}
-                          </span>
-                        </p>
-                        <p className="truncate text-xs text-apple-gray-500">{h.display_name || ''}</p>
-                        <p className="mt-1 text-xs tabular-nums text-apple-gray-500">
-                          {h.shares} shares {h.price !== null ? `@ ${money(h.price)}` : '· price unavailable'}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold tabular-nums text-apple-gray-800">{money(h.value)}</p>
-                        <p className="text-xs tabular-nums text-apple-gray-400">{h.weight.toFixed(1)}% of portfolio</p>
-                        {h.gain_pct !== null && (
-                          <p className={`text-xs font-medium tabular-nums ${h.gain_pct >= 0 ? 'text-green-600' : 'text-apple-red'}`}>
-                            {signed(h.gain_pct, '%')} all time
+                      <button onClick={() => setEditHolding(h)}
+                        className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left active:opacity-70">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-apple-gray-800">
+                            {h.symbol}
+                            <span className="ml-2 text-xs font-normal text-apple-gray-400">
+                              {h.instrument_type === 'etf' ? 'Fund' : h.instrument_type === 'stock' ? 'Stock' : ''}
+                            </span>
+                            <Pencil size={11} className="ml-1.5 inline text-apple-gray-300" />
                           </p>
-                        )}
-                      </div>
+                          <p className="truncate text-xs text-apple-gray-500">{h.display_name || ''}</p>
+                          <p className="mt-1 text-xs tabular-nums text-apple-gray-500">
+                            {h.shares} shares {h.price !== null ? `@ ${money(h.price)}` : '· price unavailable'}
+                          </p>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <p className="font-semibold tabular-nums text-apple-gray-800">{money(h.value)}</p>
+                          <p className="text-xs tabular-nums text-apple-gray-400">{h.weight.toFixed(1)}% of portfolio</p>
+                          {h.gain_pct !== null && (
+                            <p className={`text-xs font-medium tabular-nums ${h.gain_pct >= 0 ? 'text-green-600' : 'text-apple-red'}`}>
+                              {signed(h.gain_pct, '%')} all time
+                            </p>
+                          )}
+                        </div>
+                      </button>
                       <button
                         onClick={() => setConfirmDelete(h.symbol)}
                         title={`Remove ${h.symbol}`}
@@ -256,6 +262,14 @@ export default function CompassPortfolio() {
       {sheet === 'create' && (
         <CreateSheet onClose={() => setSheet(null)} onCreated={slug => { setSheet(null); refreshList(); setSelected(slug) }} />
       )}
+      {editHolding && selected && (
+        <EditHoldingSheet
+          slug={selected}
+          holding={editHolding}
+          onClose={() => setEditHolding(null)}
+          onSaved={() => { setEditHolding(null); loadSummary() }}
+        />
+      )}
       {sheet === 'deletePortfolio' && selected && summary && (
         <DeletePortfolioSheet
           slug={selected}
@@ -322,6 +336,64 @@ function Stat({ label, value, tone, onClick }: { label: string; value: string; t
     return <button onClick={onClick} className="rounded-xl py-1 active:bg-apple-gray-50">{inner}<p className="text-[10px] text-apple-blue">edit</p></button>
   }
   return <div className="py-1">{inner}</div>
+}
+
+function EditHoldingSheet({ slug, holding, onClose, onSaved }: {
+  slug: string; holding: AllocationHolding; onClose: () => void; onSaved: () => void
+}) {
+  const [shares, setShares] = useState(String(holding.shares))
+  const [cost, setCost] = useState(holding.cost_basis ? String(holding.cost_basis) : '')
+  const [saving, setSaving] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    setErr(null)
+    try {
+      await api.post(`/portfolio/${slug}/holding`, {
+        symbol: holding.symbol,
+        shares: parseFloat(shares),
+        cost_basis: cost ? parseFloat(cost) : 0,
+        account: holding.account || '',
+      })
+      onSaved()
+    } catch (error: any) {
+      setErr(error.response?.data?.detail || "Couldn't save that. Check the numbers.")
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Sheet title={`Edit ${holding.symbol}`} onClose={onClose}>
+      <form onSubmit={submit} className="space-y-3">
+        <p className="text-xs text-apple-gray-500">
+          {holding.display_name || holding.symbol}
+          {holding.price !== null && ` · currently ${money(holding.price)} per share`}
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Shares you own</label>
+            <input value={shares} onChange={e => setShares(e.target.value)} inputMode="decimal" autoFocus className={inputCls} />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-apple-gray-500">Price paid per share</label>
+            <input value={cost} onChange={e => setCost(e.target.value)} inputMode="decimal" placeholder="unknown" className={inputCls} />
+          </div>
+        </div>
+        {err && <p className="text-xs text-apple-red">{err}</p>}
+        <button type="submit" disabled={saving || !parseFloat(shares)} className={primaryBtn}>
+          {saving ? 'Saving…' : 'Save changes'}
+        </button>
+        <Link
+          to={`/compass/ask?q=${encodeURIComponent(`Tell me about my ${holding.symbol} position — is it a good long-term hold?`)}`}
+          className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-apple-gray-200 bg-white text-sm font-medium text-apple-gray-600 active:bg-apple-gray-100"
+        >
+          <MessageCircleQuestion size={15} className="text-apple-blue" /> Ask Compass about {holding.symbol}
+        </Link>
+      </form>
+    </Sheet>
+  )
 }
 
 function AddHoldingSheet({ slug, onClose, onSaved }: { slug: string; onClose: () => void; onSaved: () => void }) {
