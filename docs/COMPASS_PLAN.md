@@ -1,9 +1,16 @@
 # Compass Investing — Implementation Plan
 
-> **Status (July 28, 2026):** Phases 0–3 are built and verified. The Compass app lives at
-> `/compass` (own layout, mobile-first). Remaining/deferred: optional PIN gate for LAN
-> access, recommendation-performance dashboard (snapshots are already being written),
-> ETF overlap matrix, weekly Compass digest to Telegram (Phase 4 items).
+> **Status (July 30, 2026): COMPLETE for single-household use.** Every buildable PRD
+> item has shipped and been verified — see "PRD Coverage" below. The app runs always-on
+> (launchd), installs to phones as a PWA, and the family is actively using it.
+> Remaining by design only:
+> - **Phase 5 (ten families)** — awaiting the owner's hosting/domain/auth decisions.
+> - **DCF / intrinsic value / moat ratings** — deliberately deferred (analyst targets
+>   serve as the value signal until the core proves out).
+> - **Recommendation-performance dashboard** — snapshots have been recording to
+>   logs/compass_recs/ since day one; build the grading view once months of data exist.
+> Formerly-listed Phase 4 items now done elsewhere: weekly Telegram digest
+> (compass-weekly job), overlap analysis (Ideas), access gate (family portal passcode).
 
 > "Know exactly what to buy next." A long-term investor advisor built inside Market Digest,
 > designed for a non-technical user. Based on the Compass Investing PRD (July 2026).

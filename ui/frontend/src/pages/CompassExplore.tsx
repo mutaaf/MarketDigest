@@ -56,10 +56,21 @@ interface StockRow {
   revenue_growth?: number | null
 }
 
+interface CryptoRow {
+  symbol: string
+  name: string
+  price: number | null
+  return_1y: number | null
+  return_5y: number | null
+  volatility_1y: number | null
+}
+
 export default function CompassExplore() {
-  const [kind, setKind] = useState<'funds' | 'stocks'>('funds')
+  const [kind, setKind] = useState<'funds' | 'stocks' | 'crypto'>('funds')
   const [etfs, setEtfs] = useState<EtfRow[] | null>(null)
   const [stocks, setStocks] = useState<StockRow[] | null>(null)
+  const [cryptos, setCryptos] = useState<CryptoRow[] | null>(null)
+  const [openCrypto, setOpenCrypto] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [group, setGroup] = useState('all')
   const [sector, setSector] = useState('All')
@@ -75,6 +86,9 @@ export default function CompassExplore() {
     api.get<{ stocks: StockRow[] }>('/compass/stocks')
       .then(res => setStocks(res.data.stocks))
       .catch(() => setStocks([]))
+    api.get<{ cryptos: CryptoRow[] }>('/compass/cryptos', { timeout: 90000 })
+      .then(res => setCryptos(res.data.cryptos))
+      .catch(() => setCryptos([]))
   }
   useEffect(load, [])
 
@@ -115,9 +129,9 @@ export default function CompassExplore() {
         </p>
       </div>
 
-      {/* Funds | Stocks toggle */}
-      <div className="grid grid-cols-2 gap-1 rounded-xl bg-apple-gray-200/60 p-1">
-        {(['funds', 'stocks'] as const).map(k => (
+      {/* Funds | Stocks | Crypto toggle */}
+      <div className="grid grid-cols-3 gap-1 rounded-xl bg-apple-gray-200/60 p-1">
+        {(['funds', 'stocks', 'crypto'] as const).map(k => (
           <button key={k} onClick={() => setKind(k)}
             className={`min-h-[40px] rounded-lg text-sm font-semibold capitalize transition-colors ${
               kind === k ? 'bg-white text-apple-gray-800 shadow-sm' : 'text-apple-gray-500'
@@ -151,6 +165,47 @@ export default function CompassExplore() {
           </button>
         ))}
       </div>
+
+      {kind === 'crypto' && (
+        <div className="space-y-1.5">
+          <p className="rounded-xl bg-apple-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-yellow-800">
+            Crypto is the most volatile thing in Compass — no letter grades here, just honest
+            numbers. A common guideline keeps it under ~5% of a portfolio.
+          </p>
+          {cryptos === null && <PageSkeleton />}
+          {cryptos?.map(c => (
+            <div key={c.symbol} className="rounded-2xl border border-apple-gray-200 bg-white">
+              <button onClick={() => setOpenCrypto(openCrypto === c.symbol ? null : c.symbol)}
+                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left active:bg-apple-gray-50">
+                <div>
+                  <p className="font-semibold text-apple-gray-800">{c.symbol} <span className="text-xs font-normal text-apple-gray-400">{c.name}</span></p>
+                  <p className="mt-0.5 text-[11px] tabular-nums text-apple-gray-400">
+                    {c.price != null && `$${c.price.toLocaleString('en-US', { maximumFractionDigits: c.price > 10 ? 0 : 4 })}`}
+                    {c.return_1y != null && ` · ${c.return_1y > 0 ? '+' : ''}${c.return_1y.toFixed(0)}% past year`}
+                    {c.volatility_1y != null && ` · ${c.volatility_1y.toFixed(0)}% volatility`}
+                  </p>
+                </div>
+                <ChevronRight size={15} className={`text-apple-gray-300 transition-transform ${openCrypto === c.symbol ? 'rotate-90' : ''}`} />
+              </button>
+              {openCrypto === c.symbol && (
+                <div className="animate-fadeUp grid grid-cols-2 gap-2 border-t border-apple-gray-100 p-3">
+                  <Link to={`/compass/compare?a=${c.symbol}&b=VOO`}
+                    className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-apple-gray-200 bg-white text-xs font-semibold text-apple-gray-700 active:bg-apple-gray-100">
+                    <ArrowLeftRight size={13} /> vs VOO
+                  </Link>
+                  <Link to={`/compass/ask?q=${encodeURIComponent(`Should ${c.name} (${c.symbol}) be part of my portfolio?`)}`}
+                    className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-apple-gray-200 bg-white text-xs font-semibold text-apple-gray-700 active:bg-apple-gray-100">
+                    <MessageCircleQuestion size={13} /> Ask Compass
+                  </Link>
+                </div>
+              )}
+            </div>
+          ))}
+          <p className="text-[10px] text-apple-gray-400">
+            Own some already? Add it from the Portfolio page — it tracks like everything else.
+          </p>
+        </div>
+      )}
 
       {kind === 'stocks' && (
         <div className="space-y-1.5">

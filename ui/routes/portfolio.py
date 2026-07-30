@@ -379,6 +379,28 @@ async def refresh_data(body: RefreshRequest):
     return result
 
 
+@compass_router.get("/cryptos")
+async def list_cryptos():
+    """Browsable crypto list — price, returns, volatility (24h-cached profiles)."""
+    from config.settings import get_compass_universe
+    from src.fetchers.etf_data import fetch_etf_profile
+
+    out = []
+    for item in get_compass_universe():
+        if item["instrument_type"] != "crypto":
+            continue
+        profile = fetch_etf_profile(item["symbol"], item.get("yfinance", f"{item['symbol']}-USD")) or {}
+        out.append({
+            "symbol": item["symbol"],
+            "name": item.get("name"),
+            "price": profile.get("price"),
+            "return_1y": profile.get("return_1y"),
+            "return_5y": profile.get("return_5y"),
+            "volatility_1y": profile.get("volatility_1y"),
+        })
+    return {"cryptos": out}
+
+
 @compass_router.get("/stocks")
 async def list_stocks():
     """Browsable stock database — config + grades for cached fundamentals only.

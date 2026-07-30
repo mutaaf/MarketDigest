@@ -5,6 +5,16 @@ All notable changes to Market Digest.
 ## [Unreleased]
 
 ### Added
+- **Compass feature-complete (July 29-30)**: 294-company stock database with Explore
+  browsing (Funds | Stocks | Crypto tabs), personalized Compare verdicts ("for your
+  portfolio" pick using the viewer's gaps/holdings/overlap), crypto as a first-class
+  asset class end-to-end, live retirement-portfolio sync, 10 rules of thumb computed
+  with the user's numbers, broker export navigator (15 brokers), screenshot/paste/CSV
+  smart import with review step, persistent async Ask chats with 10MB storage GC,
+  Learn knowledge map (AI-suggested topics + kid/adult teach-me), watchlist news,
+  LLM fund pros/cons/best-for + similar funds, "Your journey" value history chart,
+  family refresh button (5-min cooldown), PWA identity, iPhone/iPad touch polish,
+  docs/AGENTS.md context layer for future agents/humans
 - **Compass Investing** — a standalone long-term investor app at `/compass` with its own
   mobile-first layout (Home, Portfolio, Ideas, Ask, Watchlist, Retirement, Compare, Learn).
   Built for a non-technical user; reachable from any device on the home network.

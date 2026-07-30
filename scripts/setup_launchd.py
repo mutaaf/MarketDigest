@@ -27,7 +27,11 @@ DIGEST_TYPES = ["morning", "afternoon", "weekly", "daytrade"]
 
 
 def find_python() -> str:
-    """Find the best Python 3 path on this system."""
+    """The project venv python — ALWAYS. Scheduled jobs died with
+    ModuleNotFoundError when this once resolved to bare Homebrew python."""
+    venv_python = PROJECT_ROOT / ".venv" / "bin" / "python"
+    if venv_python.exists():
+        return str(venv_python)
     candidates = [
         "/opt/homebrew/bin/python3",
         "/usr/local/bin/python3",
